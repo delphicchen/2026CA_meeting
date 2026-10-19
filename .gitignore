@@ -1,0 +1,10 @@
+# 忽略大型原始音訊檔案（超過 GitHub 100MB 限制）与暫存檔
+*.m4a
+*.mp3
+*.wav
+*.flac
+*.aac
+*.mp4
+*.mov
+.DS_Store
+scratch/

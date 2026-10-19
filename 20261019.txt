@@ -1,0 +1,4 @@
+1. TRQ include current AR400F / A514 plate but >5" or >4" is excluded.
+2. TRQ= https://www.international.gc.ca/trade-commerce/controls-controles/steel-acier/trq_data-donnees_tarifaires.aspx?lang=eng
+3. TRQ 台灣政府似乎有談豁免的產品尺寸
+4. 
