@@ -21,6 +21,7 @@
 | **01** | **2026-10-19** | **09:08 – 10:53 PDT** | **Terra Nova Steel** (Doug / Chris 及貿易商團隊) | Richmond, BC, Canada | [`20261019_0908_terra_nova/`](./20261019_0908_terra_nova/) | ✅ 已完成聽覺解析與歸檔 |
 | **02** | **2026-10-19** | **11:57 – 12:48 PDT** | **Cascadia Metals** (Jim Ritchie / Mark / Amy / Philip 及貿易商團隊) | Vancouver, BC, Canada | [`20261019_1157_cascadia/`](./20261019_1157_cascadia/) | ✅ 已完成聽覺解析與歸檔 |
 | **03** | **2026-10-21** | **09:09 – 10:31 MDT** | **Price Steel** (Dwayne / Rod 及 Salzgitter 團隊) | Edmonton, AB, Canada | [`20261021_0909_price_steel/`](./20261021_0909_price_steel/) | ✅ 已完成聽覺解析與歸檔 |
+| **04** | **2026-10-21** | **11:21 – 12:31 MDT** | **Carry Steel** (Richard 及貿易商團隊) | Edmonton, AB, Canada | [`20261021_1121_carry_steel/`](./20261021_1121_carry_steel/) | ✅ 已完成聽覺解析與歸檔 |
 
 ---
 
@@ -68,3 +69,21 @@
      - [`20261021_0909_Price_Steel_Meeting_Report.docx`](./20261021_0909_price_steel/20261021_0909_Price_Steel_Meeting_Report.docx)
      - [`20261021_0909_Price_Steel_Audio_Report.docx`](./20261021_0909_price_steel/20261021_0909_Price_Steel_Audio_Report.docx)
      - [`20261021_0909_Price_Steel_Raw_Notes.docx`](./20261021_0909_price_steel/20261021_0909_Price_Steel_Raw_Notes.docx)
+
+---
+
+## 📁 場次 04：Carry Steel（2026-10-21 11:21 – 12:31 MDT）
+
+### 1. 檔案清單與用途說明
+- **時間序歸檔目錄 [`20261021_1121_carry_steel/`](./20261021_1121_carry_steel/)**（亦同步保留於根目錄 `./`）：
+  1. **[`20261021_1121_01_carry_steel_meeting_report.md`](./20261021_1121_carry_steel/20261021_1121_01_carry_steel_meeting_report.md)**（同根目錄 [`20261021_carry_steel_meeting_report.md`](./20261021_carry_steel_meeting_report.md)）
+     - **結構化重點與數據資料庫**：鋼板月採購約 500 噸（44W/50W/Cat 4）、中鋼包裝防鏽與吊牌爐號溯源高度評價、海外進口占比三階段劇變（100% → 30% → 80%~90%）、服務中心創 6~7 年最強連續三個月業績、加工排程滿至明年 2~3 月、變電站工程（8"~12" 厚壁 HSS 方管）、油砂專案（Suncor/Syncrude）非北美鋼材第三方獨立測試規範與禁用中國鋼材規定、全加碼頭 40 天海關監管保稅策略與西岸至愛德蒙頓卡車運費（CAD $3,500/車 ≈ 6¢/lb）。
+  2. **[`20261021_1121_02_carry_steel_audio_report.md`](./20261021_1121_carry_steel/20261021_1121_02_carry_steel_audio_report.md)**（同根目錄 [`carry_steel_20261021_audio_report.md`](./carry_steel_20261021_audio_report.md)）
+     - **完整音訊解析報告**：包含執行摘要與全部 24 段（`00:00:00` – `01:09:55`）時間軸詳細紀錄。
+  3. **[`20261021_1121_03_carry_steel_raw_notes.md`](./20261021_1121_carry_steel/20261021_1121_03_carry_steel_raw_notes.md)**（同根目錄 [`20261021_carry_steel_raw_notes.md`](./20261021_carry_steel_raw_notes.md)）
+     - **未刪減分段聽覺完整底稿**：完整保留 24 段對話、英文原句引述（Quotes）、中鋼內部中文討論與量化數據細節。
+  4. **原生 Word 檔案（`.docx`）**：
+     - [`20261021_1121_Carry_Steel_Meeting_Report.docx`](./20261021_1121_carry_steel/20261021_1121_Carry_Steel_Meeting_Report.docx)
+     - [`20261021_1121_Carry_Steel_Audio_Report.docx`](./20261021_1121_carry_steel/20261021_1121_Carry_Steel_Audio_Report.docx)
+     - [`20261021_1121_Carry_Steel_Raw_Notes.docx`](./20261021_1121_carry_steel/20261021_1121_Carry_Steel_Raw_Notes.docx)
+
