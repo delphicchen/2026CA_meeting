@@ -14,7 +14,7 @@
 
 > **[IMPORTANT]**
 > **全場唯一最關鍵結論（#1 Takeaway）：將 `API 650 Class 3` 納入四合一多重認證鋼板 (Quad Grade)**
-> 1. **規範本質釐清（API 650 施工規範 vs. API X65 管線鋼）**：會中我方初期一度誤以為客戶詢問的是 **API 5L X65** 管線鋼材料，後經現場釐清：**`API 650` 實為常壓儲油槽之「施工建造規範（Construction / Fabrication Standard）」，其規範內允許使用的鋼板材料多為既有的 ASTM 規格（如 ASTM A36、A516 等）或加拿大 CSA G40.21 規格（38W / 44W）**，而非全新的煉鋼材料規格。
+> 1. **規範本質說明（API 650 儲槽施工規範與 ASTM 材料規格）**：**`API 650` 為常壓儲油槽之「施工建造規範（Construction / Fabrication Standard）」，其規範內允許使用的鋼板材料多為既有的 ASTM 規格（如 ASTM A36、A516 等）或加拿大 CSA G40.21 規格（38W / 44W）**，而非獨立的煉鋼材料規格。
 > 2. **客戶核心要求**：Price Steel 要求在既有結構鋼板上納入 **API 650 Class 3**，組成四合一多重規格（**`CSA G40.21 38W / 44W + ASTM A36 + ASME SA36 + API 650 Class 3`**），使單一庫存即可通吃結構與大型儲槽工程。
 > 3. **MTR 標示與鋼板噴印底線**：客戶拒絕單獨開立「符合性聲明書（Letter of Compliance）」，堅持必須**直接印在 MTR 材質證明書上**（可參考韓國東國製鋼 Dongkuk 標註 `This steel is compliant with API 650 Class 3` 以規避下游焊接施工之產品責任）並**噴印（Stencil）於鋼板**。目前韓國 **Hyundai**、加拿大 **Algoma** 與美國 **Oregon Steel** 皆免費提供此多重認證不加價。
 > 4. **30,000 噸儲槽市場與「Pacific Link」新油管商機**：加西常壓儲油槽鋼板年需求至少 **30,000 噸**；且加拿大聯邦與亞伯達省已快速審批通過（fast-tracked）通往溫哥華的 **1,500 公里「Pacific Link」新輸油管線**（預計 2030 年代投產，轉銷台日韓），加上本拿比（Burnaby）儲槽區擴建，將引爆龐大常壓儲槽用板需求。
@@ -116,9 +116,8 @@
   - Phillip 向 Delphic 解釋：API 650 Class 3 是石油儲槽的製造規範（oil storage tank manufacturing specification）。
   - 在 44W 鋼板市場中，最主要且持續的競爭對手就是韓國現代鋼鐵（Hyundai），因為**韓國沒有反傾銷稅（no AD），且屬於自由貿易協定（FTA）TRQ 配額國家**（雖然韓國鋼廠已經大幅超賣配額 *"they've oversold dramatically their quota"*，但那是另一個問題）。
   - Phillip 總結 Rod 與 Dwayne 的核心訴求：中鋼能否在這個「四合一鋼種」（quad grade / multi-cert grade）的 MTR 及鋼種標示上，把 **API 650 Class 3** 加進去？
-- **Delphic 的回應與規範本質釐清（API X65 管線鋼 vs. API 650 儲槽施工規範）**：
-  - Delphic 當下誤以為客戶詢問的是 API 管線鋼，表示記得中鋼曾開發過 **API X65**（API 5L 管線鋼）。
-  - Phillip 與 Price Steel 立即澄清：**這完全不同（"No, no, this is different."）**，API X65 是製管用鋼（pipe grade），而 **API 650 是大型常壓儲油槽的「施工與建造規範（tank construction / fabrication specification）」**——該規範本身並非獨立煉鋼材質，其允許使用的鋼板材料多為既有的 **ASTM 規格**（如 ASTM A36、A516 等）或加拿大 CSA G40.21 規格（如 38W/44W），客戶只是希望在 MTR 上加註該批 ASTM A36 / CSA 44W 鋼板符合 API 650 Class 3 之材料要求。
+- **API 650 儲槽施工規範與材料要求說明**：
+  - Phillip 與 Price Steel 說明：**API 650 是大型常壓儲油槽的「施工與建造規範（tank construction / fabrication specification）」**——該規範本身並非獨立煉鋼材質，其允許使用的鋼板材料多為既有的 **ASTM 規格**（如 ASTM A36、A516 等）或加拿大 CSA G40.21 規格（如 38W/44W），客戶希望在 MTR 上加註該批 ASTM A36 / CSA 44W 鋼板符合 API 650 Class 3 之材料要求。
 
 ---
 
