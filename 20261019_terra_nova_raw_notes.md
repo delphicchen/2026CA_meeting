@@ -219,7 +219,7 @@
     3. 討論議題（Topics for Discussion）。
   * **第一部分：中鋼鋼板廠沿革與產線配置（29:07 - 30:00）**：
     * **歷史沿革（Milestones）**：中鋼鋼板廠成立於 **1974 年**。每隔十年都有製程上的重大革新：第一個十年引進**控制軋延製程（Controlled Rolling process）**，接著發展出 **TMCP（熱機控制製程）**，最終引進最新的 **Direct Quench（DQ，直接淬火）製程**。
-    * **產線設備動畫展示（29:35 - 30:00）**：講者展示自己用 Claude Code 製作的鋼板廠產線動畫，依序介紹產線設備：步進式加熱爐（Walking Beam Furnace）$\rightarrow$ 除鏽機（Descaler）$\rightarrow$ 四重軋延機（4-High Mill）$\rightarrow$ 伽瑪射線測厚儀（Gamma-ray gauge）$\rightarrow$ 預矯直機（Pre-leveler）$\rightarrow$ **淬火設備（Quenching device / DQ 設備）** $\rightarrow$ 熱矯直機（Hot leveler）。
+    * **產線設備動畫展示（29:35 - 30:00）**：講者展示自己用 Claude Code 製作的鋼板廠產線動畫，依序介紹產線設備：步進式加熱爐（Walking Beam Furnace）→ 除鏽機（Descaler）→ 四重軋延機（4-High Mill）→ 伽瑪射線測厚儀（Gamma-ray gauge）→ 預矯直機（Pre-leveler）→ **淬火設備（Quenching device / DQ 設備）** → 熱矯直機（Hot leveler）。
 
 ---
 
@@ -354,7 +354,7 @@
 * **[51:43 - 52:15] 514S 用量分佈**
   * **外籍客戶**：看著簡報另一行：`"514S is 6.35mm to 90mm... to 3 inch (76.2mm). Yeah, that's good. 85% of what we use is in that thickness range up to 3 inch."`（我們 85% 的用量都在 3 吋以下的這個厚度範圍內。）
 * **[52:15 - 54:12] 薄規格 PA450 (6mm) 開發與對標 Hardox 450**
-  * **CSC 技術代表（Delphic）**：介紹薄規格 **PA450 wear plate of thin gauge**：為填補國內市場在 `PA400` 與 `PA500` 之間的空缺，並將耐磨板往更薄推進（多年前只能做 $\ge 10$mm，現已做到 **6mm**，更薄規格正克服平坦度問題）。展示盤對盤磨耗試驗（ball-on-disk wear loss test），顯示中鋼 `PA450` 磨耗損失低於競爭對手 **Hardox 450**。
+  * **CSC 技術代表（Delphic）**：介紹薄規格 **PA450 wear plate of thin gauge**：為填補國內市場在 `PA400` 與 `PA500` 之間的空缺，並將耐磨板往更薄推進（多年前只能做 ≥ 10mm，現已做到 **6mm**，更薄規格正克服平坦度問題）。展示盤對盤磨耗試驗（ball-on-disk wear loss test），顯示中鋼 `PA450` 磨耗損失低於競爭對手 **Hardox 450**。
   * **外籍客戶**：詢問競爭對手是誰，得知是 **Hardox 450** 後驚訝確認 `"Really? So yours is better than Hardox? From a wear perspective."` 隨後分析 Hardox 擁有**極低的碳當量（very low carbon equivalent, Ceq）**，成形性（formability）與銲接性（weldability）極佳；而中鋼 450 的 Ceq max 列為 **0.6**。
 * **[54:12 - 55:00] Terra Nova 購地擴廠計畫（2 倍大）與終端客戶對硬度的敏感度**
   * **外籍客戶（Terra Nova）**：
@@ -375,7 +375,7 @@
     * **日本 JFE**：同時提供 **400、450 與 500**，且 400 與 450 價差極小；但因長期問題（long-term issues，如交期/供應），上一次跟 JFE 下單已是**兩年前（60 噸）**的事。
 * **[56:15 - 60:00] PA450 薄脫碳層「神秘配方」與 6mm 折彎半徑 R15 (2.5t)**
   * **CSC 技術代表（Delphic）**：解釋中鋼 `PA450` 耐磨性優於 Hardox 450 的原因在於**較薄的表面脫碳層（thin decarburized layer）**，源自合金設計中的「神秘配方（magic recipe to the alloy design）」。
-  * **折彎測試**：展示 **6mm** 的 `PA450` 可使用 **R15（內半徑 15mm，即 $15/6 = \mathbf{2.5t}$）** 進行折彎成形；且客戶購買的 **AR400F 折彎性能又比 PA450 再好一點點**。
+  * **折彎測試**：展示 **6mm** 的 `PA450` 可使用 **R15（內半徑 15mm，即 15/6 = **2.5t**）** 進行折彎成形；且客戶購買的 **AR400F 折彎性能又比 PA450 再好一點點**。
   * **外籍客戶評價**：通常針對 400 級耐磨板，他們建議客戶採用 **4t**（6mm 板需 R24mm）；即便是結構鋼 `514`（A514），也建議至少 **2t 到 3t**。因此能做到 **2.5t（R15）** 非常優秀（`"That's pretty good"`）。
   * **CSC 技術代表**：說明此薄板折彎測試主要鎖定**運輸車輛市場（transportation market）**，且高成形性與薄脫碳層是 `PA450` 從產品設計初期就設定的目標性質。
 
@@ -550,7 +550,7 @@
     * **關稅（Tariff）**：兩年半至三年前加拿大先對中國課 **25% 關稅**，後加碼至 **50%（topped it up to 50%）**。
     * **反傾銷（AD）**：中國的 AD 涵蓋 **1/4" 到 4"（含 4"）** 的碳鋼板（**44W、A36、A572**），這 30 年來完全不能從中國進口。
     * **從中國進口的品項（全為合金調質板與超厚板）**：Terra Nova 付 50% 關稅從中國進口 **A514（514）、AR400、AR500**，以及 **厚度超過 3 英吋（或 3.5 英吋）的 A516-70**。
-    * **A516-70（$\le 4"$）來源**：從**日本（Japan）**進口；以前曾向**中鋼（CSC）**買 3" 以下的 516，但因加拿大政府設定的 Normal Value 導致價格不具競爭力而中斷。
+    * **A516-70（$≤ 4"$）來源**：從**日本（Japan）**進口；以前曾向**中鋼（CSC）**買 3" 以下的 516，但因加拿大政府設定的 Normal Value 導致價格不具競爭力而中斷。
 * **[01:36:25 - 01:37:45] Doug 對中鋼品質與單頁式材質證明書（MTC）的高度評價、對抗關稅的立場**
   * **Doug**：`"So it was not by our choice, because I like the product, the product is excellent. And I like your test reports, all on one page..."`（不買中鋼絕非我們自己願意的，我很喜歡中鋼的產品，品質非常好；而且我非常喜歡**中鋼的材質證明書/測試報告，全部濃縮在同一頁**，非常清楚，不像中國某鋼廠一張質保書有 4 頁。）
   * **Doug**：幾週前韓國廠商來訪暗示「付關稅已是新常態（new norm）」，但他告訴對方：`"We're going to avoid it as long as we can and fight as hard as we can to get stuff without the tariff. Because if we have the tariff and our competitors don't, we're dead."`（我們會盡一切努力避開關稅，因為如果我們付了關稅而競爭對手沒付，我們就死定了。）
