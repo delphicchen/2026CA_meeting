@@ -1,12 +1,12 @@
 # 2026 加拿大出國訪廠會議紀錄庫 (`2026CA_meeting`)
 
-🌐 **線上會議記錄網頁選單（免看 `.md`、支援 TXT / Word / PDF 匯出）：**
+🌐 **線上會議記錄網頁選單（免看 `.md`、支援 TXT / Word (`.docx`) / PDF 匯出）：**
 - **直接訪問網址 (GitHub Pages)**：**[https://delphicchen.github.io/2026CA_meeting/](https://delphicchen.github.io/2026CA_meeting/)**
 - **訪問密碼**：`8021111`
 
 ---
 
-本儲存庫依**嚴格時間順序（Chronological Order：`YYYYMMDD_HHMM_<客戶名稱>`）**存放 2026 年 10 月加拿大出國拜訪客戶之會議紀錄、原生聽覺模態完整逐段底稿與結構化數據資料，並提供互動式 HTML 網頁選單（[`index.html`](./index.html)）供不熟悉 Markdown 之同仁直接於瀏覽器閱讀及一鍵匯出為 **TXT、Word (`.doc`)、PDF**。
+本儲存庫依**嚴格時間順序（Chronological Order：`YYYYMMDD_HHMM_<客戶名稱>`）**存放 2026 年 10 月加拿大出國拜訪客戶之會議紀錄、原生聽覺模態完整逐段底稿與結構化數據資料，並提供互動式 HTML 網頁選單（[`index.html`](./index.html)）供不熟悉 Markdown 之同仁直接於瀏覽器閱讀及一鍵匯出為 **TXT、Word (`.docx`)、PDF**。
 
 > [!TIP]
 > **時間順序命名規範（避免同日多場會議依字母排序錯亂）**
