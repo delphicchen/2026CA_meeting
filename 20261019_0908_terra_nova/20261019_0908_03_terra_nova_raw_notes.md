@@ -550,7 +550,7 @@
     * **關稅（Tariff）**：兩年半至三年前加拿大先對中國課 **25% 關稅**，後加碼至 **50%（topped it up to 50%）**。
     * **反傾銷（AD）**：中國的 AD 涵蓋 **1/4" 到 4"（含 4"）** 的碳鋼板（**44W、A36、A572**），這 30 年來完全不能從中國進口。
     * **從中國進口的品項（全為合金調質板與超厚板）**：Terra Nova 付 50% 關稅從中國進口 **A514（514）、AR400、AR500**，以及 **厚度超過 3 英吋（或 3.5 英吋）的 A516-70**。
-    * **A516-70（$≤ 4"$）來源**：從**日本（Japan）**進口；以前曾向**中鋼（CSC）**買 3" 以下的 516，但因加拿大政府設定的 Normal Value 導致價格不具競爭力而中斷。
+    * **A516-70（≤ 4"）來源**：從**日本（Japan）**進口；以前曾向**中鋼（CSC）**買 3" 以下的 516，但因加拿大政府設定的 Normal Value 導致價格不具競爭力而中斷。
 * **[01:36:25 - 01:37:45] Doug 對中鋼品質與單頁式材質證明書（MTC）的高度評價、對抗關稅的立場**
   * **Doug**：`"So it was not by our choice, because I like the product, the product is excellent. And I like your test reports, all on one page..."`（不買中鋼絕非我們自己願意的，我很喜歡中鋼的產品，品質非常好；而且我非常喜歡**中鋼的材質證明書/測試報告，全部濃縮在同一頁**，非常清楚，不像中國某鋼廠一張質保書有 4 頁。）
   * **Doug**：幾週前韓國廠商來訪暗示「付關稅已是新常態（new norm）」，但他告訴對方：`"We're going to avoid it as long as we can and fight as hard as we can to get stuff without the tariff. Because if we have the tariff and our competitors don't, we're dead."`（我們會盡一切努力避開關稅，因為如果我們付了關稅而競爭對手沒付，我們就死定了。）
