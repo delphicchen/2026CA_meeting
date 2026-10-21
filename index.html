@@ -1,0 +1,1111 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>2026 加拿大客戶拜訪會議記錄系統 | CSC Canada Visit Portal</title>
+  <!-- Marked.js for Markdown parsing -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <!-- html2pdf.js for PDF export -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <style>
+    :root {
+      --primary: #0f4c81;
+      --primary-dark: #093257;
+      --primary-light: #e8f1f8;
+      --accent: #0284c7;
+      --bg: #f1f5f9;
+      --card-bg: #ffffff;
+      --text: #1e293b;
+      --text-muted: #64748b;
+      --border: #cbd5e1;
+      --success: #059669;
+      --warning: #d97706;
+      --danger: #dc2626;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft JhengHei", "PingFang TC", "Noto Sans TC", sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.65;
+    }
+
+    /* Password Lock Overlay */
+    #auth-overlay {
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(135deg, #09203f 0%, #1e4b7a 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      padding: 20px;
+    }
+
+    .auth-card {
+      background: #ffffff;
+      width: 100%;
+      max-width: 420px;
+      border-radius: 16px;
+      padding: 36px 32px;
+      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.35);
+      text-align: center;
+    }
+
+    .auth-logo {
+      width: 60px;
+      height: 60px;
+      border-radius: 14px;
+      background: var(--primary-light);
+      color: var(--primary);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      margin-bottom: 16px;
+    }
+
+    .auth-card h1 {
+      margin: 0 0 8px 0;
+      font-size: 22px;
+      color: #0f172a;
+    }
+
+    .auth-card p {
+      margin: 0 0 24px 0;
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+
+    .auth-input-group {
+      margin-bottom: 16px;
+      text-align: left;
+    }
+
+    .auth-input-group label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: #334155;
+    }
+
+    .auth-input {
+      width: 100%;
+      padding: 12px 14px;
+      font-size: 16px;
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      outline: none;
+      transition: border-color 0.2s;
+      letter-spacing: 2px;
+      text-align: center;
+    }
+
+    .auth-input:focus {
+      border-color: var(--primary);
+    }
+
+    .auth-btn {
+      width: 100%;
+      padding: 12px 16px;
+      font-size: 15px;
+      font-weight: 600;
+      color: #ffffff;
+      background: var(--primary);
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .auth-btn:hover {
+      background: var(--primary-dark);
+    }
+
+    #auth-error {
+      color: var(--danger);
+      font-size: 13px;
+      margin-top: 12px;
+      display: none;
+      font-weight: 600;
+    }
+
+    /* Main App Container */
+    #app-container {
+      display: none;
+      min-height: 100vh;
+      flex-direction: column;
+    }
+
+    /* Top Header */
+    .top-header {
+      background: linear-gradient(90deg, #092642 0%, #0f4c81 100%);
+      color: #ffffff;
+      padding: 16px 28px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.12);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .brand-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-title h1 {
+      margin: 0;
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+    }
+
+    .brand-subtitle {
+      font-size: 12.5px;
+      color: #bae6fd;
+      margin-top: 2px;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .logout-btn {
+      background: rgba(255, 255, 255, 0.14);
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.28);
+      padding: 7px 13px;
+      border-radius: 8px;
+      font-size: 13px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .logout-btn:hover {
+      background: rgba(255, 255, 255, 0.25);
+    }
+
+    /* Control Bar (Selectors + Export Buttons) */
+    .control-bar {
+      background: #ffffff;
+      border-bottom: 1px solid var(--border);
+      padding: 16px 28px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+    }
+
+    .control-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 18px;
+    }
+
+    .selectors-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      flex: 1;
+      min-width: 280px;
+    }
+
+    .select-box {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      min-width: 240px;
+      flex: 1;
+    }
+
+    .select-box label {
+      font-size: 12.5px;
+      font-weight: 700;
+      color: #475569;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .select-box select, .search-input {
+      padding: 10px 12px;
+      font-size: 14.5px;
+      font-weight: 600;
+      color: #0f172a;
+      background-color: #f8fafc;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 8px;
+      outline: none;
+      cursor: pointer;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .select-box select:focus, .search-input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(15, 76, 129, 0.12);
+      background-color: #ffffff;
+    }
+
+    .export-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .export-label {
+      font-size: 13px;
+      font-weight: 700;
+      color: #475569;
+      margin-right: 4px;
+    }
+
+    .btn-export {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 15px;
+      font-size: 13.5px;
+      font-weight: 600;
+      border-radius: 8px;
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: all 0.18s;
+      white-space: nowrap;
+    }
+
+    .btn-txt {
+      background: #f1f5f9;
+      color: #334155;
+      border-color: #cbd5e1;
+    }
+    .btn-txt:hover {
+      background: #e2e8f0;
+    }
+
+    .btn-word {
+      background: #1d4ed8;
+      color: #ffffff;
+    }
+    .btn-word:hover {
+      background: #1e40af;
+    }
+
+    .btn-pdf {
+      background: #dc2626;
+      color: #ffffff;
+    }
+    .btn-pdf:hover {
+      background: #b91c1c;
+    }
+
+    .btn-print {
+      background: #059669;
+      color: #ffffff;
+    }
+    .btn-print:hover {
+      background: #047857;
+    }
+
+    /* Main Content Layout */
+    .main-wrapper {
+      max-width: 1400px;
+      width: 100%;
+      margin: 22px auto;
+      padding: 0 28px 40px 28px;
+      display: grid;
+      grid-template-columns: 310px 1fr;
+      gap: 24px;
+      align-items: start;
+    }
+
+    @media (max-width: 980px) {
+      .main-wrapper {
+        grid-template-columns: 1fr;
+        padding: 0 16px 32px 16px;
+      }
+      .control-bar, .top-header {
+        padding: 14px 16px;
+      }
+    }
+
+    /* Left Sidebar: Quick Customer Cards & Doc Tabs */
+    .sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      position: sticky;
+      top: 86px;
+    }
+
+    .sidebar-section {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+    }
+
+    .sidebar-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #475569;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      margin: 0 0 12px 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .customer-card {
+      border: 1.5px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 12px 14px;
+      margin-bottom: 10px;
+      cursor: pointer;
+      transition: all 0.18s;
+      background: #f8fafc;
+    }
+
+    .customer-card:last-child {
+      margin-bottom: 0;
+    }
+
+    .customer-card:hover {
+      border-color: #94a3b8;
+      background: #ffffff;
+    }
+
+    .customer-card.active {
+      border-color: var(--primary);
+      background: var(--primary-light);
+      box-shadow: 0 2px 8px rgba(15, 76, 129, 0.1);
+    }
+
+    .customer-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 4px;
+    }
+
+    .customer-card-name {
+      font-size: 16px;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 4px;
+    }
+
+    .customer-card-meta {
+      font-size: 12px;
+      color: #64748b;
+    }
+
+    .doc-tab-btn {
+      width: 100%;
+      text-align: left;
+      padding: 10px 12px;
+      margin-bottom: 8px;
+      border-radius: 8px;
+      border: 1px solid #e2e8f0;
+      background: #f8fafc;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 13.5px;
+      font-weight: 600;
+      color: #334155;
+      transition: all 0.15s;
+    }
+
+    .doc-tab-btn:last-child {
+      margin-bottom: 0;
+    }
+
+    .doc-tab-btn:hover {
+      background: #f1f5f9;
+      border-color: #cbd5e1;
+    }
+
+    .doc-tab-btn.active {
+      background: var(--primary);
+      color: #ffffff;
+      border-color: var(--primary);
+    }
+
+    .doc-badge {
+      font-size: 11px;
+      padding: 2px 7px;
+      border-radius: 99px;
+      background: rgba(15, 76, 129, 0.12);
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .doc-tab-btn.active .doc-badge {
+      background: rgba(255, 255, 255, 0.22);
+      color: #ffffff;
+    }
+
+    /* Right Content Viewer */
+    .content-area {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      min-width: 0;
+    }
+
+    .meeting-banner {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-left: 5px solid var(--primary);
+      border-radius: 12px;
+      padding: 18px 24px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+    }
+
+    .banner-top {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+    .banner-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .badge-pill {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 12.5px;
+      font-weight: 700;
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+
+    .badge-tag {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .banner-title {
+      margin: 4px 0 8px 0;
+      font-size: 22px;
+      color: #0f172a;
+    }
+
+    .banner-meta {
+      font-size: 13.5px;
+      color: #475569;
+      margin-bottom: 8px;
+    }
+
+    .banner-summary {
+      font-size: 14px;
+      color: #1e293b;
+      background: #f8fafc;
+      padding: 10px 14px;
+      border-radius: 8px;
+      border: 1px solid #e2e8f0;
+    }
+
+    /* Document Viewer Card */
+    .doc-paper {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 36px 44px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+      overflow-x: auto;
+    }
+
+    @media (max-width: 768px) {
+      .doc-paper {
+        padding: 20px 18px;
+      }
+    }
+
+    /* Markdown Typography inside .markdown-body */
+    .markdown-body {
+      color: #1e293b;
+      font-size: 15.5px;
+      line-height: 1.75;
+    }
+
+    .markdown-body h1 {
+      font-size: 25px;
+      color: #0f172a;
+      border-bottom: 2px solid #e2e8f0;
+      padding-bottom: 12px;
+      margin-top: 0;
+      margin-bottom: 20px;
+    }
+
+    .markdown-body h2 {
+      font-size: 20px;
+      color: #0f4c81;
+      border-bottom: 1px solid #e2e8f0;
+      padding-bottom: 8px;
+      margin-top: 32px;
+      margin-bottom: 16px;
+    }
+
+    .markdown-body h3 {
+      font-size: 17px;
+      color: #1e3a8a;
+      margin-top: 24px;
+      margin-bottom: 10px;
+    }
+
+    .markdown-body p {
+      margin-top: 0;
+      margin-bottom: 14px;
+    }
+
+    .markdown-body ul, .markdown-body ol {
+      padding-left: 24px;
+      margin-top: 0;
+      margin-bottom: 16px;
+    }
+
+    .markdown-body li {
+      margin-bottom: 6px;
+    }
+
+    .markdown-body blockquote {
+      margin: 16px 0;
+      padding: 12px 18px;
+      border-left: 4px solid var(--primary);
+      background: #f8fafc;
+      color: #334155;
+      border-radius: 0 8px 8px 0;
+    }
+
+    .markdown-body code {
+      background: #f1f5f9;
+      color: #0f172a;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.9em;
+    }
+
+    .markdown-body hr {
+      border: none;
+      border-top: 1px solid #e2e8f0;
+      margin: 28px 0;
+    }
+
+    .markdown-body table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 18px 0 24px 0;
+      font-size: 14.5px;
+    }
+
+    .markdown-body th, .markdown-body td {
+      border: 1px solid #cbd5e1;
+      padding: 10px 12px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    .markdown-body th {
+      background-color: #f1f5f9;
+      color: #0f172a;
+      font-weight: 700;
+    }
+
+    .markdown-body tr:nth-child(even) td {
+      background-color: #f8fafc;
+    }
+
+    /* Toast status notification */
+    #toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: #0f172a;
+      color: #ffffff;
+      padding: 12px 20px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+      display: none;
+      z-index: 9000;
+    }
+
+    /* Print Styles for clean PDF / Print */
+    @media print {
+      #auth-overlay, .top-header, .control-bar, .sidebar, #toast {
+        display: none !important;
+      }
+      body {
+        background: #ffffff;
+      }
+      #app-container {
+        display: block !important;
+      }
+      .main-wrapper {
+        display: block;
+        margin: 0;
+        padding: 0;
+        max-width: 100%;
+      }
+      .meeting-banner {
+        margin-bottom: 16px;
+        border: 1px solid #94a3b8;
+        box-shadow: none;
+      }
+      .doc-paper {
+        border: none;
+        padding: 0;
+        box-shadow: none;
+      }
+      .markdown-body table {
+        page-break-inside: auto;
+      }
+      .markdown-body tr {
+        page-break-inside: avoid;
+        page-break-after: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Password Authentication Overlay -->
+  <div id="auth-overlay">
+    <div class="auth-card">
+      <div class="auth-logo">🔒</div>
+      <h1>2026 加拿大客戶訪談會議記錄</h1>
+      <p>CSC Canada Customer Visit Reports Portal<br/>請輸入訪問密碼以檢視與匯出會議記錄</p>
+      <form id="auth-form">
+        <div class="auth-input-group">
+          <label for="pwd-input">訪問密碼 (Access Password)</label>
+          <input type="password" id="pwd-input" class="auth-input" placeholder="請輸入密碼..." autocomplete="off" autofocus />
+        </div>
+        <button type="submit" class="auth-btn">進入會議記錄系統</button>
+        <div id="auth-error">❌ 密碼錯誤，請重新輸入！</div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Main Application -->
+  <div id="app-container">
+    <header class="top-header">
+      <div class="header-inner">
+        <div class="brand-title">
+          <div>
+            <h1>🇨🇦 2026 加拿大客戶拜訪會議記錄系統</h1>
+            <div class="brand-subtitle">時間順序歸檔選單 (日期 / 客戶) ・ 支援線上閱讀與一鍵匯出 TXT / Word (.doc) / PDF</div>
+          </div>
+        </div>
+        <div class="header-actions">
+          <button class="logout-btn" onclick="lockPortal()" title="鎖定畫面">🔒 鎖定系統</button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Top Control Bar: Selectors & Export Buttons -->
+    <section class="control-bar">
+      <div class="control-inner">
+        <div class="selectors-group">
+          <div class="select-box">
+            <label for="customer-select">📅 1. 選擇拜訪日期與客戶 (Date & Customer)</label>
+            <select id="customer-select" onchange="onCustomerSelectChange(this.value)"></select>
+          </div>
+          <div class="select-box">
+            <label for="doc-select">📄 2. 選擇報告類型 (Report Type)</label>
+            <select id="doc-select" onchange="onDocSelectChange(this.value)"></select>
+          </div>
+        </div>
+
+        <div class="export-group">
+          <span class="export-label">匯出當前報告：</span>
+          <button class="btn-export btn-txt" onclick="exportTXT()">📄 匯出 TXT</button>
+          <button class="btn-export btn-word" onclick="exportWord()">📘 匯出 Word (.doc)</button>
+          <button class="btn-export btn-pdf" onclick="exportPDF()">📕 匯出 PDF</button>
+          <button class="btn-export btn-print" onclick="window.print()">🖨️ 列印 / 另存 PDF</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Main Content Area -->
+    <main class="main-wrapper">
+      <!-- Left Sidebar -->
+      <aside class="sidebar">
+        <div class="sidebar-section">
+          <div class="sidebar-title">
+            <span>🏢 拜訪客戶選單 (依時間序)</span>
+            <span id="customer-count-badge">2 場次</span>
+          </div>
+          <div id="customer-cards-list"></div>
+        </div>
+
+        <div class="sidebar-section">
+          <div class="sidebar-title">
+            <span>📑 該場次會議記錄文件</span>
+          </div>
+          <div id="doc-tabs-list"></div>
+        </div>
+      </aside>
+
+      <!-- Right Document Content -->
+      <section class="content-area" id="printable-area">
+        <div class="meeting-banner" id="meeting-banner"></div>
+        <article class="doc-paper">
+          <div id="markdown-viewer" class="markdown-body"></div>
+        </article>
+      </section>
+    </main>
+  </div>
+
+  <div id="toast"></div>
+
+  <!-- Embedded Meetings Data -->
+  <script id="meetings-data" type="application/json">
+[{"id": "20261019_0908_terra_nova", "order": "場次 01", "date": "2026-10-19", "time": "09:08 – 10:53 PDT", "duration": "1 小時 44 分 49 秒", "customer": "Terra Nova Steel", "location": "Richmond, BC, Canada", "tag": "中厚板 / 調質鋼板 (Plate & Q&T)", "attendees": "客戶: Doug (負責人), Chris | 貿易商: Philip 及英/澳/德籍資深代表 | 中鋼集團 (CSC/CSGT): Jimmy, 陳博士 (Dr. Chen), 業務代表群", "summary": "全年採購量約 20,000 噸（44W 8~9千噸、A514 4千噸、A516 2千噸、AR400F 1.2~1.4千噸）。當場確認中鋼可正式接單 3\" (76.2mm) A514S；完整拆解加拿大 TRQ 豁免尺寸清單、A516 台韓價差與明年 1 月全面 50% 關稅預測。", "docs": [{"doc_id": "tn_01_report", "title": "01. 結構化重點與數據報告 (Meeting Report)", "short_title": "01. 結構化重點報告", "badge": "精華推薦", "filename": "20261019_0908_Terra_Nova_Meeting_Report", "content": "# 2026年10月19日 Terra Nova Steel 拜訪會議結構化報告與重點資料庫\n\n> **用途說明**：本檔案為結構化整理之會議重點、數據表格、價格拆解與行動項目，搭配同目錄下之 `20261019_terra_nova_raw_notes.md`（未刪減逐段對話底稿），可隨時依需求快速轉換為「中鋼出國訪廠正式報告」、「純英文會議紀要 (Minutes of Meeting)」、「主管簡報摘要」或「議題追蹤表」。\n\n---\n\n## 一、會議基本資料 (Meeting Metadata)\n- **會議日期**：2026 年 10 月 19 日 09:08 – 10:53（總時長 1 小時 44 分 49 秒）\n- **拜訪對象**：**Terra Nova Steel**（加拿大 BC 省列治文 Richmond 地區主力鋼板加工與經銷商）\n- **客戶代表**：**Doug**（負責人，持股 80%；近期與持股 20% 之銷售經理 **Chris** 完成前董事長 40% 股權之買斷 MBO）\n- **陪同貿易商**：\n  - **英/澳籍貿易商代表**（前 BlueScope/BHP 資深人員，熟悉加拿大 TRQ、CBSA 反傾銷 Normal Value 與報價操作）及 **Philip**\n  - **德籍貿易商代表**（熟悉歐美 Soft TRQ 運作與北美基建/管線市場）\n- **我方代表（CSC / CSGT）**：\n  - **Jimmy**（業務主講人，代理 Mr. Wang）、中鋼/中貿女性業務代表群\n  - **陳博士（Dr. Chen / Delphic）**（鋼板技術部門代表，主講 DQST 製程與高強度/耐磨調質鋼板）\n\n---\n\n## 二、客戶營運與年度採購結構數據 (Customer Profile & Volume Breakdown)\n\n1. **全年總採購量**：約 **20,000 噸 / 年 (tons/year)**\n2. **各主力鋼種年採購量與業務佔比**：\n   - **CSA G40.21 44W（一般結構鋼板）**：**8,000 – 9,000 噸 / 年**（最大宗基本盤）\n   - **ASTM A514 / QT100（高強度調質結構鋼板）**：**4,000 噸 / 年**（約佔營收/業務 **25%**；其中 **85% 用量集中在 $\\le 3\"$ (76.2mm)**）\n     - *拖車製造（Trailers，如貨櫃底盤車架 chassis）*：100% 使用 A514，主力厚度 **1/4\" (6mm)、5/16\" (8mm)、3/8\" (9.5mm)、1/2\" (12.7mm)**，少量 **3/16\"**。\n     - *重機具配件（Attachments：挖斗 buckets、夾具 thumbs、礦業溜槽 mining chutes）*：主力厚度 **1\" (25mm)、1-1/4\" (31.75mm)**，並大量使用 **2-3/4\" (70mm) 與 3\" (76.2mm)**；超厚板（6\"–8\"）方使用 A514 Grade Q（店內最厚備有 8\" 庫存）。\n   - **AR400 / AR400F（耐磨鋼板）**：**1,200 – 1,400 噸 / 年**（約佔業務 **10%**）\n     - **1/4\" 至 2\" 佔 AR400 市場需求的 90%**，其中 **2\" (50mm)** 為最大宗主力厚度之一；期盼未來可擴展至 **3/16\"**（目前僅中國供應）與 **3\"**。\n   - **AR500（高硬度耐磨鋼板）**：約佔業務 **3% – 4%**（年需求僅數百噸，通常於下單 100–400 噸 AR400F 時附帶約 **80 噸**）。\n   - **ASTM A516 Gr.70（壓力容器鋼板）**：約 **2,000 噸 / 年**（約佔業務 **10%**）。\n3. **採購來源與通路策略**：\n   - **進口佔比高達 95%**（國內 Algoma 因 100Q 報價高達 **$1.30/lb** 且不提供噴砂底漆、品質平坦度不佳，目前已幾乎不向 Algoma 採購）。\n   - **100% 透過貿易商（Trading Companies）進口**：不願為節省 $0.30/cwt 而自行承擔海外進口與報關風險。\n   - **現行進口來源國**：中國、韓國、台灣（中鋼）、日本（Kobe）、馬來西亞（濟鋼 Jigang）、澳洲（BlueScope，由 Worth 進口，近期剛買 200 噸 44W 現貨）。\n4. **倉儲擴建與財務部位現況**：\n   - **購地擴廠計畫**：現有倉庫過去 15–20 年空間不足（導致無法同時備貨 400/450/500 三種耐磨板），正購地興建**至少 2 倍大**的新廠房與倉庫，預計 **4 年後**完工。\n   - **在途訂單與暫緩本次 500 噸報價**：目前在途訂單約 **$2,000 萬**，若計入到港可能被課徵之關稅恐膨脹至 **$2,700 萬**；加上剛完成股東買斷，財務採取防禦保守策略，故針對貿易商現場提供之中鋼 **500 噸報價（淨價約 $1.14/lb，含 $0.32/lb 關稅分攤）決定本次先 Pass**（且近期對 Algoma 與中國鋼廠之重複下單庫存可撐至 6–7 月）。\n\n---\n\n## 三、加拿大關稅配額（TRQ）與反傾銷（AD / Normal Value）規定拆解\n\n### 1. TRQ 認定規則與台灣政府協商之豁免尺寸清單\n- **TRQ 負面排除原則**：加拿大官方無正面豁免清單，凡未明確列於特定 TRQ 條文與稅則描述中者即排除於 TRQ 之外（不計入配額、免課 50% 關稅）；但**仍受反傾銷 Normal Value（最低樓地板價）約束**（AD 涵蓋範圍為 **$\\le 4\"$**）。\n- **台灣政府（經濟部/貿易署）6 月與加拿大協商之 TRQ 豁免項目**：\n  1. **一般結構鋼板 / A514 Grade S**：厚度 **$> 4\"$**（部分細項為 $> 5\"$、$> 5.5\"$、$> 6.35\"$）豁免 TRQ。\n  2. **A514 Grade Q (514Q)**：厚度 **$> 2.75\"$ (2-3/4\")** 豁免 TRQ（但客戶指出 514Q 含高量 Cr/Mo/Ni 合金、價格昂貴且碳當量過高，4\" 以下根本無人使用，故此項對薄板無實質幫助）。\n  3. **AR400F（360–477 HBW 耐磨板）**：厚度 **$> 2.75\"$ (2-3/4\")** 豁免 TRQ。\n  4. **Hardox 500 / AR500**：厚度 **$> 1.25\"$ (31.75 mm)** 豁免 TRQ。\n  5. **DQ550 / 600 HBW**：雖可豁免 TRQ 且中鋼可生產，但因 500 級以上僅佔客戶業務 3%–4%，改用 550 易引發終端客戶鑽孔與折彎客訴，客戶決定不採用此方式避稅。\n\n### 2. A516 Gr.70 價格與反傾銷豁免對比（中鋼 vs. 韓國東國製鋼 vs. 中國/日本）\n\n| 比較項目 | 中鋼 (CSC - 台灣) | 東國製鋼 (Dongkuk - 韓國) | 其他來源 (中國 / 日本 / 德國) |\n| :--- | :--- | :--- | :--- |\n| **FOB 基價與加價 (USD/MT)** | - 44W 基價：**$985/MT FOB**<br>- 鋼種加價 (Grade)：**+$60**<br>- 正火處理 (Normalizing)：**+$30**<br>- 夏比衝擊 (-45°C Charpy)：**+$28**<br>- **合計 FOB 總價：$1,103/MT** | - **全包成交價：$1,050/MT FOB Korea**（比中鋼便宜 $53/MT） | - **日本神戶製鋼 (Kobe)**：供應 $\\le 4\"$ A516，但首批到港船貨即將遭新關稅重擊。<br>- **中國**：$\\le 4\"$ 碳鋼受 AD 封鎖；客戶付 **50% 關稅**買 $>3.5\"$ A516 及 A514/AR400/500。 |\n| **海運費 (Ocean Freight)** | **$120 – $125/MT**（鋼板運費較貴） | **$110 – $120/MT**（比台灣便宜約 $10/MT） | — |\n| **反傾銷 (AD) 與 Normal Value** | - 政府設定之 Normal Value 高達約 **1,300**。<br>- 台/德 AD 豁免僅限 **Sour Service（抗酸用途）**（須 Normalized + Vacuum Degassed + 限制 P/S + 聲明專用於抗酸環境）。 | - 針對 **Normalized + Vacuum Degassed** 享有一般反傾銷豁免（Exclusion），**無 Normal Value 限制**。 | - **德國 Dillinger**：與台灣同案，部分進口商以 Sour Service 名義引進轉售一般市場，但有遭 **CBSA 海關稽核補稅（Normal Value 與出口價差額）**之合規風險。 |\n\n### 3. 貿易政策展望（TRQ 配額削減與全面 50% 關稅預測）\n- **非 FTA 配額僅剩 20%**：台加僅有關務協定而無 FTA（韓國、馬來西亞有 FTA）。自 2025 年中以 2024 年量為基準實施 TRQ 以來，非 FTA 國家配額已連砍兩次，目前僅剩基準量的 **20%**（會中提及台灣配額約 1,800 噸）。\n- **預計明年 1 月取消 TRQ 全面改課 50% 關稅**：貿易商預期在美國 11 月期中選舉後（約明年 1 月，現行配額期至 12 月底），加拿大為與美國達成貿易協議，極可能**取消所有 TRQ 配額，對所有國家一律改課 50% 關稅**。\n- **對中鋼之商機影響**：現行「軟性配額（Soft TRQ）」導致買家擔心沒搶到配額而觀望不敢下單；Doug 明確表示，一旦改為**所有國家一律課徵 50% 關稅（立足點一致）**，將立即恢復與中鋼的常態大宗採購。\n\n---\n\n## 四、中鋼技術簡報重點與客戶高度肯定項目\n\n1. **中鋼品質與文件優勢（客戶極高評價）**：\n   - **平坦度極佳**：雷射切割平坦度 **$< 2$ mm** 無熱變形，客戶盛讚中鋼鋼板平坦度與表面品質**遠勝加拿大本土 Algoma**。\n   - **硬度控制精準**：客戶最喜愛之 AR400 硬度區間為 **395–420 HBW**（曾因他廠 425–430 HBW 導致下游鑽孔斷刀遭索賠），中鋼 AR400F 硬度穩定維持在 400 HBW 左右。\n   - **單頁式材質證明書（MTC / Mill Certs）**：中鋼將所有測試數據濃縮於**單一頁面（all on one page）**，清晰易讀，深獲客戶讚賞（對比中國鋼廠一份達 4 頁）。\n2. **A514S 厚度突破至 3\" (76.2mm) 並可推至 90mm**：\n   - 現場查證確認中鋼於**今年 4 月已成功生產並出貨 75mm / 76.2mm (3\") 之 A514S**，當場向客戶確認可正式接單 **3\" A514S（以 `514S Modified` 標示）**。\n   - 技術上受惠於 **270mm 扁鋼胚**，依 3:1 壓延比最高可推升至 **80–90 mm**。\n3. **PA450H (6–25mm) 新品技術亮點**：\n   - 特殊合金設計形成氧化阻障層，**表面脫碳層僅 0.1–0.2 mm**（一般為 0.4 mm），盤對盤磨耗試驗表現**優於 Hardox 450**。\n   - **6mm 薄板折彎半徑達 R15 (2.5t)**（一般 AR400 建議 4t），AR400F 折彎性又略優於 PA450H。\n\n---\n\n## 五、後續行動項目 (Action Items)\n1. **外方團隊（Philip）**：利用 AI 工具比對中鋼可生產尺寸表與加拿大 TRQ 稅則條文，列出所有排除於 TRQ 之外的尺寸規格。\n2. **中鋼 / 中貿團隊**：整理台灣政府與加拿大協商之「TRQ 豁免產品規格與尺寸清單」（移除內部備註欄）並寄送給客戶參考。\n3. **中鋼訪加行程**：預計於 **2 月底（End of February）** 派員赴加拿大展開一週的客戶拜訪。\n"}, {"doc_id": "tn_02_audio", "title": "02. 完整音訊解析報告 (Audio Analysis Report)", "short_title": "02. 完整音訊解析報告", "badge": "21段時間軸", "filename": "20261019_0908_Terra_Nova_Audio_Report", "content": "# 2026年10月19日 Terra Nova Steel 拜訪會議完整音訊解析報告\n\n- **原始音訊檔案**：`2026年10月19日 09點08分.m4a`\n- **總時長**：1 小時 44 分 49 秒（6,289.4 秒，共切割為 21 個 5 分鐘與 2.5 分鐘輕量化音訊片段，全程以原生聽覺模態聆聽）\n- **與會人員**：\n  - **客戶端（Terra Nova Steel）**：**Doug / Rob**（負責人，持股 80%，與銷售經理 Chris 持股 20% 剛完成前董事長 40% 股權買斷）\n  - **貿易商 / 代理商團隊**：\n    - **英籍/澳籍資深代表**（曾任職 BlueScope/BHP，熟悉加拿大 TRQ、CBSA 反傾銷 Normal Value 與報價操作）与團隊成員（如 **Philip**）\n    - **德籍代表**（熟悉歐美 TRQ 軟性配額與北美管線/基建市場）\n  - **中鋼集團（CSC / 中貿 CSGT）團隊**：\n    - **Jimmy** 等業務代表、CSGT 女性業務代表（負責鋼板與熱軋外銷加拿大）\n    - **陳博士（Dr. Chen / Delphic）**：中鋼鋼板技術部門代表（主講中鋼 DQST 直接淬火自回火製程、耐磨鋼板 PA400H/PA450H/PA500H/AR400F 與高強度結構鋼 A514S/S690QL/S890QL）\n\n---\n\n## 一、核心商務、政策與技術情報總覽（Executive Summary）\n\n### 1. 加拿大關稅配額（TRQ）與反傾銷（AD / Normal Value）關鍵結論\n> [!IMPORTANT]\n> **TRQ 條文認定原則 vs. 台灣政府協商豁免清單**\n> 1. **TRQ 負面排除原則**：不同於反傾銷（AD）稅則號列僅供參考，加拿大 TRQ 採取「凡未明確列於特定 TRQ 稅則與描述中者，即排除在外（豁免 TRQ，不計入配額亦免課 50% 超額關稅）」，但**仍須受反傾銷 Normal Value（最低樓地板價）約束**（AD 目前涵蓋厚度為 **$\\le 4\"$**）。\n> 2. **台灣政府（經濟部/貿易署）6月協商之 TRQ 豁免尺寸清單**（會議現場投影確認）：\n>    - **一般結構鋼板 / A514S**：厚度 **$> 4\"$（或 $> 5\"$ / $> 5.5\"$ / $> 6.35\"$ 依細項）** 排除於 TRQ 之外（因加拿大本土鋼廠 Algoma 宣稱計畫生產較薄規格以爭取保護）。\n>    - **A514 Grade Q (514Q)**：厚度 **$> 2.75\"$ (2-3/4\")** 即可豁免 TRQ。但客戶指出 Algoma 只做 **514S**，而 **514Q** 含高量 Cr、Mo、Ni 合金，價格極貴且碳當量（Ceq）過高，業界僅在 **6\"~8\"** 超厚板才會用 514Q，在 4\" 以下買 514Q 毫無商業意義。\n>    - **耐磨鋼板 AR400F (360–477 HBW)**：厚度 **$> 2.75\"$ (2-3/4\")** 豁免 TRQ。\n>    - **Hardox 500 / AR500**：厚度 **$> 1.25\"$ (31.75 mm)** 豁免 TRQ。\n>    - **DQ550 / 600 HBW**：雖可豁免 TRQ 且中鋼具備生產能力，但客戶評估 AR500 僅佔其業務 3%~4%，改買 550 易導致下游鑽孔斷刀與折彎開裂客訴，決定**不採行此避稅方式**。\n> 3. **非 FTA 國家 TRQ 配額削減與未來展望**：\n>    - 台灣與加拿大僅有關務協定（Customs Agreement）而無 FTA（韓國、馬來西亞有 FTA）。加拿大自 2025 年中以 2024 年進口量為基準實施 TRQ 後，**非 FTA 國家配額已連砍兩次，目前僅剩基準量的 20%**（會中提及台灣配額約 1,800 噸）。\n>    - 貿易商預期加拿大為與美國達成鋼鐵協議（防堵外國廉價鋼材經加拿大加工輸美），**極可能在美國 11 月期中選舉後（預計明年 1 月）完全取消非 FTA（甚至包含 FTA）的 TRQ 配額，改為全面課徵 50% 關稅**。客戶表示若「所有國家與競爭對手一律課 50% 關稅」，立足點恢復公平且消除 Soft TRQ 搶配額的不確定性，反而能全面恢復向中鋼採購。\n\n### 2. 產品規格與技術突破重點（AR400F、PA450H、A514S、A516-70）\n\n| 鋼種 / 規格 | 中鋼產製能力與技術亮點 | Terra Nova 需求現況與回饋 |\n| :--- | :--- | :--- |\n| **A514 Grade S (QT100)** | - 採用 **DQST（直接淬火自回火）+ 正常化軋延**，省去再加熱、低碳排。<br>- 標準表列 **6–65 mm (2.5\")**，但**今年 4 月已成功試製並出貨 75 / 76.2 mm (3\")**（因 ASTM A514S 標準表僅列至 2.5\"，故以 `514S Modified` 名義出貨）。<br>- 技術極限（270mm 扁鋼胚、3:1 壓延比）可推至 **80–90 mm**。 | - **佔客戶業務 25%**（年用量約 **4,000 噸**），85% 用量在 $\\le 3\"$。<br>- 拖車（Trailers）主力用 **1/4\"–1/2\" (6–12.7 mm)**；重機具亦大量使用 **1\"、1.25\"、2.75\" 與 3\"**。<br>- 現場確認**中鋼可正式接單供應 3\" (76.2mm) A514S**，客戶表達高度採購意願。 |\n| **AR400F / PA400H** | - 厚度範圍 **6–50 mm (1/4\"–2\")**。<br>- AR400F 為 PA400H 特化版，具較高硬度、夏比衝擊能、延伸率與優異折彎性。 | - **佔客戶業務 10%**（年用量約 **1,200–1,400 噸**）。<br>- **1/4\"–2\" 佔 AR400 市場 90%**，其中 **2\" 用量極大**；若中鋼未來能擴展至 **3\"** 更好，另希望能有 **3/16\"**（目前僅中國能供）。<br>- **高度讚賞中鋼品質**：鋼板極為平坦（遠優於 Algoma），硬度穩定落在客戶最愛的 **395–420 HBW**（超過 425–430 HBW 客戶鑽孔會斷刀索賠）。 |\n| **PA450H（薄板新品）** | - 厚度範圍 **6–25 mm**。<br>- 特殊合金設計使**脫碳層僅 0.1–0.2 mm**（一般為 0.4 mm），盤對盤磨耗測試**優於 Hardox 450**。<br>- 6mm 薄板折彎半徑達 **R15 (2.5t)**，雷射切割平坦度 **$< 2$ mm** 無熱變形。 | - 肯定 2.5t 折彎性能（一般 AR400 建議 4t、A514 建議 2t–3t）。<br>- 因現有倉庫空間不足（正購地擴建 2 倍大新廠，約需 4 年完工），目前僅備 400 與 500，暫不增備 450。 |\n| **A516 Gr.70** | - 中鋼 **44W 基價 $985 USD/MT FOB**，加上 A516 三項加價（鋼種 **+$60**、正火 **+$30**、-45°C 衝擊 **+$28** = **+$118**），合計 **$1,103 USD/MT FOB**（另加海運費 $120–$125/MT）。<br>- 加拿大對中鋼設定之 Normal Value 高達約 **1,300**，且台灣/德國 AD 豁免僅限 **Sour Service（抗酸用途）**。 | - 佔客戶業務約 **10%（2,000 噸/年）**。<br>- 韓國東國製鋼（Dongkuk）Normalized + Vacuum Degassed 享有 AD 豁免無 Normal Value，報價僅 **$1,050 USD/MT FOB**（加海運 $110–$120/MT），故轉向韓國與日本（Kobe）採購。<br>- 客戶不願冒海關稽核（CBSA Audit）風險以 Sour Service 名義規避進口。 |\n| **44W（一般結構板）** | - 中鋼可供應至 **5 inch**（優於 Algoma 超過 3\" 僅能做 A36）。 | - **客戶最大宗品項（年用量 8,000–9,000 噸，佔總量 20,000 噸近半）**。<br>- 上週剛向貿易商 Worth 買入 200 噸澳洲 BlueScope 超額庫存之 44W。 |\n\n### 3. Terra Nova 現階段採購決策與資金部位\n- **年採購總量**：約 **20,000 噸/年**，**95% 依賴進口**（全部透過貿易商操作，不自行承擔進口報關風險），來源國包含中國（付 50% 關稅買 A514/AR400/AR500 及 $>3.5\"$ A516）、韓國、台灣、日本、馬來西亞（濟鋼 Jigang）及澳洲（BlueScope）。\n- **暫緩本次 500 噸報價**：貿易商現場提供中鋼 **500 噸** 額度報價，淨價約 **$1.14/lb**（含約 **$0.32/lb** 關稅分攤）。但 Doug 表示目前在途訂單已高達 **$2,000 萬**，若計入新關稅恐暴增至 **$2,700 萬**，加上剛完成公司股權買斷（Doug 80% / Chris 20%），財務上必須採取防禦姿態，因此**本次 500 噸先 Pass**，待庫存消化及關稅政策明朗後再恢復下單。\n\n### 4. 會議行動項目（Action Items）\n1. **Philip（外方團隊）**：運用 AI 工具協助比對中鋼可生產尺寸表與加拿大 TRQ 條文，精確列出所有被排除於 TRQ 之外的尺寸規格。\n2. **中鋼 / 中貿團隊**：將台灣政府與加拿大協商之「TRQ 豁免產品規格與尺寸清單」整理版（移除內部評估欄）寄送給客戶參考。\n3. **中鋼團隊預計 2 月底（End of February）** 派員赴加拿大進行為期一週的客戶拜訪。\n\n---\n\n## 二、完整時間軸逐段詳細紀錄（00:00:00 - 01:44:49）\n\n### 【第 1 段】`chunk_00.mp3`（00:00 - 05:00）\n**主題：開場介紹與中鋼 (CSC) 公司簡報（公司概況、產線配置、鋼板生產流程、中鋼與中龍比較）**\n\n* **[00:00 - 00:34] 開場與團隊介紹、後續訪客預告**\n  * **CSC 主講人 (Jimmy 等)**：說明團隊成員分工，原本負責的另一位成員 Mr. Wang (王先生) 因故不在，改由主講人負責鋼板 (Plate) 業務。此外預告中鋼團隊預計於 **2 月底 (End of February)** 派員前往加拿大拜訪客戶（包含一週的客戶拜訪行程）。\n* **[00:34 - 00:57] 與會人員介紹**\n  * **CSC 主講人**：介紹現場與會同仁，包含負責鋼板技術部門 (Technical department, in charge of Plate) 的 **Mr. Chen (陳博士)**，以及負責市場研究 (Marketing Research) 的兩位女士。接著開始簡報。\n* **[00:57 - 01:58] 中鋼 (China Steel Corporation, CSC) 公司基本資料**\n  * **成立時間與地點**：成立於 **1971 年**，位於**高雄 (Kaohsiung)**，緊鄰高雄海港 (Kaohsiung seaport)。\n  * **廠區面積**：**575 公頃 (hectares)**；**資本額 (Capital)**：**5.3 billion**；**員工數**：超過 **10,000 人**。\n  * **台中廠區（中龍鋼鐵 Dragon Steel）**：位於台中，擁有 **2 座高爐 (2 blast furnaces)**。高雄廠與台中廠合計總年產能為 **1,600 萬噸/年 (16 million tons every year)**。\n  * **2025 年銷售量**：**1,054 萬噸 (10.54 million tons)**。\n  * **稅前淨利 (Profit Before Tax, PBT)**：主講人自嘲表現不是很好，僅供參考。外賓開玩笑說：「Prices are too high, that's why.（因為價格太高了才這樣。）」引發全場笑聲。\n* **[01:58 - 02:27] 財務縮寫確認 (PBT vs EBT)**\n  * 外賓確認簡報上的 PBT 即為「Profit Before Tax（同北美慣用的 EBT，非 EBITDA）」。\n* **[02:27 - 02:48] 高雄廠廠區配置圖 (Kaohsiung Works Layout)**\n  * 展示高雄廠平面圖，說明原料碼頭 (Raw material pier)、原料儲存場 (Storage yard)、煉鋼廠 (Steelmaking)、軋鋼廠 (Rolling mills) 到出貨碼頭區 (Delivery yard) 的動線。\n* **[02:48 - 04:08] 鋼板生產流程 (Plate Production Process)**\n  * 介紹從扁鋼胚 (Slab) 開始的製程：步進式加熱爐 (Walking beam reheating furnace) $\\rightarrow$ 除銹箱 (Descaling box) $\\rightarrow$ 四重可逆式軋機 (Four-high reversing rolling mill) 與無線測厚儀 (Wireless thickness gauge) *(03:13 外賓手機響起，另一外賓幽默說 \"That's JFE calling\" 引發大笑)* $\\rightarrow$ 預矯直機 (Pre-leveler) 與加速冷卻/直接淬火系統 (ACC / DQ) $\\rightarrow$ 熱矯直機 (Hot leveler) 與碟式輥道冷卻床 (Disc roller cooling bed) $\\rightarrow$ 表面檢測系統 (Surface inspection system) 與線上自動超音波檢測 (Online automatic UT) $\\rightarrow$ 自動噴印標記機 (Automatic marking machine)、剪切機 (Shearing machine)、正常化爐 (Normalizing furnace) $\\rightarrow$ 離線超音波測試 (UT)、檢驗與成品。\n* **[04:08 - 05:00] 高雄廠與台中廠（中龍鋼鐵 Dragon Steel）概況比較**\n  * **設備配置**：高雄廠擁有 **4 座高爐**，年產能 **990 萬噸 (9.9M tons)**；台中廠（中龍）擁有 **2 座高爐** 及 **1 座電弧爐 (1 EAF)**，年產能 **600 萬噸 (6M tons)**。\n  * **中龍歷史與命名由來**：台中廠原屬民營集團，成立於 **1993 年**，中鋼於 **2004 年**併購並更名為 **Dragon Steel（中龍鋼鐵）**，因廠區位於台中**龍井 (Longjing)**，「龍」英文即為 Dragon。\n\n---\n\n### 【第 2 段】`chunk_01.mp3`（05:00 - 10:00）\n**主題：各產線產能、中龍型鋼 (H-Beam) 與電爐配置討論、產品組合與銷售區域分析**\n\n* **[05:00 - 05:44] 中鋼各產品線產能 (Product Capacity)**\n  * **鋼板 (Plate)**：僅 **1 條產線**，年產能 **100 萬噸 (1M tons)**。主要供應台灣內銷，外銷主力為**日本 (Japan)** 與**加拿大 (Canada)**。\n  * 其他產線包含熱軋 (HR) 3 條線、冷軋 (CR) 3 條線、盤元 (Wire rod)、熱浸鍍鋅 (GI)、電鍍鋅 (EG)、電磁鋼片 (ES) 等。\n* **[05:44 - 08:23] 關於型鋼 (Beams / H-Beam) 產能與中龍 (Dragon Steel) 的深入問答**\n  * 外賓詢問為何簡報產品圖上沒有型鋼 (Beams)。中鋼女性業務代表解釋該圖僅統計中鋼本廠（Coil 與 Plate），**H型鋼 (H-Beam)** 由**中龍鋼鐵 (Dragon Steel)** 生產並由不同部門銷售。\n  * **中龍產能結構確認**：中龍的 **2 座高爐生產 600 萬噸熱軋 (HR)**，另有 **1 座電弧爐 (EAF) 專門生產 100 萬噸 H型鋼 (H-Beam)**。\n  * **H-Beam 外銷現況**：目前中龍 H-Beam 因台灣內需極佳，**完全沒有外銷產能**。中鋼女代表以中文對內補充：「因為他們最近完全沒有外銷量，所以本來想派中龍負責型鋼的 Eddie 來也沒派……H-Beam 很搶手，大家都在搶。」\n* **[08:23 - 10:00] 中鋼產品組合佔比與銷售區域 (2025 vs 2026)**\n  * 主要產品為熱軋 (HR) 與扁鋼胚 (Slab，部分外銷墨西哥與泰國策略客戶)。\n  * **鋼板 (Plate) 佔比**：2025 年佔中鋼總銷量 **6%**，2026 年截至 8 月提升至 **8%**。\n  * **銷售區域**：以台灣內銷為主；外銷以東南亞為主，部分銷往日本、歐洲、中國；**加拿大**則主要銷售 **鋼板 (Plate)** 與 **熱軋 (HR)**。\n\n---\n\n### 【第 3 段】`chunk_02.mp3`（10:00 - 15:00）\n**主題：台灣鋼板內銷需求動能（台積電/AI 半導體建廠）、銷加鋼板規格與尺寸、加拿大 TRQ 豁免規定討論**\n\n* **[10:00 - 11:46] 台灣內需強勁原因（TSMC 建廠、AI 與綠鋼 EAF）**\n  * **CSC 主講人**：台灣鋼板內銷需求極強，主要受 **TSMC (台積電)** 龐大建廠需求帶動。政府有時會要求中鋼優先供貨給台積電，但主講人向公司爭取加拿大價格也很好，若客戶有需求仍可協商。\n  * 外賓詢問台灣鋼板需求動能，主講人說明主要是**半導體新廠建設 (semiconductor factories)**，且客戶要求綠電與**綠鋼 (Green steel)**，中鋼內部正討論投資新建電爐 (EAF) 生產綠鋼供應台積電。外賓認同半導體與 AI 熱潮息息相關。\n* **[11:46 - 12:55] 銷往加拿大市場之主要鋼板規格與尺寸**\n  * 包含多重認證規格 (Multi-standard specs，Terra Nova 採購許多)、**AR400F**（耐磨板）、**PVQ plate**（壓力容器板）、高強度結構鋼板，以及熱軋與酸洗塗油 (HR & PO)。\n* **[12:55 - 15:00] 鋼板厚度極限與加拿大 TRQ（關稅配額）豁免條款深度討論**\n  * **44W 厚度上限**：外賓詢問中鋼 **44W** 是否可做到 **5 inch**（不同於 Algoma 超過 3\" 僅能做 A36），資深外賓確認中鋼可做到 5\"。\n  * **TRQ 豁免規則**：資深外賓表示當天早上剛與渥太華貿易法律顧問 (Trade counsel in Ottawa) 通話，確認加拿大官方**沒有正面豁免清單**，邏輯是**「凡未在特定 TRQ 條文中被提及的，即為排除/豁免 (Whatever is not mentioned in the specific TRQ is excluded)」**。\n  * **行動項目**：外賓團隊決定請 **AI 工具**協助比對中鋼尺寸表與 TRQ 條文，找出被排除的具體項目，並指派 **Philip** 查核 **$> 4\"$ 或 $5\"$** 的豁免細節。\n  * **公差風險提醒**：外賓提醒注意名目尺寸與公差，因為同業 **Varsteel / Barry** 先前在 **4 吋鋼板 (4.01\")** 上曾因尺寸認定問題遭課重稅。\n\n---\n\n### 【第 4 段】`chunk_03.mp3`（15:00 - 20:00）\n**主題：TRQ 與反傾銷（AD）豁免機制差異、台灣政府協商之 TRQ 豁免清單、A514Q vs. A514S 採購痛點**\n\n* **[15:00 - 16:45] TRQ 通用減免與反傾銷（AD）認定差異、4 吋上限**\n  * **外籍貿易代表**：說明加拿大關稅減免（remission）分為通用型與特定企業減免（如 GM、Cascadia 取得的中國鋁鋼材豁免）。\n  * 強調 **TRQ 與反傾銷（AD）完全不同**：AD 文件列出的稅則號列僅為舉例（附帶免責聲明），但 TRQ 則是未列出即不包含。不過，豁免 TRQ 仍受 **Normal Value（最低樓地板價）** 約束；目前 AD 範圍涵蓋至 **$\\le 4$ 吋（4 inch or thinner）**。\n* **[16:45 - 17:58] 台灣政府與加拿大協商之 TRQ 豁免清單（中鋼內部確認）**\n  * 中鋼/中貿團隊以中文確認手頭上台灣政府（6 月份）與加拿大政府談判爭取到的 **TRQ 豁免清單**（免計入 TRQ 配額、免課 50% 關稅），決定將英文規格部分投影給客戶看。\n* **[17:58 - 19:20] 檢視 TRQ 豁免清單：超厚門檻（5.5\"、6.35\"）與 Algoma 的保護主義**\n  * 客戶與貿易商檢視清單上的豁免厚度（如 **$> 5.5\"$**、A514 某項 **5.3\"–6.35\"**）。客戶吐槽加拿大本地連 2.75\" 或 3\" 都做不太出來，貿易商解釋只要本地鋼廠（Algoma）向政府宣稱「未來計畫生產」，政府就會納入保護。\n* **[19:20 - 20:00] A514Q 與 A514S 的規格差異與實務痛點**\n  * 客戶（Doug）指出清單上豁免的是 **A514 Grade Q (514Q)**。但 **514Q** 合金含量極高、價格昂貴且碳當量太高；Algoma 只生產 **514S**（客戶日常真正需要的規格）。客戶只有在 **6\"、7\"、8\"** 超厚板才會買 514Q，因此在薄尺寸豁免 514Q 毫無實質幫助（irrelevant）。\n\n---\n\n### 【第 5 段】`chunk_04.mp3`（20:00 - 25:00）\n**主題：A514Q/S 豁免厚度（2.75\" vs 4\"）、神戶製鋼 A516 船期遭關稅重擊、耐磨板（Hardox 500 / AR400F）豁免尺寸**\n\n* **[20:00 - 22:18] A514Q（$> 2.75\"$）與一般高強鋼（$> 4\"$）豁免門檻檢視**\n  * 客戶補充 4\" 以下沒人會用含大量鉻、鉬、鎳（Chrome, Moly, Nickel）的 514Q。\n  * 清單往下捲動顯示 **A514 Grade Q 厚度 $> 2.75\"$** 豁免 TRQ，而一般高強鋼板則須 **$> 4\"$**。中鋼團隊承諾會將此份豁免清單檔案寄給客戶參考。\n* **[22:18 - 23:08] A516 採購現況與日本神戶製鋼（Kobe）船期受關稅衝擊**\n  * 客戶苦笑表示近期向日本 **Kobe（神戶製鋼）** 採購的第一批 **A516** 船貨即將到港，馬上就要被新關稅重擊（getting whacked with the tariff）。\n  * 客戶感念過去向中鋼穩定月採購上千噸 A516 與 A514 的日子，盛讚中鋼鋼板品質、寬度公差精準（tighter width）與材質證明書（mill certs），只可惜後因 Normal Value 大幅調高而受阻。\n* **[23:08 - 25:00] 耐磨鋼板（Wear Resistant Plate）豁免清單與 DQ550 詢問**\n  * **Hardox 500**：豁免厚度為 **$> 1.25\"$ (31.75 mm)**。\n  * **AR400F（硬度 360–477 HBW）**：豁免厚度為 **$> 2.75\"$ (2-3/4\")**。\n  * **AR500 訂單配搭**：客戶表示 AR500 用量較小，通常在下 100–400 噸 AR400F 訂單時順便附帶（tack on）約 **80 噸**。\n  * 外籍代表轉向中鋼技術代表（Delphic）提問：「**Delphic, do you make a DQ like 550?（中鋼有生產像 DQ550 的直接淬火耐磨板嗎？）**」\n\n---\n\n### 【第 6 段】`chunk_05.mp3`（25:00 - 30:00）\n**主題：DQ550/600 評估與客戶各鋼種業務佔比、中鋼全球佈局收尾、中鋼 DQ 調質鋼板技術簡報開場**\n\n* **[25:00 - 26:20] DQ550 / 600 生產能力與客戶業務佔比分析**\n  * **中鋼技術代表（Delphic）**：確認中鋼可生產 **550 HBW** 的 DQ 鋼板，甚至已有生產 **600 HBW** 特殊規格的實績。\n  * **客戶（Doug）透露業務結構佔比**：\n    * **A514**：佔公司業務 **25%**\n    * **AR400**：佔公司業務 **10%**\n    * **AR500**：僅佔公司業務 **3%–4%**（一年僅數百噸）\n  * **結論**：客戶認為為了避稅而改買過硬的 550 是很蠢的作法（stupid way to do business），因 500 級佔比太小，改用 550 反而會造成下游鑽孔與折彎加工客訴，不值得冒險。\n* **[26:20 - 28:40] 中鋼集團全球佈局簡報（Global Deployment）與會議轉場**\n  * 業務代表簡介中鋼於**印度**（電磁鋼片 ES）、**馬來西亞**與**越南**（冷軋 CR、鍍鋅 GI 合資廠）之全球佈局，隨後換由技術代表簡報。\n* **[28:40 - 30:00] 中鋼鋼板廠與直接淬火（DQ）製程技術簡報開場**\n  * **中鋼技術代表（Delphic）** 主講 **「CSC Q&T Plates for Wear and Strength」**：\n    * 中鋼鋼板廠成立於 **1974 年**，每十年完成一次重大製程演進：控制軋延（Controlled Rolling）$\\rightarrow$ 熱機控制製程（TMCP）$\\rightarrow$ **直接淬火製程（Direct Quench, DQ）**。\n    * 展示以 Claude Code 製作的產線動畫：步進式加熱爐 $\\rightarrow$ 除鏽機 $\\rightarrow$ 四重軋機 $\\rightarrow$ 伽瑪射線測厚儀 $\\rightarrow$ 預矯直機 $\\rightarrow$ **淬火設備（Quenching device）** $\\rightarrow$ 熱矯直機。\n\n---\n\n### 【第 7 段】`chunk_06.mp3`（30:00 - 35:00）\n**主題：DQST（直接淬火自回火）vs. RQ&T 製程與減碳優勢、A514 直接淬火討論、耐磨板系列規格**\n\n* **[30:00 - 31:39] DQST 製程原理與減碳優勢**\n  * **中鋼技術代表（Delphic）**：說明後段冷矯直、線上 UT、剪切與測試設備後，解釋中鋼 **DQST（Direct Quenching and Self-Tempering，直接淬火與自回火）** 與傳統 **RQ&T（再加熱淬火回火）** 的差異：軋延後直接淬火並堆疊自回火（stacking them together），省去再加熱（reheating）程序，機械性質相同但**碳排放量大幅降低**。\n* **[31:39 - 33:43] A514 (QT100) 採用 Direct Quench 之深入問答**\n  * 客戶驚訝詢問中鋼連 **A514** 也是用 Direct Quench 嗎？技術代表確認所有 DQ 線產品（包含 **AR400、PA400、PA450、PA500 及 A514**）皆不經再加熱，但在 A514 上會搭配**正常化軋延（normalized rolling）**，確保微觀組織與機械性質與 RQ&T 完全一致，客戶作為 **QT100** 銷售完全合規。\n* **[33:43 - 35:00] 中鋼耐磨鋼板（AR Plates）四個等級與厚度範圍**\n  * **PA400H**：**6 mm – 50 mm**。\n  * **PA450H（新產品）**：口頭更正簡報誤植，實際為 **6 mm – 25 mm**（約 1/4\" 至 1\"）。\n  * **PA500H**。\n  * **AR400F**：為 PA400H 的特化升級版，具稍高硬度、更高夏比衝擊吸收能（Charpy energy）及更佳的延伸率與拉伸性質。\n\n---\n\n### 【第 8 段】`chunk_07.mp3`（35:00 - 40:00）\n**主題：高強度鋼（SM490/SM570/A514S）與抗潛變壓力容器鋼、客戶詢問 3\" A514S 生產能力**\n\n* **[35:00 - 36:35] 高強度鋼與抗潛變壓力容器鋼（SA517 Class 2 / SA387）**\n  * **中鋼技術代表**：介紹 **SM490、SM570、A514S**（簡報標示 6–65 mm，即 2.5\"），以及壓力容器鋼 **SA517 Class 2、SA387（抗潛變鋼）**，並說明已在實驗室做過加熱加速潛變測試。外方代表表示加拿大 **Alberta（亞伯達省）** 有其他專案客戶會需要這類產品。\n* **[36:35 - 38:48] 客戶詢問 2.75\" 與 3\" A514S / 514S Modified 供貨能力**\n  * **客戶（Doug）**：表示他們大量採購 **2-3/4\" (70mm)** 與 **3\" (76.2mm)** 的 **514S 或 514S Modified**（不買昂貴多合金的 Grade E），詢問 2.5\" 是中鋼設備極限還是僅因 ASTM 標準規定上限？\n  * **中鋼技術代表**：回憶 2–3 年前曾試作過 3\" A514，實驗室測試成功但記憶中出口似乎卡住。\n* **[38:48 - 40:00] 雙軌核對（外方討論台灣 TRQ 1,800 噸配額 vs. 中鋼內部查詢 76.2mm 紀錄）**\n  * 外方在背景討論台灣 TRQ 配額（1,800 tons）與 Global Affairs Canada 規定；中鋼團隊在台下以中文查詢系統中 **76.2 mm (3\")** 與 **2.75\"** 的訂單紀錄。\n\n---\n\n### 【第 9 段】`chunk_08.mp3`（40:00 - 45:00）\n**主題：中鋼查獲今年 4 月 3\" (76.2mm) A514S 成功出貨紀錄、當場確認可正式接單 3\" A514S**\n\n* **[40:00 - 44:08] 中場休息與中鋼內部中文核對確認**\n  * 外方客戶短暫離席去洗手間。中鋼女業務在系統查到**確實有 76.2 mm (3\") 的訂單與出貨紀錄**！\n  * 陳博士向主管解釋簡報上的 `Creep-resistant` 是內銷焚化爐用的高溫抗潛變鋼。\n  * 中鋼業務與陳博士釐清：因為 **ASTM A514 Grade S 標準規範表最大厚度只定義到 2.5 inch (65mm)**，所以超過 2.5\" 不能直接掛標準表名稱，但廠內試製 **75 mm / 76.2 mm (3\")** 完全沒問題，且**今年 4 月份才剛接單生產並成功出貨**（訂單範圍約 18–63 噸）。\n* **[44:08 - 45:00] 客戶回座，正式確認 3\" A514S 可接單生產（重大商務突破）**\n  * 中鋼業務與陳博士向客戶正式確認：**中鋼今年已成功生產並出貨 3 inch 的 A514S，客戶完全可以繼續下單！** 簡報上只寫到 2.5\" 純粹是因為 ASTM 標準規範只涵蓋到 2.5\"。外方代表欣喜表示：「Well, he'd like to buy more!（太好了，他想買更多！）」\n\n---\n\n### 【第 10 段】`chunk_09.mp3`（45:00 - 50:00）\n**主題：A514S Modified 命名、厚度極限推升至 90mm（270mm 扁鋼胚與 3:1 壓延比）、S690QL/S890QL 簡報**\n\n* **[45:00 - 47:30] A514S 厚度極限探討：最高可推至 90 mm**\n  * 外方代理商確認只要符合機械性質，標示為 `514S Modified` 完全沒問題，並私下詢問（off the record）中鋼在 A514 最厚合理可做到多少？\n  * **中鋼技術代表（Delphic）**：「**I think we can push it to 90 millimeter.（我想我們可以推到 90 mm。）**」並解釋因為中鋼扁鋼胚（slab）厚度為 **270 mm**，以 **3:1 壓延比（3 to 1 reduction ratio）** 計算可達 90 mm。\n* **[47:30 - 49:10] 中鋼內部中文討論調質板（Q&T）淬透極限與實績**\n  * 客戶確認 A514 規範並無強制 3:1 壓延比限制（A516 才有）。中鋼內部以中文討論先前曾幫客戶做過 **75 mm 與 80 mm**（約十幾至三十六噸），客戶使用後無不良反應，並討論調質板冷卻淬透性的物理上限。\n* **[49:10 - 50:00] 進入高強度結構鋼 S690QL 與 S890QL 簡報**\n  * 技術代表開始展示 **S690QL** 與 **S890QL**（數字代表降伏強度等級）之規格與實際生產數據。\n\n---\n\n### 【第 11 段】`chunk_10.mp3`（50:00 - 55:00）\n**主題：客戶主力厚度落點（1\" 與 1.25\"）、PA450 (6mm) 與 Hardox 450 磨耗比較、客戶擴廠計畫與硬度客訴經驗**\n\n* **[50:00 - 52:15] 客戶檢視生產數據與主力採購厚度（1\"、1.25\" 及 $\\le 3\"$ 佔 85%）**\n  * 客戶表示之前向中鋼買過 1\" (25mm)，近期剛向 Algoma（最厚只做 1.5\"）及中國鋼廠下單 3/4\" 至 2\"，庫存可撐到 **6、7 月**。中鋼技術代表更正簡報舊數據，確認該規格中鋼已可生產 **1\" 至 2\"**。\n  * 客戶指出 **1\" (25mm) 與 1-1/4\" (31.75mm)** 是他們用量最大的兩個主力規格；而在 **514S** 方面，**85% 的用量都在 3 吋（76.2mm）以下**。\n* **[52:15 - 54:12] 薄規格 PA450 (6mm) 開發與對標 Hardox 450**\n  * **中鋼技術代表**：中鋼過去只能做 $\\ge 10$ mm 的耐磨板，現已突破至 **6 mm**（更薄規格正克服平坦度問題）。在盤對盤磨耗試驗（ball-on-disk wear loss test）中，**中鋼 PA450 的磨耗損失低於競爭對手 Hardox 450（耐磨性更優）**。\n  * **客戶評價**：指出 Hardox 主打極低碳當量（Ceq，成形與焊接性極佳），而中鋼 450 Ceq max 列為 0.6。\n* **[54:12 - 55:00] Terra Nova 購地擴廠計畫（2 倍大）與終端客戶對硬度的敏感度**\n  * **擴廠計畫**：Terra Nova 正購地興建新廠與倉庫，面積將**至少是現有廠房的 2 倍大**（過去 15–20 年空間不足，無法同時庫存 400/450/500 三種等級）。\n  * **硬度控制與鑽孔斷刀索賠案例**：客戶曾出貨一批硬度 **425 HBW** 的鋼板，結果終端客戶鑽孔時斷了大量刀具而遭扣款索賠（backcharge）。客戶最喜歡的硬度區間為 **395–420 HBW**（超過 430 HBW 就會抱怨），並**稱讚中鋼來的 AR400F 硬度都穩定落在 400 左右，表現極佳**。\n\n---\n\n### 【第 12 段】`chunk_11.mp3`（55:00 - 60:00）\n**主題：北美耐磨板競品動態（Hardox 停產 400、Russel、JFE）、PA450 薄脫碳層配方與 6mm R15 (2.5t) 折彎測試**\n\n* **[55:00 - 56:15] 北美耐磨板市場競品動態**\n  * **Hardox (SSAB)**：已停產/不再庫存 400，全面轉向 **450、500、550、600**。\n  * **同業盤商**：**Russel Metals** 同時備齊 400/450/500 三種等級；**Samuel**（關閉前）與 **Structural Wear** 改為只備 450。\n  * **日本 JFE**：同時供應 400、450、500 且 400/450 價差極小，但因長期交期/供應問題，Terra Nova 上次向 JFE 下單已是兩年前（60 噸）。\n* **[56:15 - 60:00] 中鋼 PA450 薄脫碳層「神秘配方」與 6mm 折彎半徑 R15 (2.5t)**\n  * **中鋼技術代表（Delphic）**：解釋 PA450 耐磨性優於 Hardox 450 且兼具高成形性的原因，在於合金設計加入了「神秘配方（magic recipe）」，形成**極薄的表面脫碳層（thin decarburized layer）**。\n  * **折彎性能**：6 mm 的 PA450 可用 **R15（內半徑 15 mm，即 $15/6 = \\mathbf{2.5t}$）** 折彎，而客戶常買的 **AR400F 折彎性又比 PA450 更好一點**。\n  * **客戶高度肯定**：一般業界對 400 級耐磨板建議折彎半徑為 **4t**，連結構鋼 A514 都建議 **2t–3t**，因此中鋼能做到 **2.5t** 非常優秀。\n\n---\n\n### 【第 13 段】`chunk_12.mp3`（01:00:00 - 01:05:00）\n**主題：脫碳層數據（0.1–0.2mm）、雷射切割平坦度（<2mm）、客戶加工應用回饋（拖車與挖斗配件）與美國關稅災難**\n\n* **[01:00:00 - 01:00:58] 脫碳層測試（0.1–0.2 mm）與雷射切割平坦度（$< 2$ mm）**\n  * **中鋼技術代表**：一般脫碳層厚約 **0.4 mm**，中鋼因表面形成氧化阻障層（oxidation barrier），脫碳層僅 **0.1–0.2 mm**（重複測試 3 次確認）。雷射切割後平坦度 **$< 2$ mm**，無熱變形（no thermal distortions）。\n* **[01:00:58 - 01:03:45] 討論議題與 Terra Nova 兩大主力應用產業回饋**\n  * 中鋼詢問客戶應用領域、加工問題與未來尺寸需求。\n  * **Terra Nova 代表（Doug）回饋**：\n    1. **拖車製造商（Trailer manufacturers）**：全部使用 **A514**，主力厚度為 **6 mm – 12.7 mm（1/4\"、5/16\"、3/8\"、1/2\"）**，用於貨櫃底盤車架（chassis）。另少量使用 **3/16\"**（曾向 SSAB 買 60\" 寬的 Strenx 鋼捲裁切板，因比中厚板便宜）。\n    2. **重機具配件（Attachments：挖斗 buckets、夾具 thumbs、礦業溜槽 mining chutes）**：同時使用 **AR400 與 A514**。受惠於穿越 BC 省的管線工程推進，本地拖車與重機具需求看增。\n* **[01:03:45 - 01:05:00] 美國關稅對跨境出貨的衝擊（停止銷美與 DDP 慘痛教訓）**\n  * 客戶有一家舊客戶 **85% 拖車銷往美國**，目前因美國關稅與繁瑣申報而陷入困境。\n  * **Terra Nova 全面停止銷美**：去年僅 2 筆小訂單銷美卻成災難，其中一筆被美國海關課徵 **$9,000 美元額外關稅**（因將關稅計入售價，遭海關以含稅總價再課一次關稅）。現在一律要求美國客戶（如銷往阿拉斯加經西雅圖轉駁船）自行報關提貨，不做完稅交貨（DDP）。\n\n---\n\n### 【第 14 段】`chunk_13.mp3`（01:05:00 - 01:10:00）\n**主題：JFE T21 遭課 50% 關稅案例、加拿大管線工程商機、中鋼品質完勝 Algoma、AR400F 各厚度需求分析**\n\n* **[01:05:00 - 01:06:10] JFE T21 產品被課 50% 關稅案例**\n  * 延續前段，該批銷美貨物使用日本 **JFE 專屬產品 T21**，僅 **3,300 磅（lbs）** 的鋼材，因發票包含運費、機械加工與鑽孔，被美國海關在總金額上直接課徵 **50% 關稅，高達 $9,800 美元**！\n  * 提到某客戶跨過邊境到美國花天價買 11 英畝地設廠卻吃盡苦頭；Terra Nova 表示加拿大本土客戶已足夠，無須銷美。\n* **[01:06:10 - 01:07:22] 加拿大油氣管線計畫（Trans Mountain / Pacific Rim Pipeline，預計 2028 投運）**\n  * 聯邦政府與 Alberta 省強力推動的管線擴建案預計 **2028 年** 投入服務，帶動所有接觸地面的開挖設備（ground-engaging equipment：拖車、土方設備、鋪路鋼板 road plates）需求。\n* **[01:07:22 - 01:10:00] 對中鋼品質的高度評價（完勝 Algoma）與關鍵厚度需求**\n  * **平坦度與品質**：「**你們的產品完全沒問題，非常平坦漂亮，品質絕對比我們從 Algoma 買到的好太多了（better quality than we get from Algoma for sure）。**」\n  * **各厚度需求明細**：\n    1. **3/16\"**：非常希望中鋼能供應，目前**僅中國**能供。\n    2. **A514 擴展至 3\"**：非常有幫助。\n    3. **AR400F 的 1/4\"–2\"（特別是 2\" 與 3\"）**：**1/4\" 到 2\" 佔了 AR400 市場的 90%**，其中 **2 inch 是用量最大的主力之一**；若未來 AR400 也能拉高到 **3 inch** 會很棒。\n    4. **1-1/4\" (31.75 mm) 過往缺貨疑問**：幾年前曾發生整張訂單獨缺 1-1/4\" 的情況，中鋼確認目前生產完全正常無問題。\n\n---\n\n### 【第 15 段】`chunk_14.mp3`（01:10:00 - 01:15:00）\n**主題：噴砂底漆（Blasted & Primed）需求、Algoma $1.30 高價與表面夾層瑕疵、起重機（SSAB）與橋樑市場（350AT / Rapid-Span）**\n\n* **[01:10:00 - 01:11:25] 噴砂與底漆處理（Blasted & Primed）與 Algoma $1.30 報價**\n  * 貿易商說明中鋼廠內無噴砂設備，委外極貴。\n  * **Doug**：噴砂底漆**並非絕對必要（not vital）**。雖然 Richmond 廠區多數庫存有噴砂底漆（大客戶要求的 **30 呎長板** 主要從**中國**採購），但部分庫存可不帶底漆。並指出 **Algoma 的 A514 (100Q) 既不噴砂底漆，價格更飆升至 $1.30/lb**，因此現在幾乎不跟 Algoma 買了。\n* **[01:11:25 - 01:12:48] A516 鏽皮（Scale）與表面夾層（Surface Laminations）退貨案例**\n  * 分享過往將未噴砂鋼板代客滾圓（rolled）時，因氧化皮剝落發現軋入氧化皮（rolled-in scale）與底面表面夾層（laminations）而遭退貨賠錢的經驗。\n* **[01:12:48 - 01:15:00] 起重機吊臂市場（SSAB 壟斷）與橋樑結構市場（350AT / Rapid-Span）**\n  * **起重機市場（Crane work）**：Terra Nova 不做，該市場由 **SSAB** 壟斷（具備 3 mm、4 mm 超薄規格與極致平坦度，適合伸縮吊臂 telescopic booms）。\n  * **橋樑結構市場（350AT）**：加拿大橋樑不使用 A514；耐候橋樑鋼 **350AT** 主要由 **Varsteel** 與 **Rapid-Span**（直接向鋼廠買）承作。貿易商分享過去透過 **Samuel** 賣 300–400 噸給 Rapid-Span 做行人天橋，卻在貨到開 LC 後臨時變更設計拒收的慘痛經驗。\n\n---\n\n### 【第 16 段】`chunk_15.mp3`（01:15:00 - 01:20:00）\n**主題：Terra Nova 全年 20,000 噸採購結構明細、A516-70 轉單韓國原因、台/德 AD「抗酸用途（Sour Service）」豁免與海關稽核風險**\n\n* **[01:15:00 - 01:16:08] 美加西北地區橋樑廠閒聊（Warsteel、Surespan、Majestic Bridge、Seaport A588）**\n* **[01:16:08 - 01:17:38] Terra Nova 年度採購總量（20,000 噸/年）與各鋼種明細**\n  * **全年總採購量**：**20,000 噸 / 年（tons per year）**，其中 **95% 為進口**（新廠房擴建預計還需 **4 年** 完工）：\n    * **44W**：**8,000 – 9,000 噸 / 年**\n    * **A514**：**4,000 噸 / 年**\n    * **AR400 (AR400F)**：**1,200 – 1,400 噸 / 年**\n* **[01:17:38 - 01:18:45] 過往對中鋼月採購 1,000 噸歷史與 A516-70 轉單韓國（Hyundai / Dongkuk）原因**\n  * 幾年前 Terra Nova 曾穩定每個月向中鋼採購 **1,000 噸**（含 44W/A36、A572-50 Cat 4、A514、AR400、A516-70）。\n  * 後因加拿大政府大幅調高中鋼 **A516-70 的 Normal Value（高達約 1,300）**，遂轉向**韓國**採購：\n    * **現代製鐵（Hyundai）**：當時無反傾銷稅（No AD / No Normal Value）。\n    * **東國製鋼（Dongkuk）**：針對「正常化處理且真空脫氣（Normalized and Vacuum Degassed）」享有反傾銷豁免（Exclusion），故無 Normal Value 限制。\n* **[01:18:45 - 01:20:00] 台灣與德國（Dillinger）A516 反傾銷豁免限制（Sour Service）與規避稽核風險**\n  * 貿易商解釋：在台灣與德國的 AD 案件中，A516 豁免條件除 Normalized、Vacuum Degassed 與嚴格限制磷（P）、硫（S）外，還必須聲明**「專用於抗酸環境（used exclusively in Sour Service）」**。\n  * 若以 Sour Service 名義免 AD 進口卻轉售一般市場（如部分進口商引進德國 Dillinger 的作法），屬於**規避行為（Circumvention）**，一旦遭加拿大海關事後稽核（Customs audit）追查流向，將面臨高額補稅重罰。\n\n---\n\n### 【第 17 段】`chunk_16.mp3`（01:20:00 - 01:25:00）\n**主題：韓國東國製鋼 vs. 中鋼 A516-70 價格與海運費完整拆解對比、台加無 FTA 與非 FTA 配額連砍兩次剩 20%**\n\n* **[01:20:00 - 01:20:55] Sour Service 海關稽核罰則與合規要求**\n  * 貿易商指出海關稽核罰則為補繳 **Normal Value 與出口價格（Export Price）之差額**；除非客戶在 **PO（採購單）** 上明確記載需符合 Sour Service 規範。Doug 表示一年僅約 3 次此類詢單。\n* **[01:20:55 - 01:23:12] 韓國東國製鋼（Dongkuk）vs. 中鋼（CSC）A516-70 價格與運費精確拆解**\n  * **韓國東國製鋼（Dongkuk）**：近期成交價 **$1,050 USD/MT FOB Korea**，加上海運費 **$110–$120 USD/MT**（CFR 約 $1,160–$1,170/MT）。\n  * **中鋼（CSC）報價拆解**：\n    * **44W 基價（Base price）**：**$985 USD/MT FOB Taiwan**\n    * **A516 Gr.70 三項加價（Extras，共 +$118 ≈ $120 USD/MT）**：\n      1. 鋼種加價（Grade extra）：**+$60 USD/MT**\n      2. 正火處理加價（Normalizing extra）：**+$30 USD/MT**\n      3. 夏比衝擊測試加價（Charpy testing at -45°C/-45°F）：**+$28 USD/MT**\n    * **中鋼 A516 FOB 總價**：$985 + $118 = **$1,103 USD/MT FOB Taiwan**（比韓國貴逾 $50/MT）。\n    * **台灣鋼板海運費**：**$120–$125 USD/MT**（比韓國貴約 $10/MT）。\n  * Doug 表示 A516 僅佔其業務約 **10%（約 2,000 噸/年）**。\n* **[01:23:12 - 01:25:00] 2020/2022 歷史回顧、台加無 FTA 政治因素與 TRQ 配額砍至 20%**\n  * 2020 年 6 月（COVID）為十年最差單月，2022 年則創下極佳業績。\n  * **台加貿易地位與 TRQ 削減**：受中國政治因素影響，台加僅有關務協定而**無 FTA**（韓國、馬來西亞有 FTA）。自 **2025 年中**（以 2024 年量為基準）實施 TRQ 後，**非 FTA 國家配額已連砍兩次（cut twice），目前僅剩原始基準量的 20%**，且 100% 與美加政府談判連動。\n\n---\n\n### 【第 18 段】`chunk_17a.mp3` & `chunk_17b.mp3`（01:25:00 - 01:30:00）\n**主題：預測加拿大取消 TRQ 改課 50% 關稅、中/美厚板價差與品質對比、Nucor 40 億美元新廠與 12\" A514、美國缺料兩大元兇（資料中心與邊境牆 1 億噸鋼材）**\n\n* **[01:25:00 - 01:25:55] 貿易商對 TRQ 取消之預測**\n  * **貿易商代表（英國口音）**：在美國期中選舉（midterm elections）前加拿大政府不會動作，但個人預期最終加拿大很可能會**完全取消非 FTA 國家的 TRQ 配額，直接課徵 50% 關稅**；甚至連 FTA 國家的 TRQ 也可能取消或進一步大幅削減。\n* **[01:25:55 - 01:27:30] 中國 vs. 美國賓州老廠厚板價格與品質對比、加拿大加工廠輸美套利與美國保護主義**\n  * **Doug**：加拿大關稅全是為了向美國交代、保護加拿大中部（Central Canada）製造業工作。過去從**中國**進口厚板（heavy plate）到溫哥華或多倫多僅 **每磅 60 多美分加幣（mid-60s cents/lb CAD）**，而美國賓州 **Coatesville, Pennsylvania**（120 年歷史老廠）同規格卻高達 **$1.20/lb**（貴近兩倍），且中國鋼板品質遠勝美國老廠。\n  * 安大略省大型同業（如 **Carver Steel**，規模為 Terra Nova 的 5–6 倍，年買 **100,000 噸** 厚板）買進低價進口板裁切零件銷往美國中西部（Midwest），享有巨大價差優勢。Doug 坦言：「從這點來看，川普（Trump）說的其實沒錯。」\n  * **貿易商 B（德國口音）& Doug**：指出美國自 **2001 年 Section 201** 與 **2018 年 Section 232** 以來的長期保護主義導致美國鋼廠老舊不思現代化；唯一例外是 **Nucor** 因獲利豐厚，投資 **40 億美元（$4 billion）** 在肯塔基州（Kentucky）興建新鋼板廠。\n* **[01:27:30 - 01:29:05] Nucor 肯塔基廠現況、德州 12\" 厚 A514 奇聞與 SSAB 配額控管（Allocation）**\n  * **Doug**：Nucor 新廠運轉 3–4 年仍未完全順暢（號稱可做 **14\" 厚板**）。當天早上收到德州 **American Heavy Plate** 清單，上面竟有一塊美國本土熔煉、**12 吋厚（12-inch）的 A514**（尺寸 60\"x96\"，重 **21,000 磅**；Terra Nova 自己庫存最厚為 **8 吋**，此前從未見過超過 9 吋的 A514）。\n  * 兩週前向美國 **SSAB** 詢價，對方回覆目前完全無產能可接單（處於配額控管 on allocation）。*(台下中鋼女業務同時低聲以中文驗算韓國 $1,050 與中鋼 $985+$120=$1,105 及海運費價差)*。\n* **[01:29:05 - 01:30:00] 美國鋼市極度緊俏的兩大驅動力：資料中心（Data Centers）與美墨邊境牆（1 億噸鋼材）**\n  * **貿易商 B（德國口音）**：分享剛參加全美鋼管經銷商協會（NASPD）與 Argus 預測高峰會的共識——美國鋼市長期極度緊俏，兩大驅動力為：\n    1. **資料中心（Data Centers）**\n    2. **美墨邊境牆（Border Wall）**：已經正式下單（ordered），號稱需要 **1 億噸鋼材（100 million tons of steel）**，相當於全美國整整一年的鋼鐵總消耗量！（Doug 開玩笑說：「反正墨西哥會付錢！」引發全場大笑）。\n\n---\n\n### 【第 19 段】`chunk_18.mp3`（01:30:00 - 01:35:00）\n**主題：紐約 Skanska 營造案與打樁管短缺、Terra Nova 進口來源國盤點、澳洲 BlueScope 5,400 噸保稅倉清關事件、各國 Normal Value 盤點**\n\n* **[01:30:00 - 01:32:05] 紐約營造巨頭 Skanska 營收暴增 300% 與打樁管（Piling Pipe）短缺**\n  * **貿易商 B**：紐約大型營造商 **Skanska** 營收成長 **300%**，在手訂單（backlog）排滿未來 **3 年**，但現在市場上完全買不到**打樁管（piling pipe）**，甚至連 **6x4 英吋空心結構型鋼（hollow structurals）** 都缺貨。\n* **[01:32:05 - 01:33:50] 進口來源國盤點與澳洲 BlueScope 200 噸 44W（5,400 噸保稅清關烏龍）**\n  * **CSC 女代表**提醒約剩 10 分鐘須離開。\n  * **Doug** 盤點目前進口來源國：**中國、韓國、台灣、馬來西亞**，以及少量**澳洲（BlueScope，透過貿易商 Worth 引進）**。\n  * **Doug & 貿易商 A**：上週剛從 Worth 超額清單買了 **200 噸 44W**。配額監控網站上突然跳出 **5,400 噸** 清關數據，查證後發現是 Worth 先前放在保稅倉（sitting in bond）的 **3 艘船運** 跨兩個配額週期一起清關所致。\n* **[01:33:50 - 01:35:00] 澳洲對韓國反傾銷與加拿大市場各國 Normal Value 現況**\n  * 澳洲近期對韓國課徵高反傾銷稅（中鋼稅率則極低）。\n  * **加拿大市場 Normal Value 盤點**：目前在加拿大擁有 Normal Value 的僅有 **中鋼（CSC）** 與 **德國（Dillinger）**；韓國方面，**東國（Dongkuk）** 與 **POSCO（浦項）** 皆無 Normal Value，而 **現代（Hyundai）** 現已被課徵反傾銷稅（AD）。\n\n---\n\n### 【第 20 段】`chunk_19.mp3`（01:35:00 - 01:40:00）\n**主題：馬來西亞濟鋼（Jigang）、中國 50% 關稅與 AD 產品界線、盛讚中鋼單頁式 MTC、婉拒本次 500 噸報價（$1.14/lb）與在途訂單 $2,700 萬部位管控**\n\n* **[01:35:00 - 01:36:25] 馬來西亞「濟鋼（Jigang）」與中國進口品項界線（付 50% 關稅買合金調質板）**\n  * 馬來西亞鋼廠為 **Jigang（濟鋼馬來西亞廠）**。\n  * **中國關稅與反傾銷界線**：中國 **1/4\"–4\" 的碳鋼板（44W、A36、A572）** 受反傾銷（AD）管制長達 30 年完全無法進口；但加拿大對中國課徵的關稅已從兩三年前的 25% 加碼至 **50%**，Terra Nova 目前仍付 50% 關稅從中國進口 **A514、AR400、AR500** 及 **$> 3\"$ (或 $> 3.5\"$) 的 A516-70**（至於 $\\le 4\"$ 的 A516-70 則從**日本**進口，因中鋼受政府 Normal Value 限制價格不具競爭力）。\n* **[01:36:25 - 01:38:35] 對中鋼品質與單頁式 MTC 的極高評價、堅持透過貿易商進口**\n  * **Doug**：「**我很喜歡中鋼的產品，品質非常好（excellent）。而且我非常喜歡中鋼的材質證明書（mill certs / test reports），全部濃縮在同一頁（all on one page）**，不像中國鋼廠一份有 4 頁。」\n  * 強調只要競爭對手沒付關稅，自己絕不輕易付關稅（「如果我們有付關稅而競爭對手沒付，我們就死定了」）。\n  * **採購通路**：所有海外採購 **100% 透過貿易商**（不願為了省 $0.30/cwt 自行承擔進口風險；並提到中鋼下一家要拜訪的客戶 **Jim** 因會講韓文才自己直接進口）。\n* **[01:38:35 - 01:40:00] 討論現有 500 噸中鋼報價（$1.14/lb）與決定暫緩採購（Pass）**\n  * **貿易商 A**：提出手頭可供應的 **500 噸** 額度，淨價約 **$1.14/lb**（含約 **$0.32/lb** 關稅分攤），並表示仍有機會擠進免稅配額。\n  * **Doug**：坦言目前在途訂單原以為約 **$2,000 萬（$20M）**，但若計入到港可能被課徵的關稅將高達 **$2,700 萬（$27M）**，超過目前願意承擔的風險部位，因此決定採取防禦姿態（circle the wagons），**這次 500 噸先放棄（pass this time）**。\n\n---\n\n### 【第 21 段】`chunk_20.mp3`（01:40:00 - 01:44:49）\n**主題：Terra Nova 股東買斷（Doug 80% / Chris 20%）、期盼全面 50% 關稅後重建中鋼合作、Soft TRQ 弊病與道別**\n\n* **[01:40:00 - 01:41:00] Terra Nova 股權買斷與對中鋼規格組合的肯定**\n  * **Doug**：說明近期剛與銷售經理 **Chris** 完成股東買斷（**Doug 持股 80%、Chris 持股 20%**，買斷含前董事長 40% 在內的兩位股東），故不希望財務過度擴張。\n  * 再次強調中鋼 **一般板可達 5\"、100 ksi 調質板（A514/AR400）可達 3\"** 的規格組合對 Terra Nova 極具吸引力，非常期盼關稅問題解決後恢復過往合作規模。\n* **[01:41:00 - 01:44:00] 預期明年 1 月全面改課 50% 關稅、Soft TRQ 扼殺交易與美國通膨**\n  * **貿易商 A & B**：預期在美國 11 月期中選舉後（約**明年 1 月**，現行配額期至 12 月底），加拿大可能取消所有 TRQ 全面改課 50% 關稅。\n  * **貿易商 B**：指出目前的**軟性配額（Soft TRQ）** 讓買家深怕自己付 50% 關稅而對手搶到免稅配額，反而扼殺了商業交易（如同 2022–2024 年歐洲輸美 Soft TRQ 的狀況）。\n  * **Doug & 貿易商 A**：若最終對所有國家與產品一律課徵 50% 關稅（50% on everybody and everything），立足點公平，就能**立即重建與中鋼的常態合作（re-establish with CSC）**。\n* **[01:44:00 - 01:44:49] 會議結束與道別**\n  * 雙方互道感謝，Doug 幽默表示「哪天去台北打桌球時再去找你們！（play table tennis in Taipei one day）」，眾人起身離場，錄音於 01:44:49 結束。\n"}, {"doc_id": "tn_03_raw", "title": "03. 未刪減分段聽覺完整底稿 (Unabridged Raw Notes)", "short_title": "03. 未刪減逐段底稿", "badge": "完整原句庫", "filename": "20261019_0908_Terra_Nova_Raw_Notes", "content": "# 20261019 Terra Nova Steel 拜訪會議 — 原始分段聽覺完整底稿 (Unabridged Raw Listening Notes)\n\n> **用途說明**：本檔案完整保留 `2026年10月19日 09點08分.m4a`（全長 01:44:49，共 21 個分段）所有原生聽覺模態擷取之**未刪減逐段對話、中英文原句引述、台下中文內部討論、數據、價格、尺寸規格與時間軸**。後續若需轉換為任何特定格式之會議記錄（如：中鋼出國訪廠報告格式、純英文會議紀要、依議題分類報告、行動追蹤表等），可直接以此底稿作為完整資料來源，無須重新讀取音訊檔。\n\n---\n\n## 一、基本資訊與與會者識別 (Metadata & Participants)\n\n- **日期與時間**：2026 年 10 月 19 日 09:08（錄音時長：01:44:49 / 6,289.4 秒）\n- **地點**：加拿大 BC 省（Terra Nova Steel 辦公室，鄰近列治文 Richmond 廠區）\n- **與會人員**：\n  1. **Terra Nova Steel（客戶端）**：\n     - **Doug（部分片段稱 Rob/Doug，加拿大口音）**：公司負責人與採購決策者。近期剛與銷售經理 **Chris** 完成股東買斷（MBO），目前 **Doug 持股 80%、Chris 持股 20%**（買斷包含前董事長 40% 在內的兩位原股東）。\n  2. **外方貿易商 / 代理商團隊（Traders / Agents）**：\n     - **貿易商代表 A（英式/澳式口音）**：曾任職澳洲 BlueScope（前身 BHP）多年，負責協調加拿大進口配額（TRQ）、反傾銷正常價值（Normal Value）、海關規定與報價（現場提供 500 噸中鋼報價）。\n     - **貿易商代表 B（德式口音）**：曾操作 2022–2024 年歐洲輸美軟性配額（Soft TRQ），熟悉北美管線與基建市場（近期參加 NASPD 與 Argus 峰會）。\n     - **Philip**：外方團隊成員，負責查核 TRQ 排除條款（超過 4\" 或 5\" 豁免細節）。\n  3. **中鋼集團（CSC / 中貿 CSGT）代表團**：\n     - **Jimmy（男）**：中鋼業務主講人（代理因故未出席的 Mr. Wang 負責鋼板業務）。\n     - **陳博士（Dr. Chen / Delphic，男）**：中鋼鋼板技術部門代表，主講「CSC Q&T Plates for Wear and Strength（中鋼直接淬火 DQST 製程與調質鋼板技術簡報）」。\n     - **中鋼 / 中貿女性業務代表群（2~3 位）**：負責加拿大熱軋（HR）、鋼板（Plate）外銷業務與市場研究，會中協助查核今年 4 月 3\" A514S 出貨紀錄、台灣政府協商之 TRQ 豁免清單及價格運費結構。\n\n---\n\n## 二、逐段完整對話與重點還原（00:00:00 - 01:44:49）\n\n### 片段 00：`chunk_00.mp3` (00:00 - 05:00)\n**主題：開場介紹與中鋼 (CSC) 公司簡報（公司概況、產線配置、鋼板生產流程、中鋼與中龍比較）**\n\n* **[00:00 - 00:34] 開場與團隊介紹、後續訪客預告**\n  * **CSC 主講人 (Jimmy)**：說明團隊成員分工，原本負責的另一位成員 Mr. Wang (王先生) 因故不在，改由主講人負責鋼板 (Plate) 業務。此外預告中鋼團隊預計於 **2 月底 (End of February)** 派員前往加拿大拜訪客戶（包含一週的客戶拜訪行程）。\n* **[00:34 - 00:57] 與會人員介紹**\n  * **CSC 主講人**：介紹現場與會同仁，包含負責鋼板技術部門 (Technical department, in charge of Plate) 的 **Mr. Chen (陳先生/陳博士)**，以及負責市場研究 (Marketing Research) 的兩位女士。若客戶有任何關於鋼板或整體鋼鐵市場的問題都可隨時提出，接著開始簡報 (Presentation)。\n* **[00:57 - 01:58] 中鋼 (China Steel Corporation, CSC) 公司基本資料**\n  * **CSC 主講人**：\n    * **成立時間與地點**：成立於 **1971 年**，位於**高雄 (Kaohsiung)**，緊鄰高雄海港 (Kaohsiung seaport)。\n    * **廠區面積**：**575 公頃 (hectares)**。\n    * **資本額 (Capital)**：**5.3 billion**。\n    * **員工數 (Employees)**：超過 **10,000 人**。\n    * **台中廠區（中龍鋼鐵 Dragon Steel）**：位於台中，擁有 **2 座高爐 (2 blast furnaces)**。高雄廠與台中廠合計總年產能 (Total capacity) 為 **1,600 萬噸/年 (16 million tons every year)**。\n    * **2025 年銷售量 (Sales volume for 2025)**：**1,054 萬噸 (10.54 million tons)**。\n    * **稅前淨利 (Profit Before Tax, PBT)**：主講人自嘲不知為何同事把這項放上簡報，因為表現不是很好 (not very good)，僅供參考。\n    * **外賓 (Terra Nova 代表)** 開玩笑說：`\"Prices are too high, that's why.\"`（因為價格太高了，所以才這樣。）引發全場笑聲。\n* **[01:58 - 02:27] 財務縮寫確認 (PBT vs EBT)**\n  * **外賓**：詢問簡報上的縮寫 `\"What's PBI / PBT?\"`\n  * **CSC 主講人 & 團隊**：`\"Profit Before Tax (PBT)，稅前淨利。\"`\n  * **外賓**：確認 `\"Before tax? So that's like EBT (Earnings Before Taxes) for us, right? Not EBITDA, just before tax.\"` 中鋼團隊確認是純稅前盈餘 (Just before tax)。\n* **[02:27 - 02:48] 高雄廠廠區配置圖 (Kaohsiung Works Layout)**\n  * **CSC 主講人**：展示高雄廠平面圖，說明原料碼頭 (Raw material pier) 進料、原料儲存場 (Storage yard)、煉鋼廠 (Steelmaking)、軋鋼廠 (Rolling mills) 到出貨碼頭區 (Delivery yard) 的動線，並帶過熱軋 (HR) 與冷軋 (CR) 生產照片。\n* **[02:48 - 04:08] 鋼板生產流程 (Plate Production Process)**\n  * **CSC 主講人**：介紹從扁鋼胚 (Slab) 開始的鋼板製程：\n    1. **Walking beam reheating furnace**（步進式加熱爐）\n    2. **Descaling box**（除銹箱）\n    3. **Four-high reversing rolling mill**（四重可逆式軋機）與 **Wireless thickness gauge**（無線測厚儀）\n    * *(03:13 手機鈴聲響起，外賓說 \"Sorry about that\"，另一位外賓開玩笑說：\"That's JFE calling.\" 引起全場大笑)*\n    4. **Pre-leveler**（預矯直機）與 **Accelerated cooling system (ACC) / DQ**（加速冷卻系統 / 直接淬火）\n    5. **Hot leveler**（熱矯直機）與 **Disc roller cooling bed**（碟式輥道冷卻床）\n    6. **Surface inspection system**（表面檢測系統）與 **Online automatic ultrasonic testing (UT)**（線上自動超音波檢測）\n    7. **Automatic marking machine**（自動噴印標記機）、**Shearing machine**（剪切機）、**Normalizing furnace**（正常化爐）\n    8. **離線 Ultrasonic test (UT)**（超音波測試）、檢驗 (Inspection)、測試 (Test) 至最終成品 **Finished steel plate**。\n* **[04:08 - 05:00] 高雄廠 (Kaohsiung Mill) 與台中廠/中龍 (Taichung Mill / Dragon Steel) 概況比較**\n  * **CSC 主講人**：\n    * **設備配置**：左圖為高雄廠，擁有 **4 座高爐 (4 blast furnaces)**，年產能 **990 萬噸 (9.9 million tons)**；右圖為台中廠（中龍），擁有 **2 座高爐 (2 blast furnaces)** 及 **1 座電弧爐 (1 EAF)**，年產能 **600 萬噸 (6 million tons)**。\n    * **中龍歷史與命名由來**：高雄廠成立於 1971 年；台中廠原屬於另一家民營集團，成立於 **1993 年**，後因財務問題賣給中鋼，中鋼於 **2004 年**併購並更名為 **中龍鋼鐵 (Dragon Steel)**。之所以叫 Dragon Steel，是因為廠區位於台中**龍井鄉 (Longjing)**，「龍 (Long)」在中文裡就是 Dragon，連公司標誌 (Mark) 也是一條龍。\n\n---\n\n### 片段 01：`chunk_01.mp3` (05:00 - 10:00)\n**主題：各產線產能、中龍型鋼 (H-Beam) 與電爐配置討論、產品組合與銷售區域分析**\n\n* **[05:00 - 05:44] 中鋼各產品線產能 (Product Capacity)**\n  * **CSC 主講人**：\n    * **鋼板 (Plate)**：僅有 **1 條產線 (1 line)**，年產能 **100 萬噸 (1 million tons)**。主要供應台灣內銷客戶，外銷則主要銷往**日本 (Japan)** 與**加拿大 (Canada)**。\n    * **其他產線**：熱軋 (HR) 有 3 條線、冷軋 (CR) 有 3 條線，另有盤元 (Wire rod)、熱浸鍍鋅 (Galvanized)、電鍍鋅 (EG)、電磁鋼片 (ES) 等。\n* **[05:44 - 08:23] 關於型鋼 (Beams / H-Beam) 產能與中龍 (Dragon Steel) 的深入問答**\n  * **外賓**（05:50）：提問簡報的產品組合圖上為何沒看到型鋼（`\"Sorry Jimmy, I didn't see beam on there. No beams?\"`）。\n  * **CSC 主講人 & 女性業務代表 (CSGT/CSC)**：\n    * 解釋這張圖表僅統計中鋼本廠（或中鋼貿易 CSGT 負責的鋼捲 Coil 與鋼板 Plate）。**H型鋼 (H-Beam)** 屬於**中龍鋼鐵 (Dragon Steel)** 生產，且由不同部門獨立銷售。\n  * **外賓**（06:24 追問產能結構）：確認中龍的產能結構與煉鋼設備：\n    * **女性業務代表**說明：中龍有 **2 座高爐 (2 blast furnaces)** 全部用於生產扁鋼胚/熱軋產品 (flat products / HR)，另外有 **1 座電弧爐 (Electric Arc Furnace, EAF)** 專門生產 **H型鋼 (H-Beam)**。\n    * **外賓**確認數據（06:42 - 07:20）：中龍的 **EAF（電弧爐）生產 100 萬噸 (1 million tons) 的型鋼 (Beams)**，而另外 **2 座高爐生產 600 萬噸 (6 million tons) 的熱軋 (Hot Rolled)**（外賓驚嘆：`\"Interesting! 1 million tons for beams coming out of that EAF, and still 6 million tons for hot rolled from the two blast furnaces.\"`）。\n  * **H-Beam 外銷狀況與內幕交流**（07:21 - 08:23）：\n    * **女性業務代表**：目前中龍的 H-Beam **沒有多餘產能可供外銷 (don't have capacity for export)**，因為台灣內銷市場非常好 (local market is very good)。\n    * 外賓提到加拿大國內沒有型鋼廠 (no domestic mill in Canada)，中鋼女性代表表示之前曾直接向中龍採購銷往加拿大，這次原本也有邀請中龍負責型鋼的 **Eddie** 一起參加，但後來沒辦法來。\n    * **女性業務代表（以中文對內部同事補充，07:56 - 08:22）**：「因為他們沒有量，其實我們都有跟他…有賣到加拿大，之前。但因為他最近也沒有外銷量，完全沒有，所以他們也沒有派他來，本來是有想要派他來……H-Beam 很搶手，大家都在搶。」\n* **[08:23 - 09:12] 中鋼產品組合佔比 (CSC Product Mix: 2025 vs 2026)**\n  * **CSC 主講人**：\n    * 主要產品為**熱軋 (HR)** 與**扁鋼胚 (Slab)**（部分扁鋼胚外銷至墨西哥 Mexico 與泰國 Thailand 的策略客戶）。\n    * **2025 年銷售佔比**：最大宗為 HR，**鋼板 (Plate) 僅佔 6%**。\n    * **2026 年截至 8 月 (until August) 銷售佔比**：大宗仍為 HR，**鋼板 (Plate) 佔比略微提升至 8%**。\n* **[09:12 - 10:00] 中鋼主要銷售區域 (Major Sales Regions: 2025 vs 2026)**\n  * **CSC 主講人**：\n    * 整體銷售以台灣內銷 (Domestic) 為主。\n    * 外銷市場主要為東南亞 (Southeast Asia)，部分銷往日本 (Japan)、歐洲 (Europe)、中國 (China)；**加拿大 (Canada)** 則主要銷售 **鋼板 (Plate)** 與 **熱軋 (HR)**（冷軋 CR 歸類於其他）。\n    * 2025 年與 2026 年（截至 8 月）的內外銷區域佔比結構大致相近。\n\n---\n\n### 片段 02：`chunk_02.mp3` (10:00 - 15:00)\n**主題：台灣鋼板內銷需求動能（台積電/AI 半導體建廠）、銷加鋼板規格與尺寸、加拿大 TRQ（關稅配額）豁免規定討論**\n\n* **[10:00 - 11:46] 鋼板銷售區域與台灣內需強勁原因（TSMC 建廠、AI 與綠鋼 EAF）**\n  * **CSC 主講人**（10:00 - 10:44）：展示鋼板 (Plate) 銷售區域圖，指出絕大多數銷往台灣內銷市場，因為近期台灣內需非常好，例如 **TSMC (台積電)** 有龐大的建廠需求 (a lot of building demand)。主講人表示這次原本想爭取更多數量銷往加拿大，但因為台積電與政府關係非常好，政府有時會給中鋼壓力要求優先供貨給台積電；不過主講人仍向公司強調加拿大價格也很好，若加拿大客戶有需求仍可協商爭取。\n  * **外賓提問**（10:44）：`\"What's driving the demand in Taiwan? What's the main reason behind the increased demand for plate?\"`（是什麼帶動台灣的鋼板需求？）\n  * **CSC 主講人**（10:56 - 11:32）：主要是**興建新廠房 (construction of new factories)**，特別是**半導體產業 (semiconductor)**。此外半導體業也需要大量電力，並要求綠鋼，因此中鋼內部也在討論投資興建新的電爐 (EAF) 來生產**綠鋼 (Green steel)** 優先供應給台積電等客戶。\n  * **外賓**（11:32）：`\"Semiconductors goes hand in hand with the AI boom.\"`（半導體與 AI 熱潮息息相關。）主講人表示認同。\n* **[11:46 - 12:55] 加拿大市場主要鋼板規格與尺寸 (Major Plate Specs & Sizes for Canadian Market)**\n  * **CSC 主講人**：\n    * 展示熱軋銷加區域圖後，進入銷往加拿大市場的主要鋼板規格表。\n    * 包含**多認證規格 (Multi-standard specs)** 與單一規格，並提到 **Terra Nova** 也採購了許多這類多重認證規格鋼板。\n    * 此外中鋼也供應 **AR400F**（耐磨鋼板）、**PVQ plate**（壓力容器鋼板）以及**高強度結構鋼板 (High-strength structural plate)**，以及熱軋與酸洗塗油 (HR and PO) 規格。\n    * 展示銷往加拿大市場的鋼板尺寸表（Major plate spec and size），表示稍後陳先生 (Mr. Chen) 會做更詳細的介紹。\n* **[12:55 - 15:00] 鋼板厚度極限與加拿大 TRQ（關稅配額）豁免條款深度討論**\n  * **外賓 A (Doug)**（12:55）：看著尺寸表詢問：`\"The 44W goes right up to 5 inch? It's not A36 only at 3 inch and over, is that it?\"`（44W 可以做到 5 吋厚嗎？不是只有 A36 在 3 吋以上嗎？）\n  * **外賓 B (資深貿易商代表)**（13:02）：`\"No, that's Algoma.\"`（不，那是 Algoma 鋼廠的限制。）並指出中鋼這邊是可以做到 **5 inch (5 吋)** 的。\n  * **外賓 B 提出 TRQ 豁免議題**（13:15 - 14:15）：\n    * `\"Correct me if I'm wrong, I think 5 inch thick is excluded from the TRQ.\"`（如果我有錯請糾正我，我認為 **5 吋厚度的鋼板被排除在 TRQ 關稅配額之外**。）\n    * 外賓 B 說明他**今天早上才剛與渥太華的貿易法律顧問 (Trade counsel in Ottawa) 通話**：\n      * 遺憾的是，加拿大官方**並沒有一份明確列出「哪些產品被排除 (excluded)」的正面清單 (no definitive list for items that are excluded)**（除了針對中國大陸有明確的鋁和鋼鐵清單外）。\n      * 在 TRQ 規定中，邏輯是反過來的：**「凡是在特定 TRQ 條文中沒有被提及的，就是豁免/排除在外 (Whatever is not mentioned in the specific TRQ is excluded)。」**\n      * **行動項目 (Action Item)**：外賓 B 表示他們需要做一點功課，可能會**請 AI 協助比對分析 (ask AI to help us to identify specifically the items that are excluded from your range)**，從中鋼可生產的尺寸範圍中找出被排除在 TRQ 之外的具體品項。\n  * **具體規格與厚度的 TRQ 豁免細節討論**（14:15 - 15:00）：\n    * **外賓 B**：確定的是，**A514 (514)** 與 **AR400** 這個系列的鋼板**包含在 TRQ 內 (is included, is subject to the TRQ)**。\n    * **外賓 A & B 交叉確認厚度限制**（14:26 - 15:00）：\n      * 針對較厚的材料（Thicker material）：外賓提到 **A514 超過 3 吋 (3 inch) 或薄於 1/4 吋 (under a quarter inch, 0.25\")** 的情況，以及一般結構鋼板厚度豁免門檻。\n      * 外賓 A 提醒必須非常小心公差與名目尺寸 (nominal sizes) 的問題，因為之前同業 **Varsteel (?) / Barry** 在 **4 吋鋼板 (4 inch plate)** 上吃過悶虧被課稅（`\"Remember Barry/Varsteel got whacked with the 4 inch plate... 4.01 or something\"`）。\n      * **外賓 B 指派行動項目給 Philip**（14:46）：`\"Maybe Philip, you could look into that. I think 5 inch... maybe it's over 4 inch is excluded.\"`（Philip，請你查一下這個問題。我認為 5 吋——或者是**超過 4 吋 (>4 inch) 的鋼板**——是排除在 TRQ 之外的。）\n\n---\n\n### 片段 03：`chunk_03.mp3` (15:00 - 20:00)\n**主題：加拿大 TRQ 與反傾銷稅（AD）的豁免機制差異、台灣政府與加拿大協商之 TRQ 豁免清單、A514Q vs. A514S 採購痛點**\n\n* **[15:00 - 15:45] TRQ 通用豁免（Remission）與特定企業豁免**\n  * **外籍代表（英式口音）**：說明加拿大關稅減免（remission）機制分為兩種：一種是通用性的（in general），任何人只要符合條件都可以使用；另一種則是針對特定企業的減免（company-specific remissions），例如針對中國的某些鋁材與鋼材，像通用汽車（GM）、Cascadia 等公司取得了特定企業的豁免。\n  * **外籍代表**：但針對在 TRQ（Tariff Rate Quota，關稅配額）架構下的鋼鐵產品，規則是「只要沒有被明確列在清單上的（whatever is not listed in terms of the tariff code），就不會被涵蓋在內」。\n  * *(背景穿插台灣團隊與會議室人員確認免費 Wi-Fi 連線的短暫對話)*\n* **[15:45 - 16:45] 反傾銷（AD）與 TRQ 清單認定的差異、正常價值（Normal Value）與 4 吋厚度上限**\n  * **外籍代表**：提醒這點與反傾銷（AD, Anti-Dumping）非常不同，處理反傾銷時必須格外小心。反傾銷文件會列出一堆稅則號列（tariff codes），但同時附帶免責聲明（disclaimer），表示「這些稅則號列僅供舉例參考（just an example），其他稅則號列也可能被涵蓋」。然而在 TRQ 規則中，沒有被提及的就不算在內（whatever is not mentioned is not included）。\n  * **外籍代表**：不過，豁免於 TRQ 並不代表不受「正常價值（Normal Value，即最低樓地板價格 minimum/floor price）」的約束——這類似於美國每年度複查（annual review）的機制。\n  * **外籍代表 & 客戶（Terra Nova 代表）**：提到因為目前的反傾銷（Anti-Dumping）範圍只涵蓋到 **4 吋（up to and including 4 inch）**，客戶補充「4 吋或更薄（4 inch or thinner）」。\n* **[16:45 - 17:58] 台灣政府與加拿大協商之 TRQ 豁免清單（中文內部討論與確認）**\n  * **中鋼/中貿團隊（女聲 A & B、男聲）**：內部以中文討論手頭上一份台灣政府與加拿大談判爭取到的豁免清單。\n  * **討論重點**：\n    * 這份清單是台灣政府（經濟部/貿易署）去跟加拿大政府談判爭取來的，其實在 6 月份就已經把相關資訊提供給中貿（中鋼貿易團隊）。\n    * 確認這份清單的性質：不是豁免 Normal Value，而是**豁免 TRQ（exempt from TRQ）**——意思是這些規格「不用算在 TRQ 的配額額度裡面，也不會有額度用完被課徵 50% 關稅的問題」。\n    * 團隊向同事「葉軒 / Eva（音譯）」確認：我們政府跟加拿大談到幾個豁免 TRQ 的尺寸（spec），確認後決定將這份清單切換為英文版（或遮蔽右邊內部備註欄後）投影給外國客戶看。\n* **[17:58 - 19:20] 檢視 TRQ 豁免清單：厚度門檻（5.5 吋、6.35 吋）與加拿大本地鋼廠（Algoma）的保護機制**\n  * **中鋼代表（男聲）& 台灣團隊（女聲）**：將清單投影出來向客戶說明，這是台灣政府與加拿大政府協商後，被排除在 TRQ 措施之外（excluded / exempt from TRQ）的鋼板規格清單。\n  * **外籍代表 & 客戶（Terra Nova）**：看著螢幕上的數據唸出：\n    * 某規格為 **5.5 吋（5 and a half inch，大於 5.5 吋）**。\n    * 接著看到 **A514（514）** 鋼種：標示為 **5.3... 到 6.35 吋（6.35 inch）**。\n  * **外籍代表**：解釋為什麼會有這麼高的厚度門檻——因為這些超厚規格是「加拿大本地做不出來的（not made in Canada）」。\n  * **客戶（Terra Nova）**：吐槽說加拿大本地其實連 2.75 吋（2 and 3/4\"）或 3 吋以上都很難做，結果門檻卻設在 6.35 吋。\n  * **外籍代表**：說明這是因為加拿大本地鋼廠（如 Algoma）只要向加拿大政府宣稱「我們未來的計畫打算生產這個規格（their plan is to make it）」，政府就會把它納入保護，不給予較薄尺寸的豁免。\n* **[19:20 - 20:00] A514Q 與 A514S 的規格差異與採購痛點**\n  * **客戶（Terra Nova）**：仔細看清單後指出，清單上豁免的項目寫的是 **A514 Grade Q（514Q）**。\n    * **514Q** 含有大量的合金元素（lots of alloy），價格非常昂貴（very expensive）。\n    * 加拿大本地的 **Algoma 鋼廠只生產 514S**（而 514S 正是客戶日常真正需要的規格）。\n    * 客戶通常只有在厚度達到 **6 吋、7 吋、8 吋（6, 7, and 8 inch）** 時，才會開始採購 **514Q**（因為 S 等級無法達到那麼厚的硬化/機械性質要求）。\n    * 因此，清單上針對較薄尺寸豁免 514Q 其實「毫無實際意義（irrelevant）」，因為根本沒有人會在薄尺寸買昂貴的 514Q。此外，514Q 的碳當量（Carbon Equivalent）太高，對客戶來說焊接加工性也不如 514S 好。\n\n---\n\n### 片段 04：`chunk_04.mp3` (20:00 - 25:00)\n**主題：延續 A514Q/S 厚度豁免討論（2.75 吋 vs. 4 吋）、A516 採購與關稅衝擊、耐磨鋼板（Hardox 500 / AR400F / AR500 / DQ550）討論**\n\n* **[20:00 - 20:42] A514Q 合金成分與薄板無需求的原因**\n  * **客戶（Terra Nova）**：繼續補充說明，在 4 吋以下（up to 4 inch）的厚度，根本沒有人會要求買 514Q（`\"Nobody requests it in those thicknesses... it's goofy to get it in the thinner stuff\"`）。因為 514Q 含有大量的鉻（Chrome）、鉬（Moly / Molybdenum）與鎳（Nickel），導致碳當量（Carbon Equivalent）非常高。他在這個業界從沒見過有人在薄板用 514Q。\n  * **外籍代表**：確認客戶在 3 吋（3 inch）等厚度是否完全不使用鉻鉬合金（Chrome-Moly）的 Q 級鋼板，客戶確認不用。\n* **[20:42 - 22:18] A514Q 豁免厚度（大於 2.75 吋）與一般高強度鋼板（大於 4 吋）的無奈現況**\n  * *(20:42 - 21:30 台灣團隊內部小聲討論：右邊欄位是之前詢問廠內能否生產的評估紀錄，6 月份政府提供這份清單時曾轉給中貿並詢問廠內「針對這些豁免項目有沒有可能生產」以爭取商機；同時確認清單上 A514 確實只有寫 Q 有豁免，S 沒有，並答應會把這份檔案寄給客戶參考。)*\n  * **客戶 & 外籍代表（21:30 - 22:18）**：畫面往下捲動，確認在 **A514 Grade Q** 項下，厚度 **大於 2.75 吋（over 2 and 3/4 inch）** 即可豁免 TRQ。但問題是 Algoma 在 2.75 吋以下只供應 S，而客戶在 2.75 吋以上雖然可以買豁免的 Q，但 Q 成本太高。\n  * **外籍代表 & 客戶**：看到一般結構/高強鋼板的豁免門檻則是 **大於 4 吋（more than 4 inches，約 4.1 吋以上）**。外籍代表感嘆這規定很荒謬（`\"which is rubbish, I mean Algoma...\"`），客戶也無奈表示「規定就是這樣（It is what it is），你很難去挑戰或推翻政府的這套規則，因為要花上一輩子的時間，而且本地鋼廠永遠不會承認自己做不出來」。\n* **[22:18 - 23:08] A516（516）鋼板的採購現況與神戶製鋼（Kobe）船期受關稅衝擊**\n  * **外籍代表**：詢問客戶最近是否還有採購很多 **A516（516）** 鋼板？\n  * **客戶（Terra Nova）**：表示有買，但苦笑說「我第一批進來的船貨馬上就要被新關稅重擊了（`\"my first shipment coming in is getting whacked with the tariff\"`）」，現在變得非常昂貴。\n  * **客戶**：提到這批貨是向日本**神戶製鋼（Kobe）**採購的（當時下單時覺得是正確的決定，為了避開原本韓國現代或其他的反傾銷風險）。\n  * **客戶**：回憶過去能夠向**中鋼（CSC）**採購 A516 和 A514 的日子非常好，當時每個月或每季可以穩定採購上千噸（a thousand tons），給予他們極大的調度彈性（flexibility），而且他非常喜歡中鋼的鋼板品質、軋延公差（width is always a little bit tighter）與鋼廠證明書（mill certs），只可惜後來因為反傾銷與正常價值（Normal Values）大幅變動而受阻。\n* **[23:08 - 24:15] 耐磨鋼板（Wear Resistant Plate）：Hardox 500、AR400F 與 1.25 吋（31.75mm）規格**\n  * **外籍代表**：請台灣團隊將清單往下捲動，查看「耐磨鋼板（wear resistant plate）」類別。\n  * **檢視清單項目**：\n    * 看到 **Hardox 500**：豁免厚度為 **大於 1.25 吋（more than inch and a quarter）**，客戶表示這個厚度他們不太做。\n    * 看到下一項：鋼板硬度 **360 到 477 HBW（Brinell hardness）**，豁免厚度同樣是 **大於 2.75 吋（2 and 3/4 inch）**。外籍代表指出這對應的就是中鋼的 **AR400F**。\n  * **AR500 與 31.75mm（1.25 吋）的討論**：\n    * **外籍代表**：問客戶「你們 500 級（AR500）做得不多對吧？」\n    * **客戶（Terra Nova）**：我們有做，但量比較小（smaller volume）。通常是在下 100 到 400 噸的 AR400F 訂單時，順便附加（tack on）個 **80 噸**左右的 500 級鋼板。\n    * **外籍代表 & 客戶**：看到清單上的一個厚度數字「**31**（應為 31.75mm）」，外籍代表問是不是 1 又 3/8 吋（1 and 3/8\"），客戶糾正 **31.75mm 剛好是 1.25 吋（inch and a quarter）**，並提到由於某種原因，1.25 吋正好是中國鋼廠等常做的厚度分界。\n* **[24:15 - 25:00] 台灣團隊內部討論（中貿 1,000 噸 / 1,300 噸訂單傳聞）與詢問中鋼能否生產 DQ550**\n  * *(24:15 - 24:45 台灣團隊背景中文低聲交談：討論中貿與某台灣客戶/通路的接單狀況，提到「1,000 噸還是 1,300 噸？」「他幫你減 300 噸……然後他沒有接，就沒有後續了」等內部業務話題。)*\n  * **外籍代表（24:45 - 25:00）**：轉向中鋼技術代表（Delphic）提問：`\"Delphic, do you make a DQ like 550?\"`（你們有生產像 DQ550 硬度等級的直接淬火耐磨鋼板嗎？）\n\n---\n\n### 片段 05：`chunk_05.mp3` (25:00 - 30:00)\n**主題：評估高硬度耐磨鋼（550 / 600 HBW）避稅可行性與客戶業務佔比、中鋼全球佈局簡報、中鋼 DQ 製程技術簡報開場**\n\n* **[25:00 - 26:20] DQ550 / 600 生產能力與客戶各鋼種業務佔比分析（決定不刻意改用 550 避稅）**\n  * **中鋼技術代表（Delphic）**：回答外籍代表的問題，表示中鋼可以生產硬度 **550 HBW** 的 DQ（Direct Quench，直接淬火）鋼板。如果客戶有訂單需求，中鋼可以嘗試生產 550 等級；事實上，中鋼甚至已經有生產硬度達 **600 HBW** 範圍的特殊規格鋼板（special grade）。\n  * **客戶（Terra Nova）**：坦誠分析商業上的考量：\n    * 我們其實並不需要用到 550，只是因為清單上「550 可以豁免關稅（exempt from the tariff）」，但為了避稅去買過高硬度的鋼板是個很蠢的做法（a stupid way to do business）。\n    * **客戶透露其產品結構佔比**：\n      * **A514（514）**：佔公司業務的 **25%**（主力產品）。\n      * **AR400（400）**：佔公司業務的 **10%**。\n      * **AR500（500）**：僅佔公司業務的 **3% 到 4%**。\n    * **結論**：因為 500 級以上佔比太小，實在不值得大費周章（not worth all the fooling around）去改用更高硬度的鋼種（如 550）來避稅，否則到時候下游終端客戶在鑽孔（drilling）或折彎加工（bending）時反而會出現開裂或加工困難的客訴問題。如果是用量極大的主力產品還值得研究，但這個品項一年頂多只有幾百噸（some hundreds of tons），不值得冒險。\n* **[26:20 - 27:35] 中鋼集團全球產能與通路佈局簡報（Global Deployment）**\n  * *(26:22 台灣團隊女聲小聲提到：「欸，這是貿發 1,300（噸）耶，9 月 17 號…」)*\n  * **中鋼業務代表**：向客戶快速展示中鋼集團的全球佈局投影片（Global Deployment）供客戶參考：\n    * **印度（India）**：設有軋延廠（電磁鋼片等，producing ES）。\n    * **馬來西亞（Malaysia）& 越南（Vietnam）**：設有再軋延廠（re-rolling mills）與合資企業（joint venture），供應冷軋（CR）、鍍鋅（GI）等產品。\n* **[27:35 - 28:40] 會議轉場與換人簡報**\n  * 雙方交換名片或確認資料，台灣團隊內部簡短交談，準備由中鋼技術代表進行下一階段的鋼板廠與產品技術簡報。\n* **[28:40 - 30:00] 中鋼鋼板廠與直接淬火（DQ）製程技術簡報開場**\n  * **中鋼技術代表（Delphic）**：開始進行技術簡報，主題為 **「CSC Q&T Plates for Wear and Strength（中鋼耐磨與高強度調質鋼板）」**。\n  * **簡報大綱（分為三部分）**：\n    1. 中鋼鋼板廠與 DQ（Direct Quench，直接淬火）製程介紹（Introduction to CSC Plate Mill and DQ Process）。\n    2. 產品與生產實績（Products and Mill Records）。\n    3. 討論議題（Topics for Discussion）。\n  * **第一部分：中鋼鋼板廠沿革與產線配置（29:07 - 30:00）**：\n    * **歷史沿革（Milestones）**：中鋼鋼板廠成立於 **1974 年**。每隔十年都有製程上的重大革新：第一個十年引進**控制軋延製程（Controlled Rolling process）**，接著發展出 **TMCP（熱機控制製程）**，最終引進最新的 **Direct Quench（DQ，直接淬火）製程**。\n    * **產線設備動畫展示（29:35 - 30:00）**：講者展示自己用 Claude Code 製作的鋼板廠產線動畫，依序介紹產線設備：步進式加熱爐（Walking Beam Furnace）$\\rightarrow$ 除鏽機（Descaler）$\\rightarrow$ 四重軋延機（4-High Mill）$\\rightarrow$ 伽瑪射線測厚儀（Gamma-ray gauge）$\\rightarrow$ 預矯直機（Pre-leveler）$\\rightarrow$ **淬火設備（Quenching device / DQ 設備）** $\\rightarrow$ 熱矯直機（Hot leveler）。\n\n---\n\n### 片段 06：`chunk_06.mp3` (30:00 - 35:00)\n**主題：DQST（直接淬火暨自回火）與 RQ&T 製程差異、A514 直接淬火討論、耐磨鋼板各等級規格**\n\n* **[30:00 - 30:22] 中鋼技術代表（陳博士 / Delphic）**：\n  * 介紹產線後段檢測與加工設備：包含表面品質檢驗輔助系統（assist for inspection of surface quality）、冷矯直機（cold leveler）、線上超音波檢測（online ultrasonic testing, UT）、最終剪切線（final shearing）以及機械性質測試（mechanical testing）。\n* **[30:22 - 31:39] 中鋼技術代表（陳博士）**：\n  * 解釋中鋼 **Direct Quenching (DQ / DQST, Direct Quenching and Self-Tempering，直接淬火與自回火)** 製程與其他鋼廠傳統 **RQ&T (Reheating, Quenching and Tempering，再加熱淬火與回火)** 製程的差異：\n  * 傳統 RQ&T 製程需要將鋼板再次加熱（reheating of the plate）；而中鋼的 DQST 製程是在軋延（roll the plate）後直接進行淬火（quench the plate），接著將鋼板堆疊在一起（stacking them together）進行自回火，即可達到與 RQ&T 相同的機械性質（same mechanical properties as RQ&T）。\n  * 強調減碳優勢：因為省去了再加熱（reheating）的步驟，中鋼 DQST 製程的碳排放量（carbon emission）遠低於傳統 RQ&T 製程。\n* **[31:39 - 32:18] 外方客戶（Doug/Rob）& 中鋼技術代表**：\n  * **外方客戶 (31:39)**：`\"What grades do you do direct quench? Is it just the AR400 and 500?\"`（你們有哪些鋼種是用直接淬火？只有 AR400 和 500 嗎？）\n  * **中鋼技術代表 (31:45)**：回答所有 DQ 鋼板都採用此製程，包含 **AR400、PA400、PA500、PA450**，以及部分結構鋼如 **A514**。\n  * **外方客戶 (32:01)**：`\"You're doing 514 direct quench?\"`（你們連 A514 也是用直接淬火嗎？）\n  * **中鋼技術代表 (32:03)**：`\"Yeah, yeah, yeah. So every product comes from our DQ line does not suffer a reheating process.\"`（對，所有從我們 DQ 產線出來的產品都不經過再加熱製程。）\n* **[32:18 - 33:25] 外方客戶 & 外方同行人員（貿易商代表）**：\n  * **外方客戶 (32:18)**：確認若將此產品當作 **QT100** 銷售，並不會有標示不實（not misrepresenting it）的問題，只是用不同製程做出相同產品。接著好奇發問：`\"Has direct quench been used for a long time in 514? I know I've seen it in 400 and 500 for many years. I didn't realize that 514 could be made that way.\"`\n  * **外方同行人員 (32:50)**：補充說明標準規範只規定機械性質（It just specifies the properties for 514），並提出他的理解：因為是 Direct Quenching，潛在問題在於較薄的材料冷卻太快（thinner material cooling too fast），而較厚的材料冷卻太慢（thicker material cooling too slowly），這也是為什麼 Direct Quench 的厚度範圍通常較受限（why the range has been so limited）。\n* **[33:25 - 33:43] 中鋼技術代表**：\n  * 回應：在 **A514** 上，中鋼會搭配控制/正常化軋延（normalized rolling），在冶金微觀組織（metallurgy view / property of the microstructure）上確保與傳統再加熱淬火（reheating and quenching）完全相同。\n* **[33:43 - 35:00] 中鋼技術代表 & 外方客戶**：\n  * 進入「產品與實績紀錄（Products and Mill Record）」章節，展示中鋼耐磨鋼板（AR plates / wear-resistant plates）的 4 個等級與實際性能數據（actual values）：\n    1. **PA400H**：目前可生產厚度為 **6 mm 至 50 mm**。\n    2. **PA450H**（新產品）：簡報投影片上誤植，口頭更正可生產厚度為 **6 mm 至 25 mm**（外方客戶在旁換算：6 mm 約為 1/4 inch / 3/16 inch，25 mm 為 1 inch）。\n    3. **PA500 (PA500H)**。\n    4. **AR400F**：中鋼代表說明 **AR400F** 是 **PA400H** 的特化升級版（specialized version of PA400H），具有稍高的硬度（a little bit higher hardness）、更高的夏比衝擊吸收能（higher Charpy absorption energy），且延伸率（elongation）與拉伸性質（tensile properties）也比 PA400H 更好一些。\n\n---\n\n### 片段 07：`chunk_07.mp3` (35:00 - 40:00)\n**主題：高強度結構鋼（SM490、SM570、A514S）與抗潛變鋼、客戶詢問 2.75\" 與 3\" A514S 生產能力**\n\n* **[35:00 - 36:00] 中鋼技術代表（陳博士）**：\n  * 介紹高強度鋼板（High-strength steel）：包含 **SM490**、**SM570**，以及 **A514S**。\n  * 更正投影片上的 **A514S** 厚度範圍：目前可生產厚度為 **6 mm 至 65 mm**（約 2.5 inch）。\n  * 介紹壓力容器用鋼（Pressure vessel steel）：**SA517 Class 2**（或 SA537 Class 2），以及 **SA387**（抗潛變壓力容器鋼，creep-resistant pressure vessel steel）。\n* **[36:00 - 36:35] 外方同行人員 & 中鋼技術代表**：\n  * **外方同行人員 (36:00)**：詢問 `\"Have you done any long-term creep testing?\"`（你們做過長期潛變測試嗎？）\n  * **中鋼技術代表 (36:05)**：表示在實驗室做過加速潛變測試（accelerated creep testing，透過加熱方式）。\n  * **外方同行人員 (36:14)**：表示客戶雖然不買這種鋼材，但他們在加拿大 **Alberta（亞伯達省）** 有其他客戶的專案（projects）會需要這類產品，稍後可以討論。\n* **[36:35 - 38:00] 外方客戶 & 中鋼技術代表**：\n  * **外方客戶 (36:35)**：針對 **A514** 提問：`\"We purchase 2-3/4 inch and 3 inch as either a 514S or as a 514S modified. Is the 2.5 inch the maximum thickness you can make, or is that just because that's the maximum the grade allows or recommends?\"`（我們有採購 2-3/4 吋和 3 吋的 A514S 或 A514S modified。請問 2.5 吋是你們能生產的最大厚度，還是只是因為 ASTM A514S 規範標準限制/建議到 2.5 吋？）\n  * **中鋼技術代表 (36:56)**：表示可以依需求客製化規格（custom specification on demand），但需要再確認。\n  * **外方客戶 (37:09)**：進一步說明他們在其他地方買過最高到 **3 inch** 的產品，維持與 **514S** 相同的化學成分與物理性質（same chemistry and physicals），鋼廠會在質保書寫上 `514S modified` 或直接寫 `514S`。當被問到之前是不是也跟中鋼買過 3 inch 時，客戶說：`\"Probably a while back, maybe it's from you as well. We typically don't buy it in Grade E because Grade E's got a lot more alloy, more expensive, and not needed to get the physicals. And we use a lot of 3 inch.\"`（可能一陣子以前也跟你們買過。我們通常不買 Grade E，因為 Grade E 合金含量高很多、更貴，且不需要靠那些合金就能達到物理性質，而且我們 3 吋的用量很大。）\n* **[38:00 - 38:48] 中鋼技術代表 & 外方客戶**：\n  * **中鋼技術代表 (38:00)**：回憶道：`\"I think we have tried to make a 3-inch A514 two or three years ago... I think it's successful in our lab test, but there seems some problem exporting the plate... I forget the reason.\"`\n  * **外方同行人員 (38:33)**：追問 `\"Was the rejection rate quite high? Are you sure that you made it?\"`（是因為不良率太高嗎？你確定你們有做出來嗎？）\n* **[38:48 - 40:00] 雙軌對話（外方討論 TRQ/AD vs. 中鋼內部中文確認）**：\n  * **外方對話（英文，背景討論）**：\n    * 外方同行人員與女業務討論出口受阻原因是不是反傾銷（AD, Anti-Dumping）或配額問題：`\"No, there's no AD... Is it covered by the TRQ? Taiwan is... It's 1,800 tons... Have you used up the quota?\"`（沒有反傾銷…這包含在 TRQ 關稅配額裡面嗎？台灣的配額是 1,800 噸…你們配額用完了嗎？）並提醒注意加拿大全球事務部（Global Affairs Canada / World Trade）規範。\n  * **中鋼內部對話（中文，台下小聲討論）**：\n    * **中鋼技術代表（陳博士）**：「對，我們之前有做過 **76.2 (mm，即 3 inch)** 的…那時候不知道為什麼沒有出去，除鏽完沒出去，不知道為什麼…不知道是在哪裡卡住了。」\n    * **中鋼女業務 A / B**：「不是我們家的吧？真的不是我們家的，沒看到這個單啊…對啊，我們家好像最高訂到 **2.75 (inch)** 而已啊。」\n    * **中鋼技術代表（陳博士）**：「因為之前他講過我們就有做了，不知道在哪裡卡住了。」\n    * **中鋼女業務**（查看文件）：「這是柏璋（音譯，中鋼同仁）寫的…」\n\n---\n\n### 片段 08：`chunk_08.mp3` (40:00 - 45:00)\n**主題：中鋼查獲今年 4 月 76.2mm (3\") A514S 成功出貨紀錄、正式向客戶確認可接單 3\" A514S**\n\n* **[40:00 - 40:30] 中鋼內部對話（中文）**：\n  * **中鋼女業務 (40:02)**：驚訝發現紀錄：「咦，有啊！**76.2 (mm)** 啊！」\n  * **中鋼技術代表（陳博士）(40:04)**：「有啊！（笑）所以以前是什麼狀況？」\n  * **中鋼女業務 (40:09)**：「我再看一下那個。」（此時外方客戶短暫離席去洗手間，會議室進入中場休息）。\n* **[40:30 - 41:45] 中鋼內部討論（中文，陳博士與主管/業務）**：\n  * **中鋼主管 (40:32)**：「陳博士，你剛剛講的那個…外銷都沒有問題？」\n  * **陳博士 (40:37)**：「我們這個嗎？這個都內銷。」（指剛剛投影片上的壓力容器鋼 SA517/SA387）。\n  * **中鋼主管 (40:46)**：「這個是精緻鋼品嗎？」\n  * **陳博士 (40:49)**：「對。」\n  * **中鋼主管 (40:54)**：「Creep-resistant 是什麼？」\n  * **陳博士 (40:56)**：「那是那個焚化爐在用的，**抗潛變**，高溫抗潛變。潛力的潛，就是一個東西你給它一個荷重，即使低於 YS（降伏強度），你時間久了它就跟著變形，只要溫度夠高的話。」\n* **[41:45 - 44:08] 中鋼內部核對 A514S 3\" (75mm/76.2mm) 訂單與規範（中文）**：\n  * **中鋼女業務 A (41:47)**：指著規格資料問：「請問這段是什麼意思？沒有沒有，它只說有這個 PSR，適用厚度是這樣，但是它這裡又寫什麼因為規定最大厚度 **2.5 inch**…」\n  * **陳博士 (41:59)**：「就是我們可能不能出那個名字（指不能直接掛標準 A514S 名稱出超過 2.5\"）。」\n  * **中鋼女業務 A (42:03)**：「喔！你可以做到這裡，但是不可以（直接掛名），是因為 **under standard 只能做到 2.5 (inch)** 這樣嗎？」\n  * **陳博士 (42:11)**：「對對對。」\n  * **中鋼女業務 A (42:13)**：「那他剛剛的問題是問說為什麼不能做到 **3 (inch)**？」\n  * **陳博士 (42:16)**：「他說我們之前有做，啊為什麼最後沒有…應該說為什麼我們最後沒有出貨出去，是因為良率太低還是什麼？我跟他說我不知道卡在哪裡。我們之前試製過 **75 (mm)** 的，對，啊也都 OK，廠內都 OK。」\n  * **中鋼女業務 A & B (42:35 - 43:55)**：現場查詢訂單系統（PSR / 訂單紀錄）：\n    * 「可是我們訂單裡面最多到 2.75 嗎？…對啊，那你可能要查是不是沒成功，難怪他在問。」\n    * 「可是看起來訂單量有 **18 噸** 啊…還是 **63 (噸)**？它是寫範圍，我也不知道到底是訂多少，**A514** 嘛。」\n    * 「這是**今年 4 月份**！」\n    * **陳博士 (43:35)**：「今年 4 月？可是我們之前試是好久以前試的，那他們直接用厚板…」\n    * **中鋼女業務 B (43:42)**：「他還說太貴…沒有啊，你那時候訂了…對，那他試過但他也沒有說什麼…至少要出過嘛，對。」\n* **[44:08 - 45:00] 外方客戶回到座位，雙方正式確認 3\" A514S 可接單生產**：\n  * **外方同行人員 (44:12)**：向中鋼業務與技術代表說明：`\"Because he buys quite a lot of 3 inch... 514 Grade S... And you put it as...\"`\n  * **中鋼女業務 & 陳博士 (44:25)**：確認生產紀錄後一起用英文向客戶澄清：\n    * **中鋼女業務 (44:31)**：`\"Do you remember we have ever booked the A514 for some 3 inch?\"`（你記得我們曾經接過一些 3 吋的 A514 訂單嗎？）\n    * **陳博士 (44:35)**：`\"Yeah, we shipped it out! We did!\"`（對，我們已經出貨了！我們有做出來！）\n    * **外方同行人員 (44:42)**：`\"Well, he'd like to buy more!\"`（太好了，他想要買更多！）\n    * **中鋼女業務 (44:47)**：`\"Then you can place! No problem! But because the standard cannot show...\"`（那你可以下單！沒問題！只是因為標準規範上不能顯示…）\n    * **陳博士 (44:54)**：`\"Yeah, because the standard only covers up to 2.5 (inches)...\"`（對，因為 ASTM 標準規範 A514S 只涵蓋到 2.5 吋，所以在簡報標準表上才只寫到 65mm / 2.5 吋，但實際上 3 吋是可以生產供貨的。）\n\n---\n\n### 片段 09：`chunk_09.mp3` (45:00 - 50:00)\n**主題：A514S Modified 命名、厚度極限推升至 90mm（270mm 扁鋼胚與 3:1 壓延比）、S690QL/S890QL 簡報**\n\n* **[45:00 - 45:26] A514S Modified 規格命名與超厚詢問**\n  * **外籍代理商 & CSC 業務代表（女）**：延續前段討論 A514 規格命名與厚度。代理商指出，有些供應商直接稱之為 `514S`，而中鋼稱之為 `514S Modified`（業務補充：`Modified M, plus M`），代理商表示只要符合機械性質（meets the properties），稱為 Modified 完全沒問題（It's okay）。\n  * **外籍代理商**：詢問 `\"Can you go thicker than 3 inch?\"`（你們能做到比 3 吋更厚嗎？）\n  * **CSC 業務代表（女）**：半開玩笑回答 `\"I cannot tell you lah!\"`\n* **[45:26 - 46:35] 探討 A514 厚度上限需求**\n  * **外籍代理商**：只要鋼材符合性質（meets the properties），就算經過成分微調（modified），若客戶在化學成分（chemistry）上同意，你們合理能供應到多厚？（`\"I mean off the record... Because we discussed this many times for the last 8 years.\"`）\n  * **外籍代理商**：解釋市場需求差異——對於耐磨鋼板（wear resistant，如 `PA400`、`450`、`500`），客戶買的是薄板（thinner）；但對於 `514`（A514），客戶買的是厚板（thick），因為大量應用於需要高強度的結構件、拖車與卡車零件（high strength structure, trailer parts, truck parts）。\n* **[46:35 - 47:30] 90mm 厚度極限與 270mm 扁鋼胚（3:1 壓延比）**\n  * **CSC 技術代表（Delphic）**：`\"I think we can push it to 90 millimeter.\"`（我想我們可以推到 90mm。）解釋原因在於鋼廠扁鋼胚（slab）厚度為 **270mm**（the slab in our mill is 270）。\n  * **外籍代理商 & 客戶**：詢問是否有 **3:1 壓延比（3 to 1 reduction ratio）** 的要求？（`\"Is that a 3 to 1? For 514 also? Because 516... does it also apply to 514?\"`）\n  * **CSC 技術代表**：表示 3:1 是為了內部品質（internal quality），至於 A514 規範本身是否有強制規定 3:1，需再查核規範。\n* **[47:30 - 49:10] 雙軌討論（外方確認無強制 3:1 vs. 中鋼內部中文討論 75mm/80mm 實績）**\n  * **外籍客戶（Terra Nova）**：`\"There's not a 3 to 1 reduction ratio... No, I'm sure there's not.\"`\n  * **CSC 內部團隊討論（中文）**：\n    * 討論先前出貨紀錄：「出過兩塊⋯⋯三十六噸的樣子？」「十幾噸而已。」「是因為碰到出口限制（TRQ）嗎？」「對，有可能，因為後來⋯⋯但現在又可以了，現在就沒有在管額度了。」「但也不知道那時候用得狀況怎麼樣，他們應該沒有反應⋯⋯沒反應就是好事。」\n    * 討論技術限制（75mm ~ 90mm）：技術人員提到「這是 TQ 板（調質板）的上限了，就是你合金加這些⋯⋯但其實它冷卻（淬火冷卻能力）對於加上去做的效果⋯⋯但是我們說超過（某厚度）就一定會掉（硬度/強度無法淬透），這都沒提這樣子，都 OK。」\n    * 討論過去實際做過的厚度：「那口就越做越寬了⋯⋯之前最後做到多少？75（mm）？」「**80（mm）啊，有幫一個客人做。**」\n* **[49:10 - 50:00] 進入 S690QL 與 S890QL 簡報**\n  * **CSC 技術代表（Delphic）**：`\"Okay, let's move on. The final one is the S690QL and S890QL structural grades. This number means the yield strength level...\"`\n\n---\n\n### 片段 10：`chunk_10.mp3` (50:00 - 55:00)\n**主題：客戶主力採購厚度（1\" 與 1.25\"）、PA450 (6mm) 對標 Hardox 450、客戶擴廠兩倍大計畫與硬度鑽孔斷刀客訴**\n\n* **[50:00 - 51:43] 檢視生產實績數據與近期採購動態**\n  * **外籍客戶（Terra Nova）**：看著簡報數據唸出 `\"806... 730... Charpy over 30...\"`，表示：`\"We've bought some of that from you, but only in 1 inch (25mm).\"`\n  * **外籍客戶**：透露近期採購動態：`\"We just recently placed an order with Algoma and with a Chinese mill from 3/4\" up to 2\"... Algoma will only make inch and a half (1.5\"). 1 inch (25mm) is the biggest user, inch and a quarter (1.25\") is also...\"`\n  * **CSC 技術代表（Delphic）**：發現簡報圖表用了舊資料未更新：`\"Oh, I think I made a mistake here, because we can produce from 1 inch to 2 inch.\"`\n  * **外籍客戶**：說明 **2 inch** 是他們該項目採購上限，也買少量 **20mm (3/4\")**，但 **1\" (1 inch) 與 1-1/4\" (1.25 inch)** 是用量最大的兩個主力規格（the two mains we use）。因近期已重複下單（double purchased），庫存可撐到 **6 月或 7 月（good till June or July）**。\n* **[51:43 - 52:15] 514S 用量分佈**\n  * **外籍客戶**：看著簡報另一行：`\"514S is 6.35mm to 90mm... to 3 inch (76.2mm). Yeah, that's good. 85% of what we use is in that thickness range up to 3 inch.\"`（我們 85% 的用量都在 3 吋以下的這個厚度範圍內。）\n* **[52:15 - 54:12] 薄規格 PA450 (6mm) 開發與對標 Hardox 450**\n  * **CSC 技術代表（Delphic）**：介紹薄規格 **PA450 wear plate of thin gauge**：為填補國內市場在 `PA400` 與 `PA500` 之間的空缺，並將耐磨板往更薄推進（多年前只能做 $\\ge 10$mm，現已做到 **6mm**，更薄規格正克服平坦度問題）。展示盤對盤磨耗試驗（ball-on-disk wear loss test），顯示中鋼 `PA450` 磨耗損失低於競爭對手 **Hardox 450**。\n  * **外籍客戶**：詢問競爭對手是誰，得知是 **Hardox 450** 後驚訝確認 `\"Really? So yours is better than Hardox? From a wear perspective.\"` 隨後分析 Hardox 擁有**極低的碳當量（very low carbon equivalent, Ceq）**，成形性（formability）與銲接性（weldability）極佳；而中鋼 450 的 Ceq max 列為 **0.6**。\n* **[54:12 - 55:00] Terra Nova 購地擴廠計畫（2 倍大）與終端客戶對硬度的敏感度**\n  * **外籍客戶（Terra Nova）**：\n    * 目前廠內僅備 **400** 與 **500**，不備 450。\n    * **擴廠計畫**：正著手購地興建新廠（purchasing land to build a new plant），新倉庫與廠房面積將**至少是現在的兩倍大（at least twice as big a warehouse, twice as big a property）**，因為現有廠房過去 15–20 年來一直太小，沒空間同時存放三種級別（400/450/500）。\n    * **硬度與鑽孔斷刀索賠**：有些大客戶明確不要 450。他曾出貨一批硬度 **425 HBW** 的鋼板，結果客戶鑽孔時弄斷大量刀具（breaking a lot of tooling），遭客戶扣款索賠（got a backcharge for drilling）。\n    * **對中鋼 AR400F 的好評**：客戶最喜歡的硬度區間落在 **395 到 410、420 HBW** 左右。**從中鋼收到的貨表現很好（stuff we've received from you has been good），硬度都穩定落在 400 左右**；一旦硬度達到 **430 HBW**，客戶就會開始抱怨（whining）。\n\n---\n\n### 片段 11：`chunk_11.mp3` (55:00 - 60:00)\n**主題：北美耐磨板市場競品動態（Hardox 停產 400、Russel、JFE）、PA450 薄脫碳層配方與 6mm R15 (2.5t) 折彎測試**\n\n* **[55:00 - 56:15] 北美耐磨板市場競品動態**\n  * **外籍客戶（Terra Nova）**：\n    * 只做耐磨襯條（wear strips）的客戶喜歡更硬材質，他們就直接提供 **500** 級別。\n    * **競爭對手策略**：**Hardox** 已全面轉向 **450**（不再庫存 400，只做 **450、500、550、600**）；北美大盤商 **Russel Metals** 三個等級（400/450/500）都備貨（客戶認為簡直瘋了 madness）；**Samuel**（關閉前）及 **Structural Wear** 則從 400 改為只備 450。\n    * **日本 JFE**：同時提供 **400、450 與 500**，且 400 與 450 價差極小；但因長期問題（long-term issues，如交期/供應），上一次跟 JFE 下單已是**兩年前（60 噸）**的事。\n* **[56:15 - 60:00] PA450 薄脫碳層「神秘配方」與 6mm 折彎半徑 R15 (2.5t)**\n  * **CSC 技術代表（Delphic）**：解釋中鋼 `PA450` 耐磨性優於 Hardox 450 的原因在於**較薄的表面脫碳層（thin decarburized layer）**，源自合金設計中的「神秘配方（magic recipe to the alloy design）」。\n  * **折彎測試**：展示 **6mm** 的 `PA450` 可使用 **R15（內半徑 15mm，即 $15/6 = \\mathbf{2.5t}$）** 進行折彎成形；且客戶購買的 **AR400F 折彎性能又比 PA450 再好一點點**。\n  * **外籍客戶評價**：通常針對 400 級耐磨板，他們建議客戶採用 **4t**（6mm 板需 R24mm）；即便是結構鋼 `514`（A514），也建議至少 **2t 到 3t**。因此能做到 **2.5t（R15）** 非常優秀（`\"That's pretty good\"`）。\n  * **CSC 技術代表**：說明此薄板折彎測試主要鎖定**運輸車輛市場（transportation market）**，且高成形性與薄脫碳層是 `PA450` 從產品設計初期就設定的目標性質。\n\n---\n\n### 片段 12：`chunk_12.mp3` (01:00:00 - 01:05:00)\n**主題：脫碳層數據（0.1–0.2mm）、雷射切割平坦度（<2mm）、客戶加工應用回饋（拖車與挖斗配件）與美國關稅災難**\n\n* **[01:00:00 - 01:00:58] 脫碳層（Decarburized Layer）測試與雷射切割平坦度（Laser Cutting & Flatness）**\n  * **中鋼技術代表**：一般脫碳層厚度約為 **0.4 mm**，但在中鋼產品中僅約 **0.1 至 0.2 mm**（因表面形成氧化阻障層 oxidation barrier），重複測試 **3 次**確認。使用雷射切割後平坦度 **小於 2 mm（less than 2 mm）**，且無熱變形（no thermal distortions）。\n* **[01:00:58 - 01:02:18] 討論議題（Topics for Discussion）與厚度尺寸擴展**\n  * **中鋼技術代表**：提出三項討論議題：(1) 中鋼 **AR400F** 與 **A514 Grade S** 在客戶領域的具體應用；(2) 加工或使用問題；(3) 未來需要的鋼種或尺寸。並展示中鋼正將 AR400F 與 A514 往更薄與更厚擴展（包含已試做出 **3 inch A514**）。\n* **[01:02:18 - 01:03:45] Terra Nova 產品應用回饋：拖車製造（Trailers）、挖斗配件（Attachments）與尺寸需求**\n  * **Terra Nova 代表（Doug）**：\n    * 裁切零件供應最大的兩個產業是：**拖車製造商（trailer manufacturers）** 以及 **重機具配件（attachments，如挖斗 buckets、夾具 thumbs 等）**。\n    * 配件類兩者（AR400 與 A514）都會使用；而 **拖車（trailers）則全部使用 A514（just 514）**。\n    * **拖車用 A514 厚度**：主要集中在 **6 mm 到 12.7 mm（即 1/4\" 到 1/2\"）**，用於裝載貨櫃的底盤車架（chassis just for mounting containers），客戶一次做約 10 台拖車，全部用 **1/4\"、3/8\"、1/2\"**，外加少量 **5/16\"（8 mm）**。\n    * **3/16\" 規格與 SSAB 捲板（Strip Mill Coil）**：也用一點 **3/16\"**，甚至向 **SSAB** 買過 **Strenx**（strip mill 產品，**60 inch 寬**的鋼捲切板），因為從鋼捲切下來比中厚板廠調質板便宜。\n    * **礦業溜槽（Mining chutes）與 BC 省管線計畫**：也做礦業溜槽；隨著穿越 BC 省的管線工程（pipeline coming through BC）推進，本地對拖車與重機具設備需求將增加。\n* **[01:03:45 - 01:05:00] 美國關稅（US Tariffs）對客戶與跨境出貨的衝擊**\n  * **Terra Nova 代表**：\n    * 一家幾年前改向 Russel Metals 購買的舊客戶有 **85% 拖車銷往美國**，目前因關稅與繁瑣申報程序而陷入困境。\n    * **Terra Nova 停止銷美與 $9,000 美元關稅慘痛案例**：Terra Nova 過去 6 個月本身生意很好，但現在**完全不做任何銷往美國的出貨（We don't do any shipping into the US now）**。去年僅 **2 筆小訂單**銷美，兩筆都是災難（disaster），其中一筆被課了 **$9,000 美元額外關稅（extra tariff）**！因為試圖把關稅加進售價，結果美國海關又在含稅總價上再課一次關稅。現在一律不做完稅交貨（DDP），如銷往阿拉斯加（Alaska）的貨由客戶自己運到西雅圖（Seattle）轉駁船（barge）。\n    * 以前經過成型（formed）、鑽孔與皿頭孔加工（drilling and countersinking）後會被視為「完全加拿大製造（made in Canada completely）」，但現在美國海關會嚴審原產地鋼材成分（looking for content）。\n\n---\n\n### 片段 13：`chunk_13.mp3` (01:05:00 - 01:10:00)\n**主題：JFE T21 遭課 50% 關稅案例、加拿大管線計畫、中鋼品質完勝 Algoma、AR400F 各厚度需求分析**\n\n* **[01:05:00 - 01:06:10] JFE T21 產品被課徵 50% 關稅案例與美國設廠討論**\n  * **Terra Nova 代表**：那批銷美貨物使用的是 **JFE** 專屬產品 **T21**，結果被直接課了 **50% 關稅**。那批鋼材只有 **3,300 磅（3,300 lbs of steel）**，卻被課了 **$9,800 美元（$9,800 USD）** 的關稅！因為發票金額包含了運費（freight）、機械加工（machining）、鑽孔（drilling），美國海關在總金額上再課 50% 關稅，等於關稅又被墊高了 25%。\n  * 提到有個客戶跨過邊境到美國花了天價買 **11 英畝（11 acres）** 的地跟大廠房設廠，結果發現困難重重；Terra Nova 表示在加拿大就有足夠客戶，不需要賣到美國。\n* **[01:06:10 - 01:07:22] 加拿大油氣管線計畫（Trans Mountain / Pacific Rim Pipeline）對重機具鋼材的帶動**\n  * **貿易商代表 & Terra Nova 代表**：討論加拿大管線計畫（聯邦政府與 Alberta 省推動的第二條管線/擴建案，預計約 **2028 年** 投入服務 in-service，屬 fast-track 快速通道計畫）。\n  * **Terra Nova 代表**：任何與地面開挖接觸（ground-engaging）的設備都是大好機會——包括 **拖車（trailers）、重機具設備（equipment）、土方工程（earthworks）、鋪路鋼板（road plates）** 等。\n* **[01:07:22 - 01:09:50] 產品品質評價（CSC vs. Algoma）與關鍵厚度需求（3/16\", 1/4\"~2\", 1-1/4\", 3\"）**\n  * **Terra Nova 代表**：\n    * **平坦度與品質極佳**：`\"Not with your product... Your product has been nice and flat, that's been good. It's better quality than we get from Algoma for sure.\"`（你們的產品完全沒問題，非常平坦漂亮，品質絕對比我們從 Algoma 買到的好太多了。）\n    * **各厚度規格需求分析**：\n      1. **3/16\"**：很希望能買到 **3/16\"**，目前這個厚度**只有中國（China）**在供應。\n      2. **A514 擴展至 3\"**：把 **A514** 厚度拉高到 **3 inch** 是件好事。\n      3. **AR400F 的 1/4\" 至 2\"（特別是 2\" 與 3\"）**：**從 1/4 inch 到 2 inch 佔了 AR400 市場的 90%（90% of the 400 market）**。其中 **2 inch 用量非常大（2-inch we use a lot, one of our biggest usages）**；此外若 **AR400 也能拉高到 3 inch** 會很棒。\n      4. **1-1/4 inch (31.75 mm) 過去缺貨之謎**：幾年前不知道為什麼，**1-1/4 inch (31.75 mm)** 在 AR400 與 A514 都常缺貨。中鋼代表們以中文低聲確認廠內生產 31.75 mm 完全沒問題；客戶表示若現在沒問題就好。\n* **[01:09:50 - 01:10:00] 噴砂與底漆處理（Blasted and Primed）提問**\n  * **貿易商代表**：詢問購買鋼板時是否通常要求噴砂與塗底漆（blasted and primed）？\n\n---\n\n### 片段 14：`chunk_14.mp3` (01:10:00 - 01:15:00)\n**主題：噴砂底漆需求、Algoma $1.30 高價、鏽皮與表面夾層瑕疵、起重機（SSAB）與橋樑結構市場（350AT / Rapid-Span）**\n\n* **[01:10:00 - 01:11:25] 噴砂與底漆（Blasted & Primed）需求與供應來源比較**\n  * **Terra Nova 代表**：通常會買噴砂加底漆，但**並不是絕對必要的（not vital）**。有一家最大客戶要求買噴砂底漆鋼板，主要是從**中國（China）**購買 **30 呎長（30-foot plates）** 的噴砂底漆鋼板。\n  * **貿易商代表**：中鋼廠內沒有內部噴砂設備（no possibility for internal shot blasting），委外處理非常昂貴。\n  * **Terra Nova 代表**：沒關係（It's not a big deal），可以有一部分庫存不帶底漆（甚至有少數客戶要求不要底漆），目前在 **Richmond（列治文廠區）** 庫存多數有噴砂底漆。順帶一提，**Algoma** 的 **514（100Q）** 連噴砂底漆都不做，且價格高達 **$1.30/lb**（`\"they're up to 1.30\"`），現在幾乎沒跟他們買了（buying next to nothing）。\n* **[01:11:25 - 01:12:48] A516 / 100Q 鏽皮（Scale）與表面夾層瑕疵（Surface Laminations）經驗分享**\n  * **貿易商代表 & Terra Nova 代表**：A516 有正常化處理氧化皮（normalizing scale），若放室外剝落不均勻會有表面高低紋理。過去曾幫客戶將鋼板滾圓（rolled it），結果鏽皮剝落後發現軋入氧化皮（rolled-in scale）或底面表面夾層（surface laminations），導致整批被退貨賠了幾千塊（a few grand）。\n* **[01:12:48 - 01:14:55] 吊車起重機市場（Crane Work）與橋樑結構市場（Structural / Bridges - 350AT & Rapid-Span）**\n  * **Terra Nova 代表（關於 Crane Work 起重機市場）**：不做任何起重機工程。該市場基本上被 **SSAB（Weldox / Strenx / Hardox）** 壟斷（owns that market），因為他們有更薄的 **3 mm 與 4 mm** 規格，且平坦度與公差極佳，適合做伸縮吊臂（telescopic booms）。\n  * **Terra Nova 代表（關於橋樑結構市場）**：加拿大沒有工程師在建築或橋樑結構設計中使用 A514（日本會用來造橋，但加拿大沒有）。\n  * **關於 350AT 耐候橋樑鋼與 Rapid-Span 案例**：\n    * **Terra Nova 代表**：不做 **350AT**，那主要是 **Varsteel** 在做；當地約三家廠商在用，最大的是 **Rapid-Span**（直接向鋼廠採購）。\n    * **貿易商代表**：補充過去曾透過 **Samuel（Samuel, Son & Co.，當時 Phil 在職）** 賣過 **300 到 400 噸** 給 **Rapid-Span** 做行人天橋（pedestrian bridges），結果貨已運到、信用狀（LC）已開，他們卻因專案範圍變更突然拒收，非常難應付。\n\n---\n\n### 片段 15：`chunk_15.mp3` (01:15:00 - 01:20:00)\n**主題：Terra Nova 全年 20,000 噸採購結構明細、A516-70 轉單韓國原因、台/德 AD「抗酸用途（Sour Service）」豁免與海關稽核風險**\n\n* **[01:15:00 - 01:16:08] 閒聊：美加西北地區橋樑工程商與 A588 供應**\n  * **Doug (Terra Nova)**：提到 **Warsteel** 接手了溫哥華島（on the Island）原本由 **Surespan** 做的業務；另有 **Rapid-Span**、Prince George 的幾家廠商，以及 **Majestic Bridge**。Warsteel 也與 **Seaport** 合作，Seaport 在西雅圖（Seattle）備有 **A588** 庫存。\n* **[01:16:08 - 01:17:25] Terra Nova 年度各鋼種採購量（全年 20,000 噸）與空間限制**\n  * **CSC 代表**：詢問在 **AR400F** 與 **A514**（及整體）每個月大約有多少消耗量？\n  * **Doug**：澄清為**每年（Per year）**數據，**全年總採購量為 20,000 噸（Total 20,000 per year）**：\n    * **44W**：約 **8,000 到 9,000 噸 / 年**\n    * **A514**：約 **4,000 噸 / 年**\n    * **AR400**：約 **1,200 到 1,400 噸 / 年**\n  * **Doug**：場地空間有限，但新廠房/倉庫擴建計畫距離完工可能還要 **4 年（four years away from having a building）**。\n* **[01:17:25 - 01:18:18] 進口比例（95%）與過往向中鋼採購 1,000 噸/月的歷史**\n  * **Doug**：目前 **95% 是進口（95% import）**。幾年前曾向中鋼承諾每個月採購 **1,000 噸（1,000 tons a month）**，當時採購品項包含：**44W / A36、A572-50 Cat 4、A514、AR400、A516-70**。但後來加拿大政府設定的 **A516-70 Normal values（正常價值）** 發生劇烈變化，之後就轉向**韓國（Korea）**購買 A516-70。\n* **[01:18:18 - 01:20:00] A516-70 反傾銷豁免條件比較（韓國 vs. 台灣/德國）與海關稽核風險**\n  * **貿易商**：解釋韓國沒有 Normal value——**現代（Hyundai）**當時無反傾銷稅（no AD）；而 **東國（Dongkuk）** 的 **A516** 針對「正常化處理且真空脫氣（Normalized and Vacuum Degassed）」有**豁免條款（Exclusion）**。\n  * **貿易商**：但在**台灣與德國（Taiwan and German AD）**的反傾銷案中，這項豁免（Exclusion）除 Normalized、Vacuum Degassed 及限制磷與硫（Phosphorus & Sulfur）化學成分外，還必須聲明**「專門用於抗酸環境（used exclusively in sour service）」**（雖不強制做 HIC 測試，但須聲明用途）。\n  * **CSC 代表**：補充中鋼 A516-70 的 Normal value 非常高，大約在 **1,300** 左右。\n  * **貿易商 & Doug**：若以 Sour Service 名義下單引進再當作一般市場規格（regular market）賣掉（如部分廠商從德國 **Dillinger** 引進的作法），屬於**規避反傾銷稅（Circumvention）**，若遇到**海關稽核（Customs audit）**順著書面紀錄追查，將面臨被重罰（getting whacked on it）的風險。\n\n---\n\n### 片段 16：`chunk_16.mp3` (01:20:00 - 01:25:00)\n**主題：韓國東國製鋼 vs. 中鋼 A516-70 價格與海運費完整拆解對比、台加無 FTA 與非 FTA 配額連砍兩次剩 20%**\n\n* **[01:20:00 - 01:21:00] Sour Service 海關稽核罰則與客戶詢單量**\n  * **貿易商代表（英國口音）**：若遭加拿大海關（CBSA）稽核認定不符 Sour Service，罰款/補稅金額為 **Normal Value（正常價值）與 Export Price（出口價格）之間的差額**。\n  * **外方代表（德國口音）**：只要確保僅賣給在 **PO（採購單）** 上明確註明 `\"needs to fulfill sour service requirements\"` 的客戶即可。\n  * **Doug (Terra Nova)**：我們一年大概只收到 **3 次（three inquiries a year）** 這類詢問。\n* **[01:21:00 - 01:22:36] 韓國（東國製鋼 Dongkuk）與中鋼（CSC）A516-70 / 44W 價格與加價（Extras）、海運費完整拆解對比**\n  * **貿易商代表（英國口音）& 中鋼代表 (CSC)**：\n    * **韓國東國製鋼（Dongkuk）**：近期剛買的價格為 **$1,050 USD per metric ton, FOB Korea**。加上韓國至加拿大海運費 **$110 - $120 USD/MT**。\n    * **中鋼（CSC）價格拆解**：\n      * **44W 鋼板基價（Base price）**：**$985 USD/MT FOB Taiwan**（貿易商原以為是 $910，中鋼代表確認為 **$985**）。\n      * **A516 Gr.70 三項額外加價（Three extras for 516）**：\n        1. **Grade extra（鋼種加價）**：**$60**\n        2. **Normalizing extra（正火處理加價）**：**$30**\n        3. **Charpy testing extra（夏比衝擊試驗加價，針對 -45°C / -45°F）**：**$28**\n      * **加價合計**：$60 + $30 + $28 = **$118**（約 **$120 USD/MT**）。\n      * **中鋼 A516 FOB 總價**：$985 + $118 = **$1,103 USD/MT FOB**（已超過 $1,100 FOB，比韓國 $1,050 FOB 貴上逾 $50/MT）。\n      * **台灣鋼板海運費（Ocean freight）**：**$120 - $125 USD/MT**（比韓國貴約 $10/MT；中鋼內部女性成員低聲以中文補充：「鋼板的比較貴」）。\n* **[01:22:36 - 01:23:55] A516 採購佔比與歷史採購回顧（2020 COVID 低谷 vs. 2022 高峰）**\n  * **Doug (Terra Nova)**：A516 只佔我們庫存約 **10%**，每年約 **2,000 噸（2,000 tons a year）**。幾年前買齊所有產品時很容易達到每月 **1,000 噸**；**2020 年 6 月（COVID 期間）** 是十年來最差的一個月，但 **2022 年** 則是表現極佳的一年（tremendous year）。\n* **[01:23:55 - 01:25:00] 台加無 FTA 之政治因素、加拿大 TRQ 兩度砍減至 20% 與美加談判連動**\n  * **Doug & 貿易商代表**：因為中國政治因素，加拿大與台灣只有**關務協定（Customs Agreement）**，沒有**自由貿易協定（Free Trade Agreement, FTA）**；而加拿大與**馬來西亞（Malaysia）**、**韓國（Korea）**則簽有 FTA。\n  * **貿易商代表**：自從 **2025 年中（middle of 2025）** 以 **2024 年進口量（2024 volumes）** 為基準實施 TRQ 後，**非 FTA 國家的關稅配額（non-free trade TRQs）已被連砍兩次（cut twice），目前僅剩原始基準量的 20%（now 20% of the original volume）**。這 **100% 與加拿大對美國政府的談判掛鉤（100% linked to the discussions with the US government）**。\n\n---\n\n### 片段 17：`chunk_17a.mp3` & `chunk_17b.mp3` (01:25:00 - 01:30:00)\n**主題：預測加拿大取消 TRQ 全面課 50% 關稅、中/美厚板價差與品質對比、Nucor 40 億美元新廠與 12\" A514、美國缺料兩大驅動力（資料中心與邊境牆 1 億噸鋼材）**\n\n* **[01:25:00 - 01:25:55] 預測美國期中選舉後加拿大取消 TRQ 改課 50% 關稅**\n  * **貿易商代表 A（英國口音）**：在美國期中選舉（midterm elections in the US）之前，加拿大政府不會採取任何動作。但他個人認為（personal opinion），最終很可能會看到加拿大政府**完全取消非自由貿易國家的關稅配額（cancel the non-free trade TRQ completely），直接全面適用 50% 關稅（just apply 50% tariff）**；甚至**也有可能連自由貿易協定國家的配額（free trade TRQs）也一併取消**，或者就算不取消，也**肯定會進一步大幅削減（further reduced）**。\n* **[01:25:55 - 01:27:30] 中國 vs. 美國賓州老廠厚板價格與品質對比、加拿大加工商輸美套利與美國保護主義**\n  * **Doug (Terra Nova)**：\n    * 加拿大這些關稅的目的，是為了向美國交代、保護加拿大中部（Central Canada，如安大略省）與美國連動的製造業工作機會。\n    * **中、美厚板價格與品質強烈對比**：過去從**中國（China）**進口的厚板（heavy plate），運抵溫哥華或多倫多（Toronto）的到岸價僅約 **每磅 60 多美分加幣（mid-60s cents a pound Canadian）**；而同樣的厚板若從美國賓州 **Coatesville, Pennsylvania**（120 年歷史老廠）採購，價格高達 **$1.20/lb**（幾乎是兩倍價格），而且**中國鋼板的品質遠比美國那座 120 年老廠好太多了（Chinese plate is far superior, that old mill is 120 years old and expensive）**。\n    * **加拿大大型同業輸美套利**：因為美國過度保護本土鋼鐵業，美國鋼廠賺大錢卻不需與任何人競爭，讓加拿大業者過去享有極大優勢。例如安大略省的 **Carver Steel（規模約為 Terra Nova 的 5~6 倍大，年採購量達 100,000 噸，多數為厚板 heavy plate）**，買進低價進口厚板，裁切零件（cutting parts）後直接銷往美國中西部（Midwest），享有巨大優勢。Doug 坦言：`\"From that perspective, Trump was right, which I don't say very often.\"`（從這個角度來看，川普說的其實沒錯——我們確實享有巨大優勢，但那也是因為美國在 2018 年 232 條款 Section 232 時把自己的市場價格哄抬得太高了。）\n  * **貿易商代表 B（德國口音）& Doug**：\n    * **貿易商 B**：美國的保護主義從 **2001 年的 201 條款（Section 201 in 2001）** 就開始了，長達數十年的保護主義正是美國鋼鐵業如此老舊落後（so outdated）的原因，因為沒人覺得需要投資與現代化。\n    * **Doug**：唯一的例外是 **Nucor（紐柯鋼鐵）**，因為賺了太多錢，花了 **40 億美元（$4 billion）** 蓋了一座新鋼板廠（位於肯塔基州 Kentucky，已運轉約 3~4 年）。\n* **[01:27:30 - 01:29:05] Nucor 肯塔基州新廠現況、德州 12\" 厚 A514 奇聞與 SSAB 配額控管（Allocation）**\n  * **Doug & 貿易商代表**：Nucor 肯塔基州新廠雖已運轉 3~4 年，但仍未順利生產出原先宣稱的規格（號稱可做 **14 inch 厚** 的鋼板）。\n  * **Doug**：分享今天早上剛收到來自美國德州 **American Heavy Plate** 的庫存清單，上面竟然有一塊 **12 吋厚（12-inch）的 A514（514）** 鋼板（尺寸約 **60\" x 96\"**，重達 **21,000 磅 / 21,000-pound plate**），另有 A36、4140 等怪異規格，並標註「在美國熔煉與製造（made and melted in the US）」。Doug 覺得很新奇，因為在此之前他從未見過超過 **9 吋厚** 的 A514（Terra Nova 自己庫存最厚備有 **8 吋 / 8-inch**），他想不出美國除了 Nucor 新廠外還有誰能做（貿易商開玩笑說搞不好那只是一塊扁鋼胚 slab 隨便軋了一下，或是試軋失敗留在德州地板上的試驗品）。\n  * **Doug**：一兩週前向美國 **SSAB** 發了詢價單，結果對方直接回覆「目前完全沒有任何產能可供應（nothing's available at this time）」，美國所有鋼廠目前都處於**配額控管狀態（on allocation with the US mills）**。\n  * *(台下中鋼女性代表們低聲用中文討論剛剛韓國與中鋼 A516 的價差：「1,050… 我們現在因為他們就漲了… 對啊，那我們原本 985 加 120 就 1,105 了… 鋼板海運費比較貴…」)*\n* **[01:29:05 - 01:30:00] 美國鋼鐵市場極度緊俏的兩大驅動力：資料中心（Data Centers）與美墨邊境牆（Border Wall, 1 億噸鋼材）**\n  * **貿易商代表 B（德國口音）**：分享過去兩週剛參加兩場美國大型會議——上週四、五的 **NASPD（National Association of Steel Pipe Distributors，全美鋼管經銷商協會）**，以及前一週的 **Argus 預測高峰會（Forecast Summit）**。所有會議的共識完全一致：**美國鋼鐵市場極度緊俏，甚至長期都供不應求**。背後有**兩大主要驅動力（two major drivers）**：\n    1. **第一是資料中心（Number one: Data Centers）**\n    2. **第二是「那座愚蠢的美墨邊境牆（Number two: that stupid border wall）」**——據稱總共需要高達 **1 億噸鋼材（100 million tons of steel）**！\n  * **貿易商代表 A**：驚訝問 `\"Are they still talking about that?\"`\n  * **貿易商代表 B**：`\"They ordered it! Yeah, it's for years, hundred million tons, that's the entire steel consumption of the US for an entire year!\"`（他們已經下單了！那是好幾年的量，但 1 億噸相當於全美國整整一年的鋼鐵總消耗量！）\n  * **Doug**：幽默調侃：`\"But it's being paid for by the Mexicans!\"`（不過反正墨西哥會付錢嘛！）引發全場哄堂大笑。\n\n---\n\n### 片段 18：`chunk_18.mp3` (01:30:00 - 01:35:00)\n**主題：紐約 Skanska 營造案與打樁管短缺、進口來源國盤點、澳洲 BlueScope 200 噸 44W 與 5,400 噸保稅清關事件、各國 Normal Value 盤點**\n\n* **[01:30:00 - 01:32:05] 美國基礎建設與 Skanska 鋼材短缺案例（貿易商 B & Doug）**\n  * **貿易商 B（德國口音）**：提到紐約大型營造公司 **Skanska**（全美最大的打樁與營造公司之一，負責重建半個紐約 `\"rebuilding half of New York\"`；Doug 開玩笑問是不是因為捐款給川普宴會廳 `\"making donations to the ballroom?\"`）。\n  * **貿易商 B**：Skanska 營收成長了 **300%（300% revenue growth）**，且在手訂單（backlog）已經排滿未來 **3 年**（公司歷史上從未見過）。他們聲稱現在根本找不到**打樁管（piling pipe）**，甚至連 **6x4 英吋空心結構型鋼（6x4 inch structurals / hollow structurals）** 都買不到。\n* **[01:32:05 - 01:32:45] 進口來源國家盤點（CSC 代表、Doug、貿易商 A）**\n  * **CSC 女代表**提醒時間：`\"We need to get going in like 10 minutes.\"`\n  * **CSC 男代表**詢問 Doug 目前除了中國與韓國外，還從哪些國家進口鋼板？\n  * **Doug**：**中國（China）、韓國（Korea）、台灣（Taiwan）、馬來西亞（Malaysia）**，以及一點點**澳洲（Australia）**（貿易商 **Worth** 透過 **BlueScope** 引進，BlueScope 偶爾會有現貨噸數釋出）。\n* **[01:32:45 - 01:33:50] 200 噸 44W 交易與 5,000 噸（5,400 噸）配額清關烏龍（Doug & 貿易商 A）**\n  * **Doug**：上週才剛買了大約 **200 噸（200 tons）** 來自超額庫存清單（excess list）的 **44W** 鋼板。原本被告知是一批 1,000 噸的船運，結果發現是 5,000 噸的貨。\n  * **貿易商 A**：解釋那是由 **3 艘船（three shipments，其中一艘為 KSL）** 組成的，配額監控網站上跳出的 **5,400 噸（5,400 tons）** 其實是 Worth 先前放在**保稅倉（sitting in bond）**裡的 3 批不同船運**跨兩個配額週期（cleared over two quota periods）**一起清關的結果。\n* **[01:33:50 - 01:35:00] 澳洲 BlueScope 狀況、反傾銷（AD）與各國正常價值（Normal Value）**\n  * **貿易商 A**：以前在 **BlueScope（前身為 BHP）** 工作多年，澳洲國內市場目前很忙，且澳洲對**韓國**課徵了較高的反傾銷稅（中鋼在澳洲稅率則很低）。\n  * **CSC 男代表 & 貿易商 A**（盤點加拿大市場的 Normal Value 與 AD）：\n    * 目前在加拿大有 **Normal Value（正常價值）** 的只有 **CSC（中鋼）** 和 **德國（Germany，即 Dillinger）**。\n    * **韓國（Korea）** 沒有：**Dongkuk（東國製鋼）** 沒有 Normal Value；**Hyundai（現代製鐵）** 現已被課反傾銷稅（now have AD）；**POSCO（浦項鋼鐵）** 也沒有 Normal Value。\n\n---\n\n### 片段 19：`chunk_19.mp3` (01:35:00 - 01:40:00)\n**主題：馬來西亞濟鋼（Jigang）、中國 50% 關稅與 AD 界線、盛讚中鋼品質與單頁式 MTC、婉拒本次 500 噸報價（$1.14/lb）與在途訂單 $2,700 萬部位管控**\n\n* **[01:35:00 - 01:36:25] 馬來西亞「濟鋼（Jigang）」、中國 50% 關稅與反傾銷產品界線**\n  * **貿易商 A & Doug**：馬來西亞那家鋼廠叫 **Jigang（濟鋼馬來西亞廠）**。\n  * **Doug & 貿易商 A**：說明中國鋼板進口規定：\n    * **關稅（Tariff）**：兩年半至三年前加拿大先對中國課 **25% 關稅**，後加碼至 **50%（topped it up to 50%）**。\n    * **反傾銷（AD）**：中國的 AD 涵蓋 **1/4\" 到 4\"（含 4\"）** 的碳鋼板（**44W、A36、A572**），這 30 年來完全不能從中國進口。\n    * **從中國進口的品項（全為合金調質板與超厚板）**：Terra Nova 付 50% 關稅從中國進口 **A514（514）、AR400、AR500**，以及 **厚度超過 3 英吋（或 3.5 英吋）的 A516-70**。\n    * **A516-70（$\\le 4\"$）來源**：從**日本（Japan）**進口；以前曾向**中鋼（CSC）**買 3\" 以下的 516，但因加拿大政府設定的 Normal Value 導致價格不具競爭力而中斷。\n* **[01:36:25 - 01:37:45] Doug 對中鋼品質與單頁式材質證明書（MTC）的高度評價、對抗關稅的立場**\n  * **Doug**：`\"So it was not by our choice, because I like the product, the product is excellent. And I like your test reports, all on one page...\"`（不買中鋼絕非我們自己願意的，我很喜歡中鋼的產品，品質非常好；而且我非常喜歡**中鋼的材質證明書/測試報告，全部濃縮在同一頁**，非常清楚，不像中國某鋼廠一張質保書有 4 頁。）\n  * **Doug**：幾週前韓國廠商來訪暗示「付關稅已是新常態（new norm）」，但他告訴對方：`\"We're going to avoid it as long as we can and fight as hard as we can to get stuff without the tariff. Because if we have the tariff and our competitors don't, we're dead.\"`（我們會盡一切努力避開關稅，因為如果我們付了關稅而競爭對手沒付，我們就死定了。）\n* **[01:37:45 - 01:38:35] 採購模式：100% 透過貿易商進口**\n  * **Doug**：所有海外（offshore）採購 **100% 透過貿易商（trading companies）**（以前約 20% 美國、15% 加拿大國內採購才自己處理）。並提到中鋼下一家要拜訪的客戶 **Jim** 因會說韓文（speaks Korean）才自己直接進口，但為了每百磅省 **30 美分（save 30 cents a hundred [cwt]）** 承擔龐大進口風險並不值得。\n* **[01:38:35 - 01:40:00] 現有 500 噸中鋼報價討論（$1.14/lb）、在途訂單暴增至 $2,700 萬與暫緩採購決定**\n  * **貿易商 A**：提到手上還可提供給 Terra Nova 的 **500 噸（500 tons）** 額度，先前報的淨價（net number）約為 **$1.14/lb（$114/cwt）**，裡面已包含約 **32 cents（$0.32/lb）的關稅分攤**，且仍有機會擠進免稅配額（sneak it in）。\n  * **Doug**：坦言目前手上的在途訂單原本以為約 **2,000 萬（$20 million）**，但意識到加上潛在關稅後可能會變成 **2,700 萬（$27 million）**，超過目前願意承擔的風險部位，現在必須採取防禦姿態暫停買貨（`\"circle the wagons and not buy right now\"`），因此**這次 500 噸只能先放棄（`\"I know it's only 500 tons, but I think I gotta pass this time\"`）**。\n\n---\n\n### 片段 20：`chunk_20.mp3` (01:40:00 - 01:44:49)\n**主題：Terra Nova 股東買斷（Doug 80% / Chris 20%）、期盼全面 50% 關稅後重建中鋼合作、Soft TRQ 弊病與道別**\n\n* **[01:40:00 - 01:41:00] Terra Nova 公司股權結構變動與對中鋼規格的肯定**\n  * **Doug**：解釋對資金部位謹慎的原因——公司最近剛完成股東買斷，現在由他和銷售經理 **Chris** 共同持有：**Chris 持股 20%，Doug 持股 80%**（剛買斷另外兩位股東，包含原本持股 **40%** 的前董事長 Chairman），因此不想讓財務過度擴張（too heavily extended）。\n  * **Doug**：非常希望能回到以前與中鋼的合作狀態，因為中鋼的鋼種與厚度範圍非常理想——**一般鋼板厚度可達 5 英吋（up to 5 inch），100 ksi 等級調質鋼（A514 / AR400）可達 3 英吋（up to 3 inch in the 100）**，極具吸引力。\n* **[01:41:00 - 01:42:35] 加拿大可能取消所有 TRQ（全面改課 50% 關稅）與美加談判時程預測**\n  * **貿易商 A**：重申加拿大政府接下來若要與美國達成協議（確保加拿大製造商不會買廉價進口鋼材加工後銷美），很可能會在**美國 11 月期中選舉後（預計明年 1 月，現行配額階段至 12 月底結束）宣布取消所有 TRQ 配額，全面改課 50% 關稅（`\"cancel all TRQs, 50%\"`）**。\n  * **貿易商 A & Doug**：如果真的變成**對所有國家、所有產品一律課徵 50% 關稅（`\"50% on everybody and everything\"`）**，立足點反而公平了，就能**重新建立（re-establish）與中鋼過去良好的採購合作**！\n* **[01:42:35 - 01:44:00] 軟性配額（Soft TRQ）對商業活動的扼殺與美國通膨後果**\n  * **貿易商 B**：指出目前的**軟性配額（Soft TRQ，超額可付 50% 關稅進口）** 反而阻礙了生意進行（preventing business from happening），因為買家深怕自己沒搶到配額要付 50% 關稅、而對手卻搶到免稅配額，如同 **2022–2024 年** 歐洲輸美 Soft TRQ（超額付 25% 關稅）時扼殺交易的情況。\n  * **Doug & 貿易商 B**：批評美國實施 50% 關稅是為自己製造**通貨膨脹（inflation）**，導致美國製造失去國際競爭力、一般民眾受苦。\n* **[01:44:00 - 01:44:49] 會議結束、道別與離場**\n  * 雙方互道感謝，**Doug** 幽默道別：`\"I'll come out and play table tennis in Taipei one day.\"`（等哪天我有空去台北打桌球時再去找你們！）眾人起身離開會議室，錄音於 01:44:49 結束。\n"}]}, {"id": "20261019_1157_cascadia", "order": "場次 02", "date": "2026-10-19", "time": "11:57 – 12:48 PDT", "duration": "50 分 32 秒", "customer": "Cascadia Metals", "location": "Vancouver, BC, Canada", "tag": "冷軋 / 熱浸鍍鋅 / 塗鍍鋼捲 (CR / GI / GA)", "attendees": "客戶: Jim Ritchie (總裁), Mark, Amy, Philip | 貿易商: Jock 等代表 | 中鋼集團 (CSC/CSGT): Jim, Vincent, Mr. Parker, 業務代表群", "summary": "美加總月用量 40,000 噸（年用量約 48 萬噸），為中鋼加拿大最大冷軋客戶。高度肯定中鋼「全尺寸供應（1660 / 1272 薄寬規格）」；急尋 10 Gauge (0.13\") GI/GA（不計價收購）；深入剖析 Stelco 停產每月 3.5 萬噸缺口、台韓海運費價差與 Amazon AI 資料中心供應鏈（IEM / Johnson Controls）。", "docs": [{"doc_id": "cas_01_report", "title": "01. 結構化重點與數據報告 (Meeting Report)", "short_title": "01. 結構化重點報告", "badge": "精華推薦", "filename": "20261019_1157_Cascadia_Metals_Meeting_Report", "content": "# 2026年10月19日 Cascadia Metals 拜訪會議結構化報告與重點資料庫\n\n> **用途說明**：本檔案為結構化整理之會議重點、量化數據表格、產品採購現況與行動項目，搭配同目錄下之 `20261019_1157_02_cascadia_audio_report.md`（完整音訊解析報告）與 `20261019_1157_03_cascadia_raw_notes.md`（未刪減逐段對話底稿），可隨時依需求快速轉換或匯出為「中鋼出國訪廠正式報告」、「純英文會議紀要 (Minutes of Meeting)」、「主管簡報摘要」或「議題追蹤表」。\n\n---\n\n## 一、會議基本資料 (Meeting Metadata)\n- **會議日期**：2026 年 10 月 19 日 11:57 – 12:48 PDT（總時長 50 分 32 秒）\n- **拜訪對象**：**Cascadia Metals**（加拿大西岸最大鋼捲加工中心與最大鋼材進口商，總部設於 BC 省溫哥華地區）\n- **客戶代表**：\n  - **Jim Ritchie**（總裁 / 負責人，主要發言人；熟悉亞洲台韓越供應鏈，能聽說韓語但偏好英語溝通，常於媒體與加拿大國際貿易法庭 CITT 公開批判加東保護主義鋼廠）\n  - **Mark**（採購與營運主管，評估塗油鍍鋅車庫門應用，代表出席會後午餐）\n  - **Amy**（採購與業務代表，代表出席會後午餐）\n  - **Philip**（船運與物流主管，確認台灣海運費率）\n  - *提及未在場人員*：**Danny**（Cascadia 美國廠採購負責人，急需鍍鋅 GI）\n- **陪同貿易商**：\n  - **Jock 及資深貿易商夥伴（含 Cellmark 代表）**（熟悉美加反傾銷稅率 AD Duty、塗油鍍鋅豁免條款、外資鋼廠股權結構與北美新電爐廠動態）\n- **我方代表（CSC / CSGT）**：\n  - **Jim**（主談代表，簡報中鋼集團概況與高雄總部大樓、探討熱軋/冷軋與台灣下游盛餘/裕鐵/燁輝供料生態系）\n  - **Vincent**（冷軋 Cold Rolled 業務負責人，負責 Cascadia 冷軋主力業務）\n  - **Mr. Parker**（駐墨西哥城辦事處技術代表，於會議當天早晨專程自墨西哥飛抵溫哥華支援技術交流）\n  - **中鋼業務/企劃女性同仁**（詢問庫存週期、下游客戶結構、AI 資料中心預測與 GI 規格稅率；會中另提及中鋼鍍鋅 GI 團隊負責人 **Roland**）\n\n---\n\n## 二、客戶營運規模與關鍵量化數據總表 (Customer Profile & Key Metrics)\n\n| 類別 | 項目 | 數據 / 規格 | 備註說明 |\n| :--- | :--- | :--- | :--- |\n| **Cascadia 規模** | 美加總鋼材月用量 | **40,000 公噸 / 月**（約 **48 萬噸 / 年**） | 加西最大鋼捲加工中心（Coil Processor）與最大進口商 |\n| **Cascadia 規模** | 加拿大月用量 | **30,000 公噸 / 月** | 溫哥華廠約 10,000 噸/月、Brandon 廠近 10,000 噸/月、其餘廠區約 10,000 噸/月 |\n| **Cascadia 規模** | 美國月用量 | **10,000 公噸 / 月** | 由 Danny 負責採購；預計明年美國本土 GI 供貨嚴重不足 |\n| **Cascadia 規模** | 常態庫存水位 | **4 ~ 5 個月** | Cascadia 的「秘密武器（Secret Weapon）」，遠高於上市同業（如 Russel Metals） |\n| **急迫採購需求** | **10 Gauge 厚板 GI / GA** | **厚度 0.13\"（約 3.3~3.4 mm），寬度 48\" 或 60\"** | **不論價格多少都買（\"Doesn't matter what the price is, we'll just buy it\"）**；加國僅 ArcelorMittal 生產且嚴格配額 |\n| **市場重大缺口** | **Stelco 停產 GI & CR 缺口** | **30,000 ~ 35,000 公噸 / 月** | Stelco 停止在加拿大生產鍍鋅與冷軋，原本全供加國內銷，現須全靠進口填補 |\n| **中鋼優勢規格** | 冷軋（CR）特殊薄寬尺寸 | **1660（16 ga x 60\"）、1272（12 ga x 72\"）** | 最看重中鋼「全尺寸供應（Make every size）」；POSCO 忙時只肯做 10 ga x 48\" |\n| **採購量體** | 韓國 KG Dongbu 採購量 | **70,000 公噸 / 年**（塗鍍/烤漆鋼品） | Cascadia 為 KG Dongbu（原東部製鋼）**全球最大客戶** |\n| **採購量體** | 加拿大本土熱軋（HR）配額 | **Stelco 3,000 噸/月**、**Algoma 500 噸/月** | 遭加東本土鋼廠嚴格配額限制（Allocation）與價格報復 |\n| **海運費用** | 台灣出貨運費（G2 Ocean） | **$80 美元 / 噸**（Effective rate，含燃油附加費） | 台灣航線受 **Saga** 強勢壟斷控制 |\n| **海運費用** | 韓國出貨運費優勢（Swire） | **比台灣便宜 $15 ~ $18 美元 / 噸**（長期目標 $20/噸優勢） | Swire 運紙漿赴日韓，回程每兩週一班定期船，Cascadia 保證包下 1~2 個船艙換取極低運價 |\n| **內陸運費** | 加東（Hamilton）至加西陸運 | **> $100 美元 / 噸** | 加東鋼廠陸運至加西成本極高，太平洋海運具天然優勢 |\n| **關稅與反傾銷** | 加拿大對台灣 GI 反傾銷稅 | **中鋼（All Others）33%~34%**；**裕鐵（YP）3.2%**；**燁輝（PT, GL）10%** | **塗油鍍鋅（Oiled GI/GL）** 則豁免排除於加拿大 AD 之外 |\n| **關稅與反傾銷** | 美國近期塗鍍反傾銷初裁 | **Dongbu 20%、Dongkuk 28%、盛餘（SYSCO）20%** | 公佈後一週內美國市場價格直接上漲 20% 轉嫁給消費者 |\n| **關稅與反傾銷** | Cascadia 今年額外關稅支出 | **> $2,500 萬美元（$25M）** | 僅計入今年「原本非預期」的額外關稅支出 |\n| **下游終端需求** | **Johnson Controls**（資料中心冷卻機房） | **> 3,000 公噸 / 月**（由 Cascadia 供應鋼板與鋁板） | 於 Edmonton 設 13 座廠、2,000 名員工；與 Varsteel 共分訂單 |\n| **下游終端需求** | **IEM**（資料中心巨型配電開關箱） | **中鋼冷軋（CR）主力終端去向** | 為 Amazon 製造「大如房屋（as big as a house）」的巨型 Switchboxes |\n\n---\n\n## 三、核心產品採購現況與對中鋼（CSC）之高度評價\n\n### 1. 冷軋（Cold Rolled, CR）：全尺寸供應能力完勝 POSCO\n- **加拿大最大冷軋客戶**：Cascadia 為中鋼在加拿大最大的冷軋客戶，採取策略性集中採購以成為供應商之核心夥伴。\n- **核心價值——「全尺寸供應（Make Every Size）」**：\n  - 身為裁剪服務中心（Service Center），Cascadia 必須備齊全尺寸，特別依賴中鋼生產**薄規格寬幅產品（Light, wide gauges，如 `1660` [16 ga x 60\"] 與 `1272` [12 ga x 72\"]）**。\n  - 客戶直言 **POSCO 內部高度政治化（very political）且 POSCO International 難以溝通**，只要訂單一忙就拒接特殊薄寬尺寸（只肯做 10 ga x 48\"）；反觀中鋼重視長期夥伴關係、好溝通且願意生產全尺寸，這對 Cascadia 最具價值。\n- **終端流向（Amazon AI 資料中心供應鏈）**：中鋼冷軋有極大比例銷往 **IEM（Industrial Electric Mfg）**，用於製造 Amazon 資料中心所需、體積大如房屋的超大型配電開關箱（electrical switchboxes / switching gear）。\n\n### 2. 熱浸鍍鋅（GI）與合金化鍍鋅（GA）：10 Gauge 急迫缺口與反傾銷突圍構想\n- **最急迫需求（不計代價採購）**：\n  - 急需 **10 Gauge（0.13 吋 / 約 3.3~3.4 mm，48\" 或 60\" 寬）的 Galvanneal (GA) 與 Galvanized (GI)**。\n  - 因加拿大本土僅 ArcelorMittal Dofasco 能生產且對 Cascadia 嚴格配額管制，Jim Ritchie 當場表明：「**只要有任何貨源，不管價格多少我們都買（It doesn't matter what the price is, we'll just buy it）！**」（中鋼團隊現場確認 3.3~3.4 mm 屬中鋼可生產之正常厚板規格）。\n- **Stelco 停產造成每月 3~3.5 萬噸供給大缺口**：\n  - Stelco 已停止在加拿大生產鍍鋅與冷軋（GI & CR），導致加拿大內銷市場每月減少 **30,000 ~ 35,000 公噸** 供給，迫使加東買家（如 Optima）大舉轉向越南採購。\n- **台灣供應鏈反傾銷稅（AD Duty）障礙與「塗油鍍鋅」豁免方案**：\n  - 台灣下游 **裕鐵（YP，AD 僅 3.2%）** 目前無產能/缺料，**燁輝（PT，鍍鋁鋅 AD 約 10%）** 也已售罄；而 **中鋼（CSC）** 本身受限於「All Others」高達 **33% ~ 34%** 的反傾銷稅。\n  - **突圍方案**：貿易商指出 **「塗油（不鈍化）鍍鋅（Oiled GI/GL）」在加拿大反傾銷稅中屬於排除豁免項目（Excluded from AD）**（安大略省已有銷售予泳池牆板廠後續塗裝之實績），現場評估推廣予車庫門大廠（如 Flexi-Force、Assa Abloy）進行後續脫脂加工之可行性。\n- **美國廠 GI 缺口**：Cascadia 美國採購負責人 Danny 已收到中鋼冷軋報價，但明年美國廠最急缺的是 **鍍鋅（GI）**。\n\n### 3. 其他金屬品項採購現況\n- **烤漆鋼板（Pre-painted Steel）**：Cascadia 為韓國 **KG Dongbu（原東部製鋼）全球最大客戶**（年採購 **70,000 公噸** 塗鍍鋼品），此品項維持向韓國採購。\n- **不鏽鋼（Stainless Steel）**：向台灣 **燁聯（YUSCO）**、唐榮（Tang Eng）、華新麗華（Walsin）等採購。\n- **平軋鋁捲（Flat-rolled Aluminum）**：因加拿大無本土平軋鋁廠，仍從中國進口並享有特定關稅豁免（Company-specific remissions）。會中並分享 6~8 個月前將中國次級鋁材（原擬售 $2.60/lb）以 **$2.95/lb** 高價全數賣給美國廢五金商，以「廢鋁（Scrap）」名義免關稅運往美國波特蘭重熔變身為「Made in the USA」之套利實例。\n\n---\n\n## 四、台韓海運費結構差異與北美市場深度情報\n\n### 1. 台韓海運費（Freight）關鍵差異（$15~$18/MT 價差）\n- **韓國航線秘密武器（Swire 太古船務定期船）**：Swire 載運加拿大紙漿與紙張赴日韓，回程提供每兩週一班（bi-weekly liner service）定期船。Cascadia 透過**保證每船包下 1~2 個船艙（guarantee holds）**，取得遠低於現貨市場的極低運價。\n- **台灣航線劣勢（Saga 壟斷）**：台灣航線由 **Saga** 強勢主導，目前台灣（G2 Ocean）運費約 **$80/噸**（含燃油附加費），導致從韓國出貨每噸比台灣便宜 **$15 ~ $18 美元**（長期平均甚至享有 $20/噸運費優勢）。Cascadia 強烈期盼未來能改善台灣航線運費結構。\n\n### 2. 下游 AI 資料中心（Data Centers）熱潮與免關稅輸美通道\n- **最大終端成長動能**：目前 AI 資料中心為 Cascadia 最大且最強勁的客戶群（主要由 **Amazon** 驅動）：\n  1. **Johnson Controls（江森自控）**：於艾德蒙頓（Edmonton）設有 13 座工廠、約 2,000 名員工，製造大型資料中心冷卻風扇機房模組，**Cascadia 每月供貨超過 3,000 公噸**（外殼鋼板與地板鋁材）。\n  2. **IEM**：製造巨型配電開關箱，大量消耗中鋼冷軋（CR）。\n- **免稅輸美通道**：美國企業在加拿大設廠，進口全球鋼材與銅線製成資料中心設備模組後運往美國，**進入美國時完全免關稅（Zero Duty）**。\n- **供應鏈瓶頸**：受限於**缺工（Labor shortage）**與**冷卻風扇/電子零件短缺**，導致許多完工鐵殼堆置戶外等待零件，Amazon 因此將訂單分散予 3~4 家代工廠（均為 Cascadia 客戶）。\n\n### 3. 與加東外資鋼廠之對立、北美鋼廠漲價與 Alberta 新電爐廠情報\n- **盛讚中鋼生態系 vs. 批判加拿大外資鋼廠**：\n  - Jim Ritchie 高度讚賞中鋼具備世界級競爭力，並全力扶植盛餘、裕鐵、燁輝等下游，讓**整個台灣鋼鐵生態系具備全球競爭力**。\n  - 反觀加拿大三大鋼廠全為外資持有（**Stelco 屬美國 Cleveland-Cliffs、Algoma 屬美國私募/對沖基金、Dofasco 屬英印 ArcelorMittal**），設備老舊且將獲利全數匯出海外。因 Cascadia 大量進口且公開於 CITT 反對保護主義，遭 Stelco 與 ArcelorMittal 報復（大砍配額，甚至以低於賣給 Cascadia **$100/噸** 的價格直接傾銷給 Cascadia 的下游小客戶，導致 Cascadia 向客戶回購反而比向鋼廠直購便宜）。\n- **北美鋼廠強硬漲價與霸王條款**：\n  - **Nucor 與 Big River Steel** 明年度合約**全面取消折扣（由原本 CRU -5.5% 改為 0 折扣）且取消數量緩衝（no buffer）**，幾乎每週一調漲。\n  - 會議當天（10月19日）**Dofasco** 亦宣布漲價：**熱軋（HR）漲 $5/噸、冷軋（CR）與鍍鋅（GI）漲 $10/噸**。\n- **「4~5 個月高庫存」經營哲學與市場隱憂**：\n  - 不同於上市同業（Russel Metals）受制於短期 ROI 不敢備貨，私人控股的 Cascadia 常態維持 **4~5 個月高庫存**，在充滿關稅（今年已額外支付逾 **$2,500 萬美元** 關稅）與斷鏈恐慌的市場中提供「確定性（Certainty / Comfort food）」。\n  - 但 Jim Ritchie 對市場過熱深感憂慮：認為目前美加鋼價（全球第 1、第 2 高）**高估約 30%**，擔憂若油價觸及 **$140/桶** 或 AI 晶片算力突破將引發黑天鵝反轉，期盼好景氣能維持至 **2027 年**。\n- **Alberta 新建 50 萬噸電爐廠情報**：貿易商透露 Big River Steel 創辦人 **Dave Stickler**（近期剛建 Hybar 鋼筋廠）正認真評估於**亞伯達省（Alberta）興建一座年產 50 萬噸之電弧爐（EAF）鋼廠**。\n\n---\n\n## 五、後續行動項目 (Action Items)\n1. **中鋼鍍鋅（GI/GA）團隊（Roland 團隊）**：針對 Cascadia 最急迫需求之 **10 Gauge（0.13\" / 約 3.3~3.4 mm，48\" 及 60\" 寬）GI 與 GA**，評估產能、33%~34% AD 稅率下之報價可行性（客戶表示不計價格皆願意採購），以及「塗油鍍鋅（Oiled GI）」豁免反傾銷稅之供貨可能。\n2. **中鋼冷軋（CR）與美國市場團隊（Vincent）**：持續鞏固 Cascadia 加拿大冷軋全尺寸（含 `1660`、`1272` 薄寬規格）穩定供應，並與 Cascadia 美國採購負責人 **Danny** 對接冷軋與鍍鋅需求。\n3. **海運物流評估**：探討台灣航線（目前 G2 Ocean / Saga 約 $80/MT）是否有合船、包艙或改善運費結構之空間，以縮小與韓國 Swire 定期船（便宜 $15~$18/MT）之運價差距。\n"}, {"doc_id": "cas_02_audio", "title": "02. 完整音訊解析報告 (Audio Analysis Report)", "short_title": "02. 完整音訊解析報告", "badge": "17段時間軸", "filename": "20261019_1157_Cascadia_Metals_Audio_Report", "content": "# Cascadia Metals 拜訪會議音訊完整聆聽報告\n\n- **原始音訊檔案**：`2026年10月19日 11點57分.m4a`\n- **音訊總長度**：50 分 32 秒（3,032.02 秒，原始大小 47 MB）\n- **聆聽方式**：全程透過原生多模態聽覺（Audio Modality）逐段仔細聆聽，**未調用任何本地 STT**。\n- **防卡死與高注意力分段策略**：\n  1. **重新編碼修復容器標頭與大幅降載**：先前直接對 `.m4a`（AAC/MP4 容器）切割或讀取大檔容易因 MP4 Atom 邊界不完整或單檔過大導致 `read_file` 卡死無回應。本次預先轉為 **16kHz、單聲道（Mono）、32kbps 之標準 `.mp3` 格式**，並以 `-reset_timestamps 1` 重置時間戳記。\n  2. **3 分鐘黃金切片（共 17 段，`chunk_00.mp3` ~ `chunk_16.mp3`）**：每段僅 **704 KB**，每次僅批次載入 2 段（約 1.4 MB）並立即記錄筆記，全程 17 段均在 1~2 秒內完成讀取，零卡頓、零遺漏。\n\n---\n\n## 一、 與會人員與背景識別\n\n| 陣營 / 單位 | 代表人物 | 職稱 / 角色說明 |\n| :--- | :--- | :--- |\n| **Cascadia Metals** | **Jim Ritchie** | 總裁 / 老闆（主要發言人，熟悉亞洲供應鏈、會講韓文但偏好英文溝通，作風直率敢言） |\n| **Cascadia Metals** | **Mark、Amy、Philip** | 採購與營運主管團隊（Mark 與 Amy 代表出席會後午餐；Philip 負責船運/物流數據確認；另提及美國廠負責採購之 **Danny**） |\n| **中鋼公司 (CSC)** | **Jim** | 主談代表（開場簡報中鋼集團概況、介紹總部大樓、探討熱軋/冷軋與下游合作） |\n| **中鋼公司 (CSC)** | **Vincent** | 冷軋（Cold Rolled）業務負責人（感謝 Cascadia 為中鋼在加拿大最大冷軋客戶） |\n| **中鋼公司 (CSC)** | **Mr. Parker** | 駐墨西哥城（Mexico City）技術代表（會議當天早上專程自墨西哥飛抵溫哥華支援技術交流） |\n| **中鋼公司 (CSC)** | **女性同仁等** | 負責詢問庫存週期、下游客戶產業結構、資料中心預測及探討 GI 產能與稅率（另提及中鋼負責鍍鋅 GI 團隊之 **Roland**） |\n| **通路 / 貿易商夥伴** | **Jock 等代表（含 Cellmark 代表）** | 熟悉美加貿易法規、反傾銷稅（AD Duty）、海運與加東/美國鋼廠動態之資深貿易商夥伴 |\n\n---\n\n## 二、 核心商情與關鍵數據摘要\n\n> [!IMPORTANT]\n> **Cascadia 鋼材採購量體與急迫需求**\n> - **總使用量**：美加合計每月約 **40,000 公噸**（年用量約 **48 萬噸**），其中加拿大約 **30,000 噸/月**（溫哥華廠約 10,000 噸/月、Brandon 廠近 10,000 噸/月等）、美國約 **10,000 噸/月**。\n> - **最急迫缺口（不計代價採購）**：**10 Gauge（0.13 吋 / 約 3.3~3.4 mm，48\" 或 60\" 寬）的 Galvanneal（GA，合金化鍍鋅）與 Galvanized（GI，熱浸鍍鋅）**。因加拿大僅 ArcelorMittal Dofasco 生產且嚴格配額，Jim Ritchie 明確表示：「**只要有任何貨源，不管價格多少我們都買（It doesn't matter what the price is, we'll just buy it）！**」\n> - **Stelco 停產鍍鋅與冷軋帶來的進口大缺口**：Stelco 已停止在加拿大生產鍍鋅與冷軋（GI & CR），導致加拿大內銷市場每月憑空少掉 **30,000 ~ 35,000 公噸** 供給，進口需求將進一步大增。\n\n### 1. 各項產品採購現況與對中鋼（CSC）的評價\n- **冷軋（Cold Rolled, CR）**：\n  - Cascadia 是中鋼在加拿大最大的冷軋客戶。\n  - **Cascadia 最看重中鋼的核心價值：「全尺寸供應能力（Make Every Size）」**，特別是**薄規格寬幅產品（如 1660 [16 gauge 60\" 寬]、1272 [12 gauge 72\" 寬]）**。POSCO 只要訂單一忙就拒接特殊薄寬尺寸，而中鋼高度客製化且重視長期關係，這對身為裁剪服務中心（Service Center）的 Cascadia 至關重要。\n  - **主要終端去向**：大量供應給 **IEM（Industrial Electric Mfg）** 製造 **Amazon 資料中心**所需、體積「大如一棟房子（as big as a house）」的超大型配電開關箱（electrical switchboxes / switching gear）。\n- **熱浸鍍鋅（GI）與合金化鍍鋅（GA）**：\n  - **反傾銷稅（AD Duty）障礙**：中鋼（CSC）本身在加拿大反傾銷稅被歸於「All Others」，稅率高達 **33% ~ 34%**；反觀台灣下游 **YP（裕鐵）僅 3.2%**、**PT（燁輝）鍍鋁鋅約 10%**，但目前裕鐵無產能（缺料）、燁輝也已售罄（sold out）。\n  - **「塗油鍍鋅（Oiled GI/GL）」豁免構想**：貿易商提出「塗油（不鈍化）鍍鋅」在加拿大反傾銷稅屬於**豁免排除項目（excluded from AD）**，在安大略省已有賣給游泳池牆板廠後續塗裝的案例，建議評估 Cascadia 下游門業客戶（如 Flexi-Force、Assa Abloy）能否使用。\n  - **目前 GI 進口來源**：越南（Vietnam）、韓國（Korea）、澳洲（BlueScope Australia）及部分泰國（POSCO Thailand）。\n- **烤漆鋼板（Pre-painted Steel）**：\n  - Cascadia 是韓國 **KG Dongbu（原東部製鋼）全球最大客戶**，年採購約 **70,000 公噸**塗鍍/烤漆鋼品，此品項將繼續維持向韓國採購。\n- **其他金屬品項**：\n  - **平軋鋁捲（Flat-rolled Aluminum）**：因加拿大無本土平軋鋁廠，仍從中國進口（享有特定關稅豁免）。\n  - **不鏽鋼（Stainless Steel）**：部分自台灣進口（如 **YUSCO 燁聯**、唐榮、華新麗華等）。\n\n### 2. 台韓海運費（Freight）關鍵差異\n- **韓國航線秘密武器（Swire 太古船務）**：Swire 載運加拿大紙漿與紙張赴日韓，回程提供每兩週一班（bi-weekly liner service）定期船。Cascadia 透過**保證每船包下 1~2 個船艙（guarantee tons / holds）**，拿到遠低於現貨市場的極低運價。\n- **台灣航線劣勢（Saga 壟斷）**：台灣航線由 **Saga** 強勢主導，目前台灣（如 G2 Ocean）運費約 **$80/噸**（含燃油附加費），而 Cascadia 從韓國出貨每噸可便宜 **$15 ~ $18 美元**（長期平均甚至享有 $20/噸的運費優勢）。Cascadia 非常希望能改善台灣航線的運費結構。\n\n### 3. 下游 AI 資料中心（Data Centers）熱潮與關稅奇象\n- **最大下游客戶群**：目前資料中心是 Cascadia 最大的終端應用市場，主要由 **Amazon** 驅動：\n  1. **Johnson Controls（江森自控）**：於艾德蒙頓（Edmonton）設有 13 座工廠、約 2,000 名員工，製造大型資料中心冷卻風扇機房模組。Cascadia 與 Varsteel 共同供應該客戶，**Cascadia 每月供貨超過 3,000 公噸**（鋼板與地板鋁材）。\n  2. **IEM**：製造資料中心巨型配電開關箱，消耗大量中鋼冷軋（CR）。\n- **免關稅輸美通道**：美國企業在加拿大設廠，進口全球鋼材與銅線製成資料中心設備模組後運往美國，**進入美國時完全免關稅（Zero Duty）**。\n- **供應鏈瓶頸**：客戶雖曾喊出業務翻四倍（quadruple），但受限於**缺工（labor shortage）**及**缺風扇/電子零件**，導致許多做好的鐵殼堆在田裡等零件；Amazon 也因此將訂單分散給 3~4 家代工廠（均為 Cascadia 客戶）。\n\n---\n\n## 三、 完整 17 段音訊逐段時間軸紀錄（00:00 - 50:32）\n\n### Chunk 00 (00:00 - 03:00)：開場寒暄、越南市場與中鋼團隊介紹\n- **越南與馬來西亞市場討論**：中鋼 Jim 剛結束簡報，Cascadia 總裁 Jim Ritchie 表示非常喜歡越南市場。貿易商夥伴補充越南為非自由貿易協定國（馬來西亞則是自由貿易國），並指出 Cascadia 在越南人脈深厚。Jim 開玩笑說他們向中鋼越南廠（CSVC）買料，算是中鋼的下游間接客戶。\n- **中鋼集團總部展示**：Jim 展示中鋼集團概況（涵蓋鋼鐵、工業材料、工程等）與高雄總部大樓照片，與會者稱讚大樓非常現代化。\n- **行程寒暄與介紹 Mr. Parker**：Cascadia 表示很喜歡跟台灣做生意（好溝通、容易合作）。中鋼團隊昨日剛抵達加拿大；負責技術的 **Mr. Parker** 則於當天早上剛從墨西哥城（中鋼駐墨辦事處）飛抵支援。Jim Ritchie 回憶多年前曾參訪中鋼一貫化煉鋼廠並用餐，早年也與燁輝（PT）做過很多直接生意。\n\n### Chunk 01 (03:00 - 06:00)：韓國 KG Dongbu 採購量與 Cascadia 北美產銷規模\n- **烤漆鋼板與 KG Dongbu**：Cascadia 表示競爭總在韓國與台灣之間。他們是韓國 **KG Dongbu（原 Dongbu 東部製鋼）全球最大客戶**，每年向其採購約 **70,000 噸**塗鍍鋼材，但笑稱韓國人還是很難控制。\n- **Cascadia 鋼材月使用量**：\n  - 現址廠區（溫哥華）約 **10,000 噸/月**，Brandon 廠約 **10,000 噸/月**，**全加拿大合計約 30,000 噸/月**；\n  - **美國廠區另約 10,000 噸/月**，**美加總計約 40,000 噸/月**。\n  - 身為加西最大鋼捲加工中心與最大進口商，他們持續擴張市佔率；但坦言加東（Eastern Canada）因法語文化差異、本土鋼廠林立與激烈競爭而較難切入。\n\n### Chunk 02 (06:00 - 09:00)：加東老舊鋼廠對比、冷軋合作與對 POSCO 的抱怨\n- **加東鋼廠設備老舊**：加東的 Dofasco、Stelco、Algoma 設備全都有百年歷史（笑稱因為加拿大沒經歷過本土戰爭被炸毀重建，不像德國或韓國 POSCO 從零開始，也不像 1971 年創立的中鋼擁有最先進設備）。\n- **冷軋（CR）業務交流**：介紹中鋼冷軋負責人 **Vincent**。Vincent 感謝 Cascadia 作為中鋼在加拿大最大的冷軋客戶。Jim Ritchie 表示加拿大市場不大，他們採取策略性集中採購以成為供應商的重要客戶，並盛讚中鋼在台灣每月與盛餘（SYSCO）、裕鐵（YP）等下游開會協作的產業共榮模式。\n- **POSCO 政治化問題**：Jim Ritchie 直言中鋼比 POSCO 好合作太多了，POSCO 內部充滿政治角力（very political），加上 POSCO International 更是令人頭痛（即便他自己會說韓文也無濟於事）。\n\n### Chunk 03 (09:00 - 12:00)：報價默契、全尺寸供應價值與韓國海運優勢\n- **價格與全尺寸供應（Full Size Range）**：中鋼與 POSCO 在加拿大的報價通常非常接近。Jim Ritchie 強調他們不追求過低價格，而是需要穩定具競爭力的價格，但**最核心價值是中鋼願意生產所有尺寸（特別是 1660、1272 等薄規格寬幅產品）**，不會像 POSCO 忙起來就拒接特殊規格。\n- **海運費差距（Swire 定期船）**：Cascadia 點出最希望改善的是台灣海運費。他們在韓國與 **Swire（太古船務）** 合作（去程載紙漿赴日韓，回程每兩週一班定期船），Cascadia 靠**保證每月包下 1~2 個船艙（holds）**取得遠低於現貨市場的特別運價。\n\n### Chunk 04 (12:00 - 15:00)：台韓運費價差精算與對市場過熱的深層憂慮\n- **台灣運費行情**：台灣航線受 **Saga** 控制，目前透過 G2 Ocean 運費約 **$80/噸**（含燃油附加費），而 Cascadia 從韓國出貨每噸便宜 **$15 ~ $18 美元**（長期靠每噸省 $20 美元運費作為競爭秘密武器）。\n- **「生意極好，但我不開心（Business is really good, but I'm not happy）」**：\n  - Jim Ritchie 坦言對當前市場結構感到高度緊張：到處都是關稅、加拿大消費者不堪負荷、通膨累積、油價與鋼價過高（他認為**目前鋼價約高估了 30%**）。\n  - 他不喜歡客戶只因為「別處買不到」而被迫向 Cascadia 買，這會導致客戶對單一供應商產生怨懟。\n\n### Chunk 05 (15:00 - 18:00)：北美製造業競爭力危機、黑天鵝風險與全球鋼價排名\n- **製造業外銷困境與資料中心泡沫隱憂**：美國鋼價高昂導致製造商（如 Caterpillar）根本無法與中國同業競爭外銷；目前全靠 **AI 資料中心（Data Centers）** 與風電基建支撐，他質疑這種行情如何持續多年？\n- **黑天鵝指標**：歷史經驗只要**油價衝上每桶 $140 美元**或發生金融危機，市場就會反轉；與會夥伴也笑稱若 Nvidia 今晚發表算力 10 倍、耗電減半的新晶片，資料中心熱潮就會結束。Jim Ritchie 表示若好景氣能維持到 **2027 年**他就很滿意了。\n- **全球鋼價排名**：**美國全球第一高、加拿大全球第二高**，高於歐洲與亞洲。\n\n### Chunk 06 (18:00 - 21:00)：Stelco 停產鍍鋅大缺口、台灣反傾銷稅率與塗油鍍鋅豁免\n- **Stelco 停產 GI/CR 衝擊**：Stelco 停止在加拿大生產鍍鋅與冷軋，造成每月 **30,000 ~ 35,000 噸** 的內銷缺口，迫使安大略省買家（如 Optima）大舉向越南下單。\n- **台灣 GI 產能與稅率討論**：裕鐵（YP，稅率 3.2%）沒產能、燁輝（PT，GL 稅率 10%）已滿載，而中鋼（CSC）本身受限於「All Others」高達 **33%~34%** 的反傾銷稅。\n- **塗油鍍鋅（Oiled GI）豁免探討**：貿易商提出「塗油鍍鋅」可豁免加拿大反傾銷稅，詢問 Mark 能否推給車庫門大廠 Flexi-Force 或 Assa Abloy（目前加西暫無此製程需求，加東則有用於泳池牆板烤漆）。\n\n### Chunk 07 (21:00 - 24:00)：10 Gauge 厚板 GI/GA 急迫需求、採購國偏好與鋁/不鏽鋼\n- **10 Gauge GI/GA 不計價收購**：Cascadia 急需 **10 Gauge（0.13 吋 / 約 3.4 mm，48\"/60\" 寬）的 Galvanneal 與 Galvanized**，強調「**只要有貨，不論價格多少都買**」（中鋼團隊現場以中文確認 0.13 吋即約 3.3~3.4 mm 正常厚板規格）。\n- **最喜愛採購國**：第一、二名為**台灣與韓國**，第三名為**越南**（FHS 台塑河靜、Hoa Phat 和發；越南品質雖不如中鋼與 POSCO，但尚可接受）。\n- **鋁材與不鏽鋼**：平軋鋁捲從中國進口（加拿大無生產商，享特定豁免）。\n\n### Chunk 08 (24:00 - 27:00)：本土配額縮減與加東本土鋼廠的惡意報復\n- **不鏽鋼採購**：向台灣燁聯（YUSCO）、唐榮、華新麗華等採購。\n- **本土熱軋配額**：目前每月僅從 Stelco 拿到 **3,000 噸**、從 Algoma 拿到 **500 噸**。\n- **與加東鋼廠公開交鋒**：因為 Cascadia 大量進口，加上 Jim Ritchie 敢在媒體與加拿大國際貿易法庭（CITT）公開批評本土鋼廠受保護又老舊，**Stelco 與 ArcelorMittal Dofasco** 處處報復 Cascadia：不僅大砍 Cascadia 配額，甚至以**比賣給 Cascadia 低 $100/噸的價格**直接賣給 Cascadia 的下游小客戶（唯獨 Algoma 未參與報復）。\n\n### Chunk 09 (27:00 - 30:00)：向客戶回購竟比鋼廠便宜、亞伯達公投與 2,500 萬美元關稅\n- **荒謬的價格倒掛**：Cascadia 向自己的下游客戶回購 ArcelorMittal 的鋼材，價格竟然比直接向 ArcelorMittal 買還便宜！Jim Ritchie 當面嗆 ArcelorMittal 是最爛供應商。\n- **東西部分裂與亞伯達公投**：政府拿加西稅金補貼加東外資鋼廠，從漢密爾頓（Hamilton）運往加西的**內陸運費超過 $100 美元/噸**，這也是為何會議當天（10月19日）亞伯達省（Alberta）正在舉行公投。\n- **龐大關稅負擔**：Cascadia 今年光是「預期之外」額外支付的關稅就超過 **2,500 萬美元（$25 million）**。Jim Ritchie 笑稱中鋼乾脆去把 Stelco 買下來，他一定當客戶。\n\n### Chunk 10 (30:00 - 33:00)：中鋼生態系典範 vs. 加拿大外資鋼廠、反傾銷可能性評估\n- **中鋼模式獲得極高評價**：Jim Ritchie 盛讚中鋼雖然在台灣地位特殊，但具備世界級競爭力，且全力扶植盛餘、裕鐵、燁輝等下游，讓**整個台灣鋼鐵生態系具備全球競爭力**；反觀加拿大三大鋼廠全為外資持有（**Stelco 屬美國 Cleveland-Cliffs、Algoma 屬美國私募/對沖基金、Dofasco 屬英印 ArcelorMittal**），只顧把獲利匯出海外給外國股東，毫不投資本土。\n- **反傾銷風險評估**：太平洋是最便宜的高速公路，進口永遠具優勢。針對熱軋（HR）是否會被提反傾銷？與會者一致認為**目前本土鋼廠暴賺且市場嚴重缺貨，完全無法證明產業受損（no injury）**；況且全面課徵關稅比耗時花錢的反傾銷對鋼廠更有利（如近期美國對韓、台祭出 20%~28% 反傾銷初裁，一週後美國市價直接漲 20% 轉嫁）。\n\n### Chunk 11 (33:00 - 36:00)：Cascadia 的「4~5 個月高庫存」秘密武器與經營哲學\n- **暴漲暴跌的應對**：在多頭市場 Cascadia 賺得比同業多，一旦空頭反轉，Jim Ritchie 會果斷砍價認賠出清。\n- **庫存水位（4~5 個月）**：不同於上市公司（如 Russel Metals）只看短期資本報酬率（ROI）不敢備貨，私人控股的 Cascadia 常態維持 **4 到 5 個月的高庫存**，在充滿關稅與斷鏈恐慌的市場中為客戶提供「確定性（certainty）」，如同販售「療癒美食（comfort food）」，甚至連其他同業服務中心都需向其調貨。\n\n### Chunk 12 (36:00 - 39:00)：資料中心免稅輸美通道與「中國廢鋁變美國製造」奇聞\n- **資料中心免關稅通道**：美國企業在加拿大用全球進口的鋼材與銅線製造資料中心設備，運進美國完全零關稅（Zero Duty）。\n- **廢鋁（Scrap Aluminum）套利奇聞**：6~8 個月前美國鋁價飆漲，Cascadia 正常鋁賣 $2.75/磅、次級鋁想賣 $2.60/磅，結果廢五金商出價 **$2.95/磅** 全數收購當廢鋁免稅運往美國波特蘭重熔，中國鋁材瞬間變成「Made in the USA」。\n\n### Chunk 13 (39:00 - 42:00)：Johnson Controls 與 IEM（Amazon 供應鏈）深度解析\n- **Johnson Controls（艾德蒙頓 13 座廠、2,000 人）**：製造資料中心大型冷卻風扇機房，Cascadia 每月供貨 **3,000 噸以上**。\n- **IEM（中鋼冷軋 CR 主力終端用戶）**：為 Amazon 製造大如房屋的巨型配電開關箱（switchboxes），消耗大量冷軋。\n- **缺工與缺零件瓶頸**：因缺風扇與缺工，Amazon 將訂單拆給 3~4 家代工廠，Cascadia 同時供應這幾家代工廠。\n\n### Chunk 14 (42:00 - 45:00)：越南回溯關稅官司與美國 Nucor / Big River 霸王條款\n- **午餐安排與越南追溯稅**：Jim Ritchie 不克出席午餐，由 Mark 與 Amy 代表。提及 COVID 期間自越南進口 5 萬噸塗鍍鋼材遭加拿大政府回溯課稅，至今仍在訴訟。\n- **美國鋼廠取消折扣並週週漲價**：中鋼冷軋有報給 Cascadia 美國廠（Danny），但美國廠明年最缺的是鍍鋅（GI）。**Nucor 與 Big River** 通知明年度合約**全面取消折扣（原本為 CRU minus 5.5%，明年改為 0 折扣且無數量緩衝 buffer）**，且 Nucor 與 Dofasco 在會議當天（週一）又再度調漲價格（Dofasco 熱軋漲 $5、冷軋與鍍鋅漲 $10）。\n\n### Chunk 15 (45:00 - 48:00)：本土鋼廠如培養皿細菌、Alberta 新電爐廠計畫與台韓地理優勢\n- **辛辣比喻**：Jim Ritchie 形容貪婪的北美本土鋼廠就像「**培養皿裡的細菌（bacteria in a Petri dish）**」，無止境漲價擴張直到耗盡養分崩潰。\n- **Alberta 新建電爐廠情報**：貿易商透露 Big River Steel 創辦人 **Dave Stickler**（近期剛建 Hybar 鋼筋廠，與 LMS 的 Ron 熟識）正認真考慮在**亞伯達省（Alberta）興建一座年產 50 萬噸的電弧爐（EAF）鋼廠**。\n- **台韓地理優勢**：Jim Ritchie 分析加拿大內陸太大、海岸線少且缺廢鋼，不適合蓋鋼廠；反觀**台灣（海島）與韓國（半島）四面環海，任何靠海處都能建廠，是全球最適合蓋鋼廠的完美地理環境**。\n\n### Chunk 16 (48:00 - 50:32)：批判「國家安全」保護主義、資源交換構想與會議結束\n- **反駁國家安全論**：Jim Ritchie 認為無能的外資本土鋼廠才是國家安全威脅；加拿大擁有鐵礦砂、焦煤、銅、鋅等豐富天然資源，最聰明的做法應該是用原物料與國外交換便宜優質的鋼材（「以噸易噸 ton for ton」，把污染留在國外），讓本土製造業繁榮，等 20~30 年後綠鋼（Green Steel）等新技術成熟再重建鋼廠。\n- **會議結束**：雙方互道感謝，結束約 50.5 分鐘的深度會談。\n"}, {"doc_id": "cas_03_raw", "title": "03. 未刪減分段聽覺完整底稿 (Unabridged Raw Notes)", "short_title": "03. 未刪減逐段底稿", "badge": "完整原句庫", "filename": "20261019_1157_Cascadia_Metals_Raw_Notes", "content": "# Cascadia Metals 拜訪會議完整原始素材庫 (Raw Listening Material & Quotes)\n\n> 本檔案為後續轉換任何會議記錄格式（如：中鋼內部出差報告格式、條列式決策摘要、中英雙語對照逐段紀錄、客戶背景與商情分析表、待辦事項追蹤表等）之核心素材來源。\n\n---\n\n## 1. 會議基本資訊 (Metadata)\n- **會議日期與時間**：2026年10月19日 11:57（錄音檔名：`2026年10月19日 11點57分.m4a`）\n- **會議總長**：50分32秒（3,032.02秒）\n- **拜訪地點**：加拿大卑詩省溫哥華地區（Cascadia Metals 溫哥華廠區 / 總部）\n- **與會人員**：\n  - **Cascadia Metals**：\n    - **Jim Ritchie**：總裁 / 負責人（主要發言人，熟悉台韓越供應鏈，能聽說韓語但習慣以英語交談，沒有上級老闆、決策直接，經常在媒體與 CITT 公開發聲批評加東保護主義鋼廠）\n    - **Mark**：採購/營運主管（會中共同評估塗油鍍鋅 Oiled GI 應用於車庫門客戶的可行性，並代表出席會後午餐）\n    - **Amy**：採購/業務人員（代表出席會後午餐）\n    - **Philip**：物流/船運相關主管（會中確認台灣 G2 Ocean 海運費為 $80/噸 effective rate）\n    - *提及未在場人員*：**Danny**（Cascadia 美國廠採購負責人，急需鍍鋅 GI）\n  - **中鋼公司 (CSC)**：\n    - **Jim**：主談代表（介紹中鋼集團概況與高雄總部大樓、說明中鋼與台塑河靜及台灣下游盛餘/裕鐵/燁輝之供料關係）\n    - **Vincent**：冷軋（Cold Rolled）銷售代表（負責 Cascadia 冷軋業務）\n    - **Mr. Parker**：駐墨西哥城（Mexico City）辦事處技術代表（因本次技術部門僅派一名代表赴美，為重視 Cascadia 特於會議當天早晨自墨西哥飛抵溫哥華支援）\n    - **女性業務/企劃同仁**：提問 Cascadia 庫存月數（4~5個月）、下游客戶產業結構（Data Centers）、客戶預測模式，並參與討論台灣 GI 反傾銷稅率與 10 Gauge 厚度規格\n    - *提及未在場人員*：**Roland**（中鋼負責熱浸鍍鋅 GI 團隊代表）\n  - **貿易商 / 通路夥伴**：\n    - **Jock（及英國/澳洲口音貿易商代表）**：熟悉美加反傾銷稅率（AD Duty）、塗油鍍鋅豁免條款、外資鋼廠股權結構，並推薦 Big River 創辦人 Dave Stickler 予 Jim Ritchie\n    - **Cellmark 代表**：與 Jim Ritchie 敘舊，提及 10 年前馬來西亞反規避案（Malaysian anti-circumvention case）時曾來推銷鍍鋅\n\n---\n\n## 2. 關鍵量化數據總表 (Key Quantitative Data)\n\n| 類別 | 項目 | 數據 / 規格 | 備註說明 |\n| :--- | :--- | :--- | :--- |\n| **Cascadia 規模** | 加拿大＋美國總月用量 | **40,000 公噸 / 月**（約 48 萬噸/年） | 加西最大鋼捲加工中心與最大進口商 |\n| **Cascadia 規模** | 加拿大月用量 | **30,000 公噸 / 月** | 溫哥華廠約 10,000 噸/月、Brandon 廠近 10,000 噸/月、其餘廠區合計約 10,000 噸/月 |\n| **Cascadia 規模** | 美國月用量 | **10,000 公噸 / 月** | 主要由 Danny 負責採購，明年預計美國本土 GI 供貨不足 |\n| **Cascadia 規模** | 常態庫存水位 | **4 ~ 5 個月** | Cascadia 的「秘密武器（Secret Weapon）」，遠高於上市同業（如 Russel Metals） |\n| **採購量體** | 韓國 KG Dongbu 採購量 | **70,000 公噸 / 年**（塗鍍/烤漆鋼品） | Cascadia 為 KG Dongbu（原東部製鋼）**全球最大客戶** |\n| **採購量體** | 加拿大本土熱軋（HR）配額 | **Stelco 3,000 噸/月**、**Algoma 500 噸/月** | 遭本土鋼廠嚴格配額限制（Allocation） |\n| **採購量體** | COVID 期間越南塗鍍進口量 | **50,000 公噸** | 事後遭加拿大政府追溯課稅（Retroactive duty），目前仍在訴訟中 |\n| **急迫需求** | **10 Gauge 厚板 GI / GA** | **厚度 0.13\"（約 3.3~3.4mm），寬度 48\" 或 60\"** | **不論價格多少都買（\"Doesn't matter what the price is, we'll just buy it\"）**；加國僅 ArcelorMittal 生產且配額管制 |\n| **市場缺口** | **Stelco 停產 GI & CR 缺口** | **30,000 ~ 35,000 公噸 / 月** | Stelco 停止在加拿大生產鍍鋅與冷軋，原本全供加國內銷，現必須全靠進口填補 |\n| **中鋼優勢規格** | 冷軋（CR）特殊薄寬尺寸 | **1660（16 ga x 60\"）、1272（12 ga x 72\"）** | Cascadia 最看重中鋼能「全尺寸供應（Make every size）」，POSCO 忙時只肯做 10 ga x 48\" |\n| **海運費用** | 台灣出货运費（G2 Ocean） | **$80 美元 / 噸**（Effective rate，含燃油附加費） | 台灣航線受 **Saga** 強勢壟斷控制 |\n| **海運費用** | 韓國出货运費優勢（Swire） | **比台灣便宜 $15 ~ $18 美元 / 噸**（長期目標 $20/噸優勢） | Swire 運紙漿赴日韓，回程每兩週一班定期船（Liner），Cascadia 保證包下 1~2 個船艙（Holds）換取極低運價 |\n| **內陸運費** | 加東（Hamilton）至加西陸運 | **> $100 美元 / 噸** | 加東鋼廠運往加西成本極高，遠不如太平洋海運 |\n| **關稅與反傾銷** | 加拿大對台灣 GI 反傾銷稅 | **中鋼（All Others）約 33%~34%**；**裕鐵（YP）3.2%**；**燁輝（PT, GL）10%** | 塗油鍍鋅（Oiled GI/GL）則豁免排除於加拿大 AD 之外 |\n| **關稅與反傾銷** | 美國近期塗鍍反傾銷初裁 | **Dongbu 20%、Dongkuk 28%、盛餘（SYSCO）20%** | 公佈後一週內美國市場價格直接上漲 20% 轉嫁給消費者 |\n| **關稅與反傾銷** | Cascadia 今年額外關稅支出 | **> $2,500 萬美元（$25M）** | 僅計入「原本非預期」的額外關稅支出 |\n| **下游終端需求** | **Johnson Controls**（資料中心冷卻機房） | **> 3,000 公噸 / 月**（由 Cascadia 供應鋼板與鋁板） | 於 Edmonton 設 13 座廠、2,000 名員工；與 Varsteel 共分訂單 |\n| **下游終端需求** | **IEM**（資料中心巨型配電開關箱） | **中鋼冷軋（CR）主力終端去向** | 為 Amazon 製造大如房屋（as big as a house）的 Switchboxes |\n| **市場價格指標** | 全球鋼價水準與高估幅度 | **美國全球第 1 高、加拿大全球第 2 高**；認為目前鋼價**高估約 30%** | 擔心油價若觸及 **$140 美元/桶** 將引發黑天鵝崩盤；期盼好景氣能撐過 **2027 年** |\n| **北美鋼廠漲價** | Nucor / Big River / Dofasco 動態 | Nucor 明年合約**取消 CRU -5.5% 折扣（改為 0 折扣且無 buffer）** | 10月19日當天 Dofasco 宣布漲價：**HR 漲 $5/噸、CR 與 GI 漲 $10/噸** |\n| **廢鋁套利案例** | 次級鋁材當廢鋁免稅輸美價 | 正常鋁賣 **$2.75/磅**、次級鋁原擬賣 **$2.60/磅**，廢五金商以 **$2.95/磅** 全收 | 6~8 個月前案例：廢鋁（Scrap）進美國免關稅，運往波特蘭重熔即變「美國製造」 |\n\n---\n\n## 3. 逐段時間軸詳細對話紀錄與原文關鍵引述 (Chronological Segment Details)\n\n### Chunk 00 (00:00 - 03:00)\n- **主題**：簡報收尾、越南與馬來西亞市場、中鋼總部介紹、雙方團隊寒暄\n- **詳細內容**：\n  - Jim Ritchie 開場表示非常喜歡越南：「*Yeah, we really like Vietnam. Great place to do business.*」\n  - 貿易商代表補充越南是非自由貿易國（*non-free trade country*），馬來西亞則是自由貿易國（*Malaysia is free trade*），並向中鋼 Jim 強調 Cascadia 在越南人脈極佳（*very well connected already in Vietnam*）。\n  - 中鋼 Jim 幽默回應他們向中鋼越南廠買料，屬於中鋼的下游間接客戶（*downstream customer*）。\n  - 中鋼 Jim 簡報集團概況（Group Overview）：除鋼鐵業務外，亦涵蓋工業材料（industrial material）、工程（engineering）等，並展示高雄中鋼集團總部大樓（CSCG HQ in Kaohsiung），眾人讚賞建築十分現代化（*very modern*）。\n  - Jim Ritchie 表示喜歡與台灣做生意：「*Well we like doing business with Taiwan. It's good, easy to do business in Taiwan, we like that.*」\n  - 詢問中鋼行程：中鋼團隊昨日剛抵達溫哥華；技術代表 **Mr. Parker** 駐點於墨西哥城（stationed in Mexico City），因發現 Cascadia 極為重要，特別請 Parker 今天早上從墨西哥城飛抵溫哥華支援。\n  - Jim Ritchie 提到多年前曾參訪中鋼一貫化煉鋼廠（*integrated mill*）並在中鋼用午餐；早年常去台灣，曾與燁輝（*PT, Prosperity Tieh*）有大量直接往來。\n\n### Chunk 01 (03:00 - 06:00)\n- **主題**：烤漆鋼板採購（韓國 KG Dongbu）、Cascadia 北美產銷噸數、加東與加西市場差異\n- **詳細內容**：\n  - Jim Ritchie 指出對他們而言，競爭永遠在韓國與台灣之間（*for us it's always Korea or Taiwan*）。\n  - Cascadia 購買大量烤漆鋼板（*pre-painted steel*），韓國是全球最大烤漆鋼板生產國，台灣也很優秀。\n  - 中鋼詢問是否向東國製鋼（Dongkuk）購買？Jim Ritchie 表示是向 **Dongbu（東部製鋼，現改名 KG Dongbu / KG Steel）** 採購：「*We are KG Dongbu's largest global customer... largest in the world.*」每年向其採購約 **70,000 噸塗鍍鋼品（coated steel）**，但也笑稱韓國鋼廠很難控制：「*Still very hard to control them though because they're Korean, they just do whatever they want.*」\n  - **Cascadia 鋼材使用量（每月）**：\n    - 溫哥華廠（this plant）：約 **10,000 公噸/月**；\n    - Brandon 廠：接近 **10,000 公噸/月**；\n    - 加拿大全國合計：約 **30,000 公噸/月**；\n    - 美國廠區合計：另約 **10,000 公噸/月**；\n    - 美加總計：每月約 **40,000 公噸**。\n  - 他們是加西遙遙領先的最大鋼捲加工廠（*biggest coil processor in Western Canada by a long shot*）及最大進口商，同時也採購本土鋼材，只要有市佔率機會就會持續擴張。\n  - 談及加拿大東部（Eastern Canada）：文化與加西截然不同，法裔人口多（*a lot of French*）、本土鋼廠多、競爭激烈，對來自加西的 Cascadia 而言較難經營。\n\n### Chunk 02 (06:00 - 09:00)\n- **主題**：加東老舊鋼廠歷史調侃、冷軋（CR）VIP 夥伴關係、對中鋼與 POSCO 的鮮明對比\n- **詳細內容**：\n  - 加東主要鋼廠為 **Dofasco、Stelco、Algoma**，但設備全都非常老舊，不像中鋼（China Steel）擁有最先進的新設備（*state of the art, new everything*）。\n  - Jim Ritchie 開玩笑說加拿大的大問題就是從沒發生過本土戰爭、沒被炸光過（*never had a war, never got everything bombed*），所以設備都 100 年歷史；不像德國或韓國被摧毀後從零重建（如 POSCO 從頭蓋起），才有世界級鋼廠。中鋼則是 1971 年創立。\n  - 貿易商介紹中鋼負責冷軋（Cold Rolled）的 **Vincent**。Vincent 感謝 Cascadia 作為中鋼在加拿大最大的冷軋客戶。\n  - Jim Ritchie 表示他們喜歡採取策略性採購（*we like to be strategic*）：加拿大市場不大，因此他們盡可能把訂單集中在單一供應商，以成為對供應商有份量的客戶。\n  - 稱讚中鋼在台灣的運作模式：每月與盛餘（SYSCO）、裕鐵（YP）等下游聚會並供應熱軋（hot rolled），大家攜手合作。\n  - **批評 POSCO**：直言「中鋼比 POSCO 好打交道太多了，POSCO 真是讓人頭痛（*You're much easier to deal with than POSCO. POSCO is such a headache to deal with.*）」。雖然 Jim Ritchie 會講韓文（開玩笑說自己故意假裝忘記韓文只講英文），但說韓文也沒用，因為 POSCO 內部非常政治化（*very political, lots of politics*），加上 POSCO International 更是糟糕的組織（*terrible organization*）。\n\n### Chunk 03 (09:00 - 12:00)\n- **主題**：中鋼與 POSCO 報價水準、全尺寸客製化價值、韓國 Swire 海運費秘密優勢\n- **詳細內容**：\n  - 中鋼詢問是指價格嗎？Jim Ritchie 表示中鋼與 POSCO 對加拿大市場的報價一向非常接近（*always very similar*），笑稱雙方可能有溝通或有充足市場情報；但他強調：「你們不該賣加拿大太便宜，我們也不希望太便宜，只要有競爭力且穩定的價格即可（*We don't want it too cheap either. We just want a competitive price and steady.*）。」\n  - **核心價值——全尺寸供應（Make Every Size）**：\n    - 「對我們最重要的是你們生產所有尺寸（*What's actually most important to us is that you make every size. That to us is the most valuable.*）。」\n    - 因為 Cascadia 是服務中心（Service Center）而非製造商，必須備齊所有尺寸；特別喜歡中鋼生產的**薄規格寬幅產品（light, wide gauges）**，例如 **1660（16 gauge, 60\" wide）** 與 **1272（12 gauge, 72\" wide）**。\n    - 反觀 POSCO 一旦忙碌起來就不想做這些尺寸，只叫客戶買 10 gauge 48\" wide。Vincent 回應中鋼重視建立長期客戶關係，絕不會為了賺快錢而放棄客戶。\n  - **海運費（Shipping / Freight）差距**：\n    - Jim Ritchie 指出目前唯一希望能改變的是**海運（shipping）**，因為他們從韓國出貨有極大的運費優勢（由 Cascadia 自行安排船運）：\n    - 船公司 **Swire（太古船務）** 負責載運紙漿與紙張（pulp and paper）赴日本與韓國，回程走定期船班（*liner service*，每兩週一班 *every two weeks*）。\n    - Cascadia 向 Swire **保證貨量（guarantee tons，保證每月包下船上 1~2 個船艙 holds）**，因此獲得遠低於現貨市場（*way below spot market*）的特殊運價。\n\n### Chunk 04 (12:00 - 15:00)\n- **主題**：台灣 Saga 航線壟斷與運價差額、對當前市場景氣的隱憂\n- **詳細內容**：\n  - 台灣航線幾乎被 **Saga** 控制（*Saga controls everything out of Taiwan, and Saga is so strong out of Taiwan*），找不到類似 Swire 的協議。\n  - 詢問台灣目前運費：Philip 與貿易商表示最近一批（G2 Ocean）運費為 **$80/噸**（effective rate，無額外燃油附加費，依貨量計）。\n  - Jim Ritchie 表示他們從韓國出貨的運費比台灣便宜約 **$15 ~ $18 美元/噸**。他透露 Cascadia 創業 30 年來的秘密就是談判好運價（維持每噸比別人便宜 $20 美元的優勢，一年半百萬噸下來如同鐵鎚般極具殺傷力）。\n  - **對景氣的看法**：中鋼 Jim 詢問目前生意應該很好？Jim Ritchie 回答：「生意非常好，但我不開心、非常緊張（*Business is really good, but I'm not happy. Very nervous.*）。」\n  - **五大擔憂原因**：\n    1. 討厭目前的關稅壁壘結構（*all the duties*）；\n    2. 加拿大消費者壓力極大（*Canadian consumer is stressed out*），通膨正在系統內累積（*inflation is building in the system*）；\n    3. 油價太高、鋼價太高（認為**目前鋼價比合理水準高出約 30%，\"about 30% too high\"**）；\n    4. 客戶現在是因為「別處買不到（*cannot find it anywhere else*）」才被迫買，而非貨比三家後選擇 Cascadia，這會導致客戶最終心生不滿。\n\n### Chunk 05 (15:00 - 18:00)\n- **主題**：北美製造業失去出口競爭力、AI 資料中心熱潮的可持續性、全球鋼價排名\n- **詳細內容**：\n  - 擔憂北美失去全球競爭力：美國鋼價這麼高，Caterpillar（卡特彼勒）做的怪手（backhoe）怎麼可能跟中國製造商競爭出口？\n  - 目前榮景全靠為 **AI 資料中心（data centers）** 建造風機與基建支撐，一旦資料中心建設潮結束該怎麼辦？\n  - 質疑行情的「**可持續性（sustainable）**」：一生中從未見過這種高價市場能維持好幾年，必定會出現**黑天鵝（Black Swan）**，例如金融危機或**油價飆到每桶 $140 美元**（歷史上油價只要碰到 $140 必出大事）；與會歐洲夥伴也補充，若 Nvidia 今晚宣布推出算力 10 倍、耗電僅一半的新晶片，整個熱潮就會瞬間終結。\n  - 調侃美國人比台灣人還害怕中國（只要中國出新記憶體晶片，Micron 就大跌，因為中國做電池、鋼鐵、手機都能做得更便宜）。表示若好景氣能維持到 **2027 年** 他就會非常開心了。\n  - **全球鋼價排名**：美國是全球第一高，**加拿大鋼價是全球第二高（second highest prices in the world）**，再來才是歐洲與亞洲。\n\n### Chunk 06 (18:00 - 21:00)\n- **主題**：Stelco 停產鍍鋅與冷軋造成每月 3~3.5 萬噸缺口、台灣 GI 反傾銷稅率與塗油鍍鋅豁免探討\n- **詳細內容**：\n  - 調侃即便加拿大鋼價全球第二高，川普（Donald Trump）依然不開心（除非川普退休他才會開心）。\n  - **重大商情——Stelco 停產鍍鋅與冷軋**：\n    - 短期內進口需求將變得更強（*import is going to get even stronger*），因為 **Stelco 已停止在加拿大生產鍍鋅與冷軋（stopped making galvanized and cold rolled in Canada）**！\n    - 這造成加拿大內銷市場每月減少 **30,000 ~ 35,000 公噸** 供給，現在市場嚴重缺貨，安大略省買家（如 **Optima**）已開始向越南大舉下單採購塗鍍鋼材。\n  - **台灣供應商產能與反傾銷稅率（AD Duty）**：\n    - 中鋼 Jim 建議可向台灣裕鐵（YP）多買 GI，中鋼可支援熱軋底材；但眾人指出 **YP（裕鐵）目前沒產能/缺料（no capacity）**，且 **PT（燁輝）也已賣光（sold out）**。\n    - 討論能否直接向中鋼買鍍鋅（由中鋼另一部門 **Roland** 團隊負責）：貿易商指出中鋼在加拿大屬於「All Others」稅率，高達 **33% ~ 34% AD duty**（相較之下 YP 僅 3.2%、PT 鍍鋁鋅約 10%）。\n    - **塗油鍍鋅（Oiled Galvanized / Galvalume）豁免方案**：貿易商指出「塗油鍍鋅」在加拿大反傾銷稅中是**排除豁免的（excluded from the AD）**！在安大略省已有透過 Taylor 賣給游泳池牆板廠（swimming pool walls）後續烤漆的實績。Jim Ritchie 詢問同事 **Mark** 能否讓車庫門客戶 **Flexi-Force** 或 **Assa Abloy** 使用塗油鍍鋅再脫脂（degrease），但評估目前加西廠區暫無此設備或需求。\n  - **Cascadia 目前 GI 採購來源**：越南（Vietnam）、韓國（Korea）、澳洲（BlueScope Australia）。\n\n### Chunk 07 (21:00 - 24:00)\n- **主題**：10 Gauge 厚板 GI/GA 不計代價急迫採購、最愛採購國排名、鋁材進口\n- **詳細內容**：\n  - 補充若有貨源也會買 POSCO Thailand（浦項泰國廠）。\n  - **最急迫採購需求——10 Gauge GI & GA**：\n    - Jim Ritchie 強調：「我們隨時都在找 **10 Gauge（厚度 0.13 吋 / 約 3.3~3.4 mm，48\" 及 60\" 寬）的 Galvanneal（GA）與 Galvanized（GI）**。如果你們有任何貨源，**不管價格多少我們都買（It doesn't matter what the price is, we'll just buy it）**！」\n    - 原因：加拿大嚴重短缺，本土僅 **ArcelorMittal** 一家能做，且對 Cascadia 實施嚴格配額限制（on allocation）。\n    - （中鋼團隊現場以中文低聲確認：0.13 吋乘 25.4 約 3.3~3.4 mm，屬正常厚板規格，中鋼可做到 3.4 mm）。\n  - **最喜愛採購國家排名**：第 1、2 名是**台灣與韓國**（最容易做生意），第 3 名是**越南**（Formosa Ha Tinh 台塑河靜、Hoa Phat 和發）。評論越南鋼廠非常激進（導致高反傾銷稅），品質雖不如中鋼或 POSCO，但尚可接受（*not as good as China Steel or POSCO, but it's okay*）。\n  - 中鋼 Jim 說明台灣因對中國等課徵反傾銷稅，政府要求中鋼優先滿足台灣國內下游（讓下游有競爭力外銷）。\n  - **其他產品需求**：重申 **Galvanized 與 Galvanneal 是最大需求項目**；烤漆（pre-paint）則會繼續留在韓國。此外也大量進口**鋁材（Aluminum，因加拿大無平軋鋁廠，仍從中國進口並享特定關稅豁免 company-specific remissions）**與**不鏽鋼（Stainless Steel）**。\n\n### Chunk 08 (24:00 - 27:00)\n- **主題**：台灣不鏽鋼採購、本土鋼廠配額現況、與 Stelco 及 ArcelorMittal 的尖銳對立\n- **詳細內容**：\n  - 不鏽鋼採購自台灣 **YUSCO（燁聯）**、唐榮（Tang Eng）、華新麗華（Walsin）等。\n  - **本土鋼廠配額**：目前每月僅從 **Stelco** 拿到 **3,000 噸熱軋（HR）**，從 **Algoma** 拿到 **500 噸**（Algoma 稱新年會增產）。\n  - **與加拿大本土鋼廠的恩怨**：\n    - 加拿大本土鋼廠非常討厭 Cascadia，因為 Cascadia 進口量龐大，且 Jim Ritchie 常接受報紙採訪公開批評本土鋼廠（受保護、老舊、位於加東），其他加拿大服務中心都不敢吭聲，只有他自己當老闆沒上司管（笑稱哪天可能被抓去關塔那摩灣 Guantanamo Bay）。\n    - **Stelco 與 ArcelorMittal 的報復手段**（因 Cascadia 去加拿大國際貿易法庭 CITT 作證反對他們；唯獨 Algoma 態度不同未報復）：\n      1. 故意賣給 Cascadia 下游小型終端客戶比賣給 Cascadia **便宜 $100/噸** 的價格；\n      2. 削減配額時，砍 Cascadia 砍得最重，想方設法傷害 Cascadia。\n\n### Chunk 09 (27:00 - 30:00)\n- **主題**：向客戶回購 ArcelorMittal 鋼材竟更便宜、亞伯達省公投、年繳逾 2,500 萬美元關稅\n- **詳細內容**：\n  - Jim Ritchie 透露：Cascadia 的客戶向 ArcelorMittal 買鋼材再轉賣給 Cascadia，**價格竟然比 Cascadia 直接向 ArcelorMittal 買還便宜**！他當面告訴 ArcelorMittal：「我不喜歡你們，若靠你們供貨我們早就破產了，但儘管你們是最爛的供應商，我們依然做得極好！」\n  - 批評 ArcelorMittal 是外資公司，加拿大聯邦政府卻拿加西納稅人的錢去保護與補貼加東鋼廠（且從漢密爾頓 Hamilton 運到加西的**內陸運費高達 $100 美元/噸以上**），加東鋼廠拿了補貼卻不供應加西市場——這正是加拿大東西部嚴重分裂、甚至**當天（2026年10月19日）亞伯達省（Alberta）舉行公投（referendum）**的原因！\n  - **關稅支出**：Cascadia 今年支付的關稅比誰都多，光是「非預期內」額外繳交的關稅就超過 **2,500 萬美元（more than $25 million in tariffs）**。大家開玩笑說政府收這麼多錢乾脆買下 Stelco，Jim Ritchie 笑說：「**中鋼應該去把 Stelco 買下來（China Steel should buy Stelco），我一定當你們的客戶！**」\n\n### Chunk 10 (30:00 - 33:00)\n- **主題**：盛讚中鋼台灣產業生態系典範 vs. 加拿大外資鋼廠抽血、熱軋反傾銷風險評估\n- **詳細內容**：\n  - **高度肯定中鋼模式**：Jim Ritchie 指出，中鋼在台灣雖享有特殊地位，但作為回報，中鋼具備**世界級競爭力（world-class competitive）**，並全力支持盛餘（SYSCO）、裕鐵（YP）、燁輝（PT）等下游，**讓整個台灣鋼鐵生態系（entire ecosystem）具備世界競爭力**。\n  - **批判加拿大外資鋼廠**：加拿大給予本土鋼廠同等保護，但三大鋼廠全被外資收購且對本土毫無貢獻，把錢全匯出國外給股東、完全不重新投資：\n    - **Stelco**：由美國 **Cleveland-Cliffs** 持有；\n    - **Algoma**：由**美國私募股權/對沖基金（American private equity / hedge fund）**持有；\n    - **ArcelorMittal Dofasco**：由**英國/印度財團（UK-Indian company）**持有。\n  - **太平洋航線與反傾銷（AD）評估**：\n    - 好消息是正因本土鋼廠太差，加拿大永遠需要進口，且**太平洋是全球最便宜的高速公路**。\n    - 中鋼詢問本土鋼廠是否可能對熱軋（HR）等提起反傾銷訴訟？貿易商與 Jim Ritchie 一致認為：**目前完全不可能證明反傾銷產業損害（no injury / no damage）**，因為本土鋼廠正在暴賺、價格極高且市場嚴重缺貨（shortage）。\n    - 此外，全面高關稅（high tariff）比反傾銷對本土鋼廠更有利（反傾銷耗時且花律師費，買家還能換國別買；全面關稅則是墊高所有進口價）。舉例美國近期對韓國 Dongbu（20%）、Dongkuk（28%）及台灣盛餘 SYSCO（20%）祭出初裁稅率，結果大家只慌了一週，美國市場價格隨即直接上漲 20% 轉嫁。\n\n### Chunk 11 (33:00 - 36:00)\n- **主題**：Cascadia「4~5 個月高庫存」秘密武器與私人企業經營哲學\n- **詳細內容**：\n  - 談及市場循環：鋼價下跌永遠比上漲快。Cascadia 因庫存龐大，在多頭市場賺得比多數人多，在空頭市場則會跌得更痛（一旦反轉他就直接砍價認賠、快速出清重來）。\n  - **庫存水位（4 ~ 5 個月）**：\n    - 回應中鋼女性同仁提問：Cascadia 常態維持 **4 到 5 個月（4 to 5 months）** 的庫存與在途訂單。\n    - 這是 Cascadia 的**秘密武器（secret weapon）**：上市公開發行公司（如 **Russel Metals**）只關注資本投資報酬率（ROI，例如拿 1,000 萬美元資本要求 15% 回報賺 150 萬美元即可），不敢抱大庫存；而 Cascadia 不看 ROI，專注於**充分供應市場（supplying the market）**。\n    - 在今年充滿關稅與政策不確定性的市場衝擊下，所有尋求「確定性（certainty）」的客戶都湧向 Cascadia——他形容自己就像在焦慮市場中販售「**療癒美食（comfort food）**」，甚至其他同業服務中心（如 Terra Nova 透露今年其最大客戶就是 Russel Metals）也必須向有現貨的人調貨。\n\n### Chunk 12 (36:00 - 39:00)\n- **主題**：最大下游客戶群（AI 資料中心）、免關稅輸美通道與「中國廢鋁變美國製造」奇聞\n- **詳細內容**：\n  - 回應中鋼女性同仁提問下游客戶產業：目前表現最好、最大的客戶群是「非買鋼不可」的 **AI 資料中心（Data Centers）**！\n  - **資料中心免稅輸美內幕**：許多美國企業在加拿大設廠製造資料中心設備，使用來自全球的鋼材與全球的銅線，但在加拿大製成資料中心設備模組運往美國時，**進入美國完全免關稅（going into the US duty-free, zero duty）**！業界對此都非常低調（「Don't ask」）。\n  - **廢鋁（Scrap Aluminum）免稅輸美趣聞**：\n    - 6~8 個月前美國鋁價飆漲，Cascadia 正常鋁材賣 **$2.75/磅**，手頭有大批中國進口次級鋁材（secondary aluminum）想賣 **$2.60/磅**。\n    - 結果廢五金回收商（scrap dealer）上門以 **$2.95/磅** 收購所有鋁材當廢鋁！因為**廢鋁進美國完全免關稅（duty-free）**，運到美國波特蘭（Portland）熔掉重鑄後，中國鋁材就直接變成「美國製造（Made in the USA）」！Cascadia 當場把所有次級鋁材全數高價賣光。\n\n### Chunk 13 (39:00 - 42:00)\n- **主題**：資料中心兩大主力客戶（Johnson Controls 與 IEM / Amazon）及供應鏈缺工缺料瓶頸\n- **詳細內容**：\n  - **主力客戶一：Johnson Controls（江森自控）**：\n    - 製造資料中心專用的大型冷卻風扇機房（*great big rooms with fans in them that cool air*），內含大量電子設備。\n    - Cascadia 供應其外殼鋼板與地板鋁材（與 **Varsteel** 共享客戶，Varsteel 供應熱軋、鋼管與型鋼）。\n    - Johnson Controls 在**艾德蒙頓（Edmonton）擁有 13 座工廠、約 2,000 名員工**，**Cascadia 每月賣給他們超過 3,000 公噸（more than 3,000 tons a month）**！\n  - **主力客戶二：IEM（Industrial Electric Mfg，中鋼冷軋 CR 的主要去向）**：\n    - **Cascadia 採購的中鋼冷軋（Cold Rolled）有極大比例流向 IEM**！\n    - IEM 製造資料中心的配電開關箱/配電盤（*switchboxes / busbar / switching gear*），目前為 **Amazon** 製造的新型開關箱「**大得像一棟房子（as big as a house）**」。\n  - **預測與供應鏈瓶頸**：\n    - 6 個月前客戶曾喊出業務要翻四倍（quadruple），Cascadia 備妥大量鋼材，但客戶卻買不到風扇（fans）與其他零組件，加上**嚴重缺工（not enough labor）**，導致做好的機房外殼全堆在田裡等零件。\n    - Amazon 因此將原本集中在 1~2 家的訂單拆給多家代工廠（指定風扇與開關設備供應商，但未指定鋼材），目前 Cascadia 同時供應 **3 ~ 4 家** 幫 Amazon 代工相同產品的廠商。\n\n### Chunk 14 (42:00 - 45:00)\n- **主題**：會後午餐安排、越南回溯關稅訴訟、美國 Nucor / Big River / Dofasco 強硬漲價\n- **詳細內容**：\n  - Jim Ritchie 因故無法參加午餐，指派 **Mark** 與 **Amy** 代表出席。\n  - 與 **Cellmark** 代表敘舊（回憶 10 年前馬來西亞反規避案時曾買過一部分鍍鋅，後鋼價大跌 50%），並提及 COVID 期間自越南進口 50,000 噸塗鍍鋼材遭加拿大政府事後回溯課稅（retroactive duty），目前仍在打官司。\n  - **美國市場與鋼廠霸王條款**：\n    - 中鋼熱軋因反傾銷稅未銷美，冷軋則有報給 Cascadia 美國廠的 **Danny**；但 Jim Ritchie 指出 Danny 明年最缺的是**鍍鋅（Galvanized）**。\n    - 美國 **Nucor** 與 **Big River Steel** 提出極為強硬的明年度合約條件：往年合約為 **CRU 指數減 5.5% 折扣（CRU minus 5.5%）**，明年改為 **0 折扣（no CRU minus, no discount）**，且**無數量緩衝（no buffer）**，每月承諾噸數必須一噸不差照買！\n    - Nucor 在會議當天（週一）又再度漲價（幾乎每週一都在漲）；貿易商補充 **Dofasco** 當天也宣布調漲：**熱軋（HR）漲 $5/噸、冷軋（CR）與鍍鋅（GI）漲 $10/噸**。\n\n### Chunk 15 (45:00 - 48:00)\n- **主題**：本土鋼廠如培養皿細菌、Big River 創辦人擬於亞伯達省建電爐廠、台韓設廠地理優勢\n- **詳細內容**：\n  - Jim Ritchie 形容貪婪的本土鋼廠就像「**培養皿裡的細菌（bacteria in a Petri dish）**」，無止境擴張漲價直到把養分吃光，然後徹底崩潰（collapse），直言對加拿大鋼鐵業感到羞恥，笑稱若年輕 20 歲且有幾十億美元真想自己蓋鋼廠。\n  - **重要市場情報——Alberta 新建電爐廠計畫**：\n    - 貿易商向 Jim Ritchie 推薦認識 **Dave Stickler**（美國 **Big River Steel** 創辦人，剛在阿肯色州建了年產 50 萬噸的 Hybar 鋼筋廠，與 LMS 的 Ron 很熟）。\n    - 透露 **Dave Stickler 正認真考慮在亞伯達省（Alberta）興建一座電弧爐（EAF）鋼廠**（初期可能從 50 萬噸鋼筋廠起步，但有 EAF 就能進一步延伸冷軋與鍍鋅）。\n  - **地理環境比較**：Jim Ritchie 分析加拿大內陸太廣、海岸線有限、人口少且缺廢鋼（scrap），其實沒有適合蓋鋼廠的地點；反觀**台灣（島嶼）與韓國（半島）四面環海，任何靠海處都能蓋鋼廠，是全球最完美的鋼廠地理環境**。\n\n### Chunk 16 (48:00 - 50:32)\n- **主題**：駁斥「國家安全」保護主義、原物料「以噸易噸」構想、會議結束\n- **詳細內容**：\n  - 駁斥加拿大政府以「國家安全（national security）」為由保護鋼廠：他認為無能的外資本土鋼廠才是國家安全的威脅；為了國家安全反而應該進口鋼材。\n  - 提出「以噸易噸（ton for ton）」資源交換構想：加拿大擁有鐵礦砂（iron ore）、焦煤（coking coal）、銅、鋅等所有天然資源，若夠聰明應直接要求中國等低成本產鋼國高價購買加拿大原物料，加拿大則買回便宜優質的鋼材（把污染留在國外），讓加拿大本土製造業全面繁榮；等老舊鋼廠自然淘汰、20~30 年後綠鋼（Green Steel）等新技術成熟再重新投資（無奈政客只關心明年的選票）。\n  - 雙方互道感謝（*Thanks for your time, nice meeting you guys*），會議圓滿結束。\n"}]}]
+  </script>
+
+  <script>
+    const PASSCODE = "8021111";
+    const STORAGE_KEY = "ca2026_meeting_auth_ok";
+    const meetingsData = JSON.parse(document.getElementById("meetings-data").textContent);
+
+    let currentMeetingIndex = 0;
+    let currentDocIndex = 0;
+
+    // Authentication Logic
+    function checkAuth() {
+      if (sessionStorage.getItem(STORAGE_KEY) === "1") {
+        unlockPortal();
+      }
+    }
+
+    function unlockPortal() {
+      document.getElementById("auth-overlay").style.display = "none";
+      document.getElementById("app-container").style.display = "flex";
+      initPortal();
+    }
+
+    function lockPortal() {
+      sessionStorage.removeItem(STORAGE_KEY);
+      document.getElementById("pwd-input").value = "";
+      document.getElementById("app-container").style.display = "none";
+      document.getElementById("auth-overlay").style.display = "flex";
+    }
+
+    document.getElementById("auth-form").addEventListener("submit", function (e) {
+      e.preventDefault();
+      const val = document.getElementById("pwd-input").value.trim();
+      if (val === PASSCODE) {
+        sessionStorage.setItem(STORAGE_KEY, "1");
+        document.getElementById("auth-error").style.display = "none";
+        unlockPortal();
+      } else {
+        const err = document.getElementById("auth-error");
+        err.style.display = "block";
+        document.getElementById("pwd-input").select();
+      }
+    });
+
+    // Portal UI Initialization
+    function initPortal() {
+      const custSelect = document.getElementById("customer-select");
+      custSelect.innerHTML = "";
+      meetingsData.forEach((m, idx) => {
+        const opt = document.createElement("option");
+        opt.value = idx;
+        opt.textContent = `[${m.order}] ${m.date} (${m.time.split(" ")[0]}) — ${m.customer}`;
+        custSelect.appendChild(opt);
+      });
+
+      renderSidebarCustomers();
+      selectMeeting(currentMeetingIndex, 0);
+    }
+
+    function renderSidebarCustomers() {
+      const container = document.getElementById("customer-cards-list");
+      container.innerHTML = "";
+      meetingsData.forEach((m, idx) => {
+        const card = document.createElement("div");
+        card.className = "customer-card" + (idx === currentMeetingIndex ? " active" : "");
+        card.onclick = () => selectMeeting(idx, 0);
+        card.innerHTML = `
+          <div class="customer-card-header">
+            <span>${m.order} ・ ${m.date}</span>
+            <span>${m.time.split(" ")[0]}</span>
+          </div>
+          <div class="customer-card-name">${m.customer}</div>
+          <div class="customer-card-meta">📍 ${m.location}</div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function selectMeeting(mIdx, dIdx = 0) {
+      currentMeetingIndex = Number(mIdx);
+      currentDocIndex = Number(dIdx);
+
+      document.getElementById("customer-select").value = currentMeetingIndex;
+      renderSidebarCustomers();
+
+      const meeting = meetingsData[currentMeetingIndex];
+      const docSelect = document.getElementById("doc-select");
+      docSelect.innerHTML = "";
+      meeting.docs.forEach((d, idx) => {
+        const opt = document.createElement("option");
+        opt.value = idx;
+        opt.textContent = `${d.title}`;
+        docSelect.appendChild(opt);
+      });
+      docSelect.value = currentDocIndex;
+
+      renderDocTabs();
+      renderCurrentDocument();
+    }
+
+    function renderDocTabs() {
+      const meeting = meetingsData[currentMeetingIndex];
+      const tabsContainer = document.getElementById("doc-tabs-list");
+      tabsContainer.innerHTML = "";
+      meeting.docs.forEach((d, idx) => {
+        const btn = document.createElement("button");
+        btn.className = "doc-tab-btn" + (idx === currentDocIndex ? " active" : "");
+        btn.onclick = () => selectDoc(idx);
+        btn.innerHTML = `
+          <span>${d.short_title}</span>
+          <span class="doc-badge">${d.badge}</span>
+        `;
+        tabsContainer.appendChild(btn);
+      });
+    }
+
+    function selectDoc(dIdx) {
+      currentDocIndex = Number(dIdx);
+      document.getElementById("doc-select").value = currentDocIndex;
+      renderDocTabs();
+      renderCurrentDocument();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function onCustomerSelectChange(val) {
+      selectMeeting(Number(val), 0);
+    }
+
+    function onDocSelectChange(val) {
+      selectDoc(Number(val));
+    }
+
+    // Format GitHub Alert blocks (> [!IMPORTANT] etc.) nicely
+    function preprocessMarkdown(md) {
+      return md.replace(/^> \[!([A-Z]+)\]\s*$/gm, "> **[$1]**");
+    }
+
+    function renderCurrentDocument() {
+      const meeting = meetingsData[currentMeetingIndex];
+      const doc = meeting.docs[currentDocIndex];
+
+      // Update Banner
+      const banner = document.getElementById("meeting-banner");
+      banner.innerHTML = `
+        <div class="banner-top">
+          <div class="banner-badges">
+            <span class="badge-pill">${meeting.order}｜${meeting.date} (${meeting.time})</span>
+            <span class="badge-pill badge-tag">${meeting.tag}</span>
+          </div>
+          <span style="font-size:13px; color:#64748b;">⏱️ 錄音時長：${meeting.duration}</span>
+        </div>
+        <h2 class="banner-title">${meeting.customer} — ${doc.short_title}</h2>
+        <div class="banner-meta">
+          <strong>📍 拜訪地點：</strong>${meeting.location} &nbsp;|&nbsp;
+          <strong>👥 與會代表：</strong>${meeting.attendees}
+        </div>
+        <div class="banner-summary">
+          <strong>💡 場次核心摘要：</strong>${meeting.summary}
+        </div>
+      `;
+
+      // Render Markdown Content
+      const rawMd = preprocessMarkdown(doc.content);
+      const viewer = document.getElementById("markdown-viewer");
+      if (window.marked) {
+        viewer.innerHTML = marked.parse(rawMd);
+      } else {
+        viewer.innerHTML = "<pre style='white-space:pre-wrap;'>" + rawMd + "</pre>";
+      }
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById("toast");
+      t.textContent = msg;
+      t.style.display = "block";
+      clearTimeout(window._toastTimer);
+      window._toastTimer = setTimeout(() => {
+        t.style.display = "none";
+      }, 3500);
+    }
+
+    // 1. Export as Plain Text (.txt)
+    function exportTXT() {
+      const meeting = meetingsData[currentMeetingIndex];
+      const doc = meeting.docs[currentDocIndex];
+
+      // Convert markdown to clean readable text while keeping structure
+      let txt = "====================================================================\r\n";
+      txt += `【2026 加拿大客戶拜訪會議記錄】${meeting.customer}\r\n`;
+      txt += `日期時間：${meeting.date} (${meeting.time}) | 地點：${meeting.location}\r\n`;
+      txt += `報告名稱：${doc.title}\r\n`;
+      txt += "====================================================================\r\n\r\n";
+
+      let body = doc.content
+        .replace(/<br\s*\/?>/gi, " / ")
+        .replace(/\*\*(.*?)\*\*/g, "$1")
+        .replace(/^> \[!([A-Z]+)\]/gm, "[$1]")
+        .replace(/\r?\n/g, "\r\n");
+
+      txt += body;
+
+      const blob = new Blob(["\uFEFF" + txt], { type: "text/plain;charset=utf-8" });
+      triggerDownload(blob, `${doc.filename}.txt`);
+      showToast("✅ 已匯出 TXT 文字檔：" + doc.filename + ".txt");
+    }
+
+    // 2. Export as Microsoft Word (.doc)
+    function exportWord() {
+      const meeting = meetingsData[currentMeetingIndex];
+      const doc = meeting.docs[currentDocIndex];
+      const renderedHtml = document.getElementById("markdown-viewer").innerHTML;
+
+      const wordHtml = `
+        <html xmlns:o="urn:schemas-microsoft-com:office:office"
+              xmlns:w="urn:schemas-microsoft-com:office:word"
+              xmlns="http://www.w3.org/TR/REC-html40">
+        <head>
+          <meta charset="utf-8">
+          <title>${doc.title}</title>
+          <!--[if gte mso 9]>
+          <xml>
+            <w:WordDocument>
+              <w:View>Print</w:View>
+              <w:Zoom>100</w:Zoom>
+              <w:DoNotOptimizeForBrowser/>
+            </w:WordDocument>
+          </xml>
+          <![endif]-->
+          <style>
+            @page {
+              size: 21cm 29.7cm;
+              margin: 2cm 2cm 2cm 2cm;
+            }
+            body {
+              font-family: "Microsoft JhengHei", "PMingLiU", "Calibri", sans-serif;
+              font-size: 11pt;
+              line-height: 1.55;
+              color: #111827;
+            }
+            h1 { font-size: 18pt; color: #0f4c81; border-bottom: 1.5pt solid #0f4c81; padding-bottom: 4pt; }
+            h2 { font-size: 14pt; color: #0f4c81; margin-top: 14pt; border-bottom: 0.5pt solid #cbd5e1; padding-bottom: 2pt; }
+            h3 { font-size: 12pt; color: #1e3a8a; margin-top: 10pt; }
+            table { border-collapse: collapse; width: 100%; margin: 10pt 0; font-size: 10pt; }
+            th, td { border: 1pt solid #64748b; padding: 5pt 7pt; text-align: left; vertical-align: top; }
+            th { background-color: #e2e8f0; font-weight: bold; }
+            blockquote { border-left: 3pt solid #0f4c81; padding-left: 8pt; background-color: #f8fafc; margin: 8pt 0; }
+            code { font-family: Consolas, monospace; background-color: #f1f5f9; padding: 1pt 3pt; }
+            .meta-box { border: 1pt solid #94a3b8; background-color: #f8fafc; padding: 8pt 12pt; margin-bottom: 14pt; font-size: 10pt; }
+          </style>
+        </head>
+        <body>
+          <div class="meta-box">
+            <strong>拜訪客戶：</strong>${meeting.customer} (${meeting.location})<br/>
+            <strong>會議時間：</strong>${meeting.date} ${meeting.time} (時長：${meeting.duration})<br/>
+            <strong>與會人員：</strong>${meeting.attendees}
+          </div>
+          ${renderedHtml}
+        </body>
+        </html>
+      `;
+
+      const blob = new Blob(["\uFEFF" + wordHtml], { type: "application/msword;charset=utf-8" });
+      triggerDownload(blob, `${doc.filename}.doc`);
+      showToast("✅ 已匯出 Word 檔案：" + doc.filename + ".doc");
+    }
+
+    // 3. Export as PDF
+    function exportPDF() {
+      const meeting = meetingsData[currentMeetingIndex];
+      const doc = meeting.docs[currentDocIndex];
+      const element = document.getElementById("printable-area");
+
+      if (window.html2pdf) {
+        showToast("⏳ 正在產生 PDF 檔案，請稍候...");
+        const opt = {
+          margin:       [10, 10, 10, 10],
+          filename:     `${doc.filename}.pdf`,
+          image:        { type: "jpeg", quality: 0.98 },
+          html2canvas:  { scale: 2, useCORS: true, scrollY: 0 },
+          jsPDF:        { unit: "mm", format: "a4", orientation: "portrait" },
+          pagebreak:    { mode: ["avoid-all", "css", "legacy"] }
+        };
+        html2pdf().set(opt).from(element).save().then(() => {
+          showToast("✅ 已完成匯出 PDF：" + doc.filename + ".pdf");
+        }).catch(() => {
+          window.print();
+        });
+      } else {
+        window.print();
+      }
+    }
+
+    function triggerDownload(blob, filename) {
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(() => {
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }, 200);
+    }
+
+    checkAuth();
+  </script>
+</body>
+</html>

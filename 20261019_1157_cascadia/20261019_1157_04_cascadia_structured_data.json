@@ -1,0 +1,145 @@
+{
+  "meeting_metadata": {
+    "date": "2026-10-19",
+    "time": "11:57",
+    "audio_file": "2026年10月19日 11點57分.m4a",
+    "duration_seconds": 3032.02,
+    "duration_formatted": "50:32",
+    "location": "Vancouver, BC, Canada (Cascadia Metals)",
+    "customer_company": "Cascadia Metals",
+    "visiting_company": "China Steel Corporation (CSC)"
+  },
+  "participants": {
+    "cascadia_metals": [
+      {
+        "name": "Jim Ritchie",
+        "role": "President / Owner",
+        "notes": "Main speaker; speaks some Korean; outspoken critic of Eastern Canadian protectionist mills at CITT and in media; unable to attend post-meeting lunch."
+      },
+      {
+        "name": "Mark",
+        "role": "Purchasing / Operations Executive",
+        "notes": "Evaluated oiled GI feasibility for garage door customers (Flexi-Force, Assa Abloy); attended post-meeting lunch."
+      },
+      {
+        "name": "Amy",
+        "role": "Purchasing / Sales",
+        "notes": "Attended post-meeting lunch."
+      },
+      {
+        "name": "Philip",
+        "role": "Logistics / Freight",
+        "notes": "Confirmed current Taiwan coil freight rate of $80/ton effective via G2 Ocean."
+      },
+      {
+        "name": "Danny (Mentioned, US Office)",
+        "role": "US Purchasing Manager",
+        "notes": "Handles US purchasing; received CSC CR offers; critically short on Galvanized (GI) for next year."
+      }
+    ],
+    "csc_team": [
+      {
+        "name": "Jim",
+        "role": "Lead Representative (CSC)",
+        "notes": "Presented CSC Group overview and Kaohsiung HQ; discussed HR/CR/GI supply chain and Vietnamese/Taiwanese downstream mills."
+      },
+      {
+        "name": "Vincent",
+        "role": "Cold Rolled (CR) Sales Representative",
+        "notes": "In charge of Cold Rolled sales to Canada; noted Cascadia is CSC's largest CR customer in Canada."
+      },
+      {
+        "name": "Mr. Parker",
+        "role": "Technical Representative (CSC Mexico City Office)",
+        "notes": "Stationed in Mexico City; flew in the morning of Oct 19 to support the technical discussion."
+      },
+      {
+        "name": "CSC Female Colleague(s)",
+        "role": "Sales / Marketing Representative",
+        "notes": "Inquired about inventory months (4-5 months), downstream industries (Data Centers), customer forecasts, and 10ga GI specifications."
+      },
+      {
+        "name": "Roland (Mentioned)",
+        "role": "Galvanized (GI) Team Lead at CSC",
+        "notes": "In charge of CSC's coated/galvanized team."
+      }
+    ],
+    "traders_and_partners": [
+      {
+        "name": "Jock & Trading Partners (incl. Cellmark rep)",
+        "role": "Trading / Channel Representatives",
+        "notes": "Provided intel on AD duties (CSC 33-34%, YP 3.2%, PT 10%), oiled GI exemption, Stelco shutdown, Dofasco price hikes, and Dave Stickler's Alberta EAF plan."
+      }
+    ]
+  },
+  "key_metrics_and_numbers": {
+    "total_steel_consumption_tons_per_month": 40000,
+    "canada_consumption_tons_per_month": 30000,
+    "us_consumption_tons_per_month": 10000,
+    "vancouver_plant_tons_per_month": 10000,
+    "brandon_plant_tons_per_month": 10000,
+    "kg_dongbu_annual_purchases_tons": 70000,
+    "stelco_gi_cr_shutdown_shortage_tons_per_month": "30000 - 35000",
+    "stelco_hr_allocation_tons_per_month": 3000,
+    "algoma_hr_allocation_tons_per_month": 500,
+    "inventory_level_months": "4 - 5",
+    "unexpected_tariffs_paid_this_year_usd": "> 25000000",
+    "taiwan_freight_rate_usd_per_ton": 80,
+    "korea_freight_advantage_usd_per_ton": "15 - 18 (historical target: 20)",
+    "hamilton_to_west_coast_inland_freight_usd_per_ton": "> 100",
+    "perceived_steel_price_overvaluation_percent": 30,
+    "oil_price_black_swan_threshold_usd_per_barrel": 140,
+    "johnson_controls_monthly_sales_tons": "> 3000",
+    "canada_ad_duty_rates": {
+      "CSC_all_others": "33% - 34%",
+      "YP_Prosperity_Tieh_or_Yieh_Phui": "3.2% (YP) / 10% (PT Galvalume)",
+      "oiled_gi_gl": "0% (Excluded from AD)"
+    },
+    "us_recent_preliminary_ad_duty_rates": {
+      "KG_Dongbu": "20%",
+      "Dongkuk": "28%",
+      "SYSCO_Sheng_Yu": "20%"
+    }
+  },
+  "product_discussions": {
+    "cold_rolled_cr": {
+      "status": "Cascadia is CSC's largest CR customer in Canada.",
+      "key_value_proposition": "Full size capability ('make every size'), especially light and wide gauges such as 16ga x 60\" (1660) and 12ga x 72\" (1272), which POSCO refuses to roll when busy.",
+      "primary_end_use": "Sold heavily to IEM (Industrial Electric Mfg) for manufacturing house-sized electrical switchboxes for Amazon data centers.",
+      "us_market": "Offered to Danny (Cascadia US), though US office needs GI more urgently."
+    },
+    "galvanized_and_galvanneal_gi_ga": {
+      "urgent_inquiry": "10 Gauge (0.13\" / ~3.3-3.4mm) x 48\" and 60\" Galvanneal (GA) and Galvanized (GI). Cascadia will buy at ANY price due to severe Canadian shortage (only ArcelorMittal makes it and puts Cascadia on tight allocation).",
+      "market_shock": "Stelco stopped producing GI and CR in Canada, removing 30,000-35,000 MT/month from the domestic market.",
+      "taiwan_bottlenecks": "YP (3.2% AD) has no capacity; PT (10% AD) is sold out; CSC has 33-34% 'All Others' AD rate.",
+      "oiled_gi_opportunity": "Oiled (unpassivated) GI/GL is excluded from Canadian AD duties; currently used in Ontario for pool walls, evaluated for garage door makers (Flexi-Force, Assa Abloy).",
+      "current_import_sources": ["Vietnam", "Korea", "BlueScope (Australia)", "POSCO Thailand"]
+    },
+    "pre_painted_ppgi": {
+      "status": "Will stick with Korea (KG Dongbu), where Cascadia is their largest global customer (70,000 MT/year)."
+    },
+    "aluminum": {
+      "status": "Imported from China (under company-specific duty remissions) as Canada has no flat-rolled aluminum producer.",
+      "scrap_arbitrage_story": "6-8 months ago, sold all Chinese secondary aluminum (normally $2.60/lb vs prime $2.75/lb) to US scrap dealers at $2.95/lb, who shipped it duty-free as scrap to Portland to remelt as 'Made in USA'."
+    },
+    "stainless_steel": {
+      "status": "Imported partially from Taiwan: YUSCO (燁聯), Tang Eng (唐榮), Walsin Lihwa (華新麗華)."
+    }
+  },
+  "downstream_and_market_intel": {
+    "data_centers": {
+      "overview": "Largest and strongest customer segment for Cascadia right now, driven primarily by Amazon.",
+      "duty_free_channel": "US companies manufacture data center modules/equipment in Canada using global steel and copper wire, then ship completed units into the US with zero duty.",
+      "johnson_controls": "Operates 13 plants with 2,000 employees in Edmonton building large cooling fan rooms; buys >3,000 MT/month of sheet/aluminum from Cascadia (account shared with Varsteel for HR/tubing/beams).",
+      "iem": "Builds massive house-sized electrical switchboxes for Amazon data centers using CSC Cold Rolled steel.",
+      "bottlenecks": "Shortage of labor and non-steel components (e.g., cooling fans), causing Amazon to split orders across 3-4 fabricators (all supplied by Cascadia)."
+    },
+    "north_american_mills": {
+      "stelco": "Owned by Cleveland-Cliffs (US); stopped making GI/CR in Canada; penalizes Cascadia on allocation (3,000 MT/mo HR) and undercuts Cascadia to small end-users by $100/ton.",
+      "arcelormittal_dofasco": "Owned by UK/Indian parent; penalizes Cascadia for CITT testimony; sells to Cascadia's customers cheaper than to Cascadia; raised HR by $5 and CR/GI by $10 on Oct 19.",
+      "algoma": "Owned by US private equity/hedge fund; supplies 500 MT/mo HR to Cascadia; does not retaliate against Cascadia like Stelco/Dofasco.",
+      "nucor_and_big_river": "For next year's contracts, eliminated the previous CRU minus 5.5% discount (now 0% discount) and removed volume buffers; raising prices almost every Monday.",
+      "alberta_new_eaf_project": "Dave Stickler (Big River Steel / Hybar founder) is seriously considering building a 500,000 MT/year EAF mill in Alberta."
+    }
+  }
+}
