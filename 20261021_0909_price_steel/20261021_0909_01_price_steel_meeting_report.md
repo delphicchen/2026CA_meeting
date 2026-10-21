@@ -25,7 +25,7 @@
 
 | 類別 | 項目 | 數據 / 規格 | 備註說明 |
 | :--- | :--- | :--- | :--- |
-| **核心技術訴求** | **四合一多重認證鋼板 (Quad Grade)** | **CSA G40.21 38W / 44W + ASTM A36 + ASME SA36 + API 650 Class 3** | **全場第一要務 (#1 Takeaway)**：要求直接印於 **MTR 材質證明書**（如 `API 650 Class 3 compliant`）並**噴印 (Stencil)** 於鋼板上，不接受單獨符合性聲明書；Algoma、Oregon Steel、Hyundai 皆免費提供不加價 |
+| **核心技術訴求** | **四合一多重認證鋼板 (Quad Grade)** | **CSA G40.21 38W / 44W + ASTM A36 + ASME SA36 + API 650 Class 3** | **全場第一要務 (#1 Takeaway)**：API 650 實為**儲油槽施工建造規範**（其允許使用的材料多為 **ASTM 規格**如 A36、A516 等，或加拿大 CSA G40.21 規格，而非 API 5L X65 等管線鋼材料規範）。客戶要求直接於 **MTR 材質證明書**加註符合聲明（如 `API 650 Class 3 compliant`）並**噴印 (Stencil)** 於鋼板上 |
 | **儲槽市場規模** | 加西常壓儲油槽鋼板年需求 | **≥ 30,000 公噸 / 年** | 用於直徑 200 ft、高 30–50 ft（3–5 層 8'–10' 寬鋼板焊接）之大型常壓儲油槽（如 Edmonton 東側 Henday 與 Burnaby 儲槽區） |
 | **重大基建商機** | **「Pacific Link」新輸油管線計畫** | 全長約 **1,500 km**（亞伯達省 → 溫哥華），預計 **2030 年代** 投產 | 聯邦與亞伯達省政府已啟動 **1 年期快速審批 (Fast-tracking)**，擺脫對美單一依賴轉銷台日韓，將引爆沿線與終端常壓儲槽需求 |
 | **中鋼獨特優勢** | **薄規格 10 呎寬板 (1/4" × 10' wide)** | **厚度 1/4" (6.35mm)、5/16" (7.94mm)、3/8" (9.53mm) × 寬 120" (3,048mm)** | 儲槽上部壁板、頂板與底板極暢銷尺寸；多數鋼廠不願軋製 1/4" × 120"，中鋼具備產能且競爭對手極少 |
@@ -46,12 +46,15 @@
 ## 三、核心議題深度解析
 
 ### 1. 第一要務：將 `API 650 Class 3` 納入四合一多重認證鋼板 (Quad Grade)
+- **規範本質釐清（施工建造規範 vs. 材料規範）**：
+  - 會中我方初期一度以為客戶詢問的是 **API 5L X65** 等管線鋼材料規範，經現場討論釐清：**`API 650`（Welded Tanks for Oil Storage）本質上是常壓儲油槽的「施工與建造規範（Construction / Fabrication Standard）」，而非獨立的煉鋼材料規格**。
+  - 在 `API 650`（第四章 Materials）中，其**允許使用的鋼板材料多為既有之 ASTM 標準規格**（如 **ASTM A36、A283C、A516、A573、A537** 等）或加拿大國家標準（如 **CSA G40.21 38W / 44W**），僅對部分化學成分（如銅、硫、磷、碳當量）或厚度/衝擊條件設有補充規範，中鋼既有生產之 `44W / A36` 成分與機械性質完全相容。
 - **客戶核心訴求**：
-  - Price Steel 作為大型庫存商，為避免同尺寸備貨多套庫存，要求將常壓儲油槽建造規範 **API 650 Class 3** 納入既有結構鋼板，組成 **「四合一多重認證鋼種 (Quad Grade)」**：**`CSA G40.21 38W / 44W + ASTM A36 + ASME SA36 + API 650 Class 3`**。
+  - Price Steel 作為大型庫存商，為避免同尺寸備貨多套庫存，要求將 **API 650 Class 3** 納入既有結構鋼板，組成 **「四合一多重認證鋼種 (Quad Grade)」**：**`CSA G40.21 38W / 44W + ASTM A36 + ASME SA36 + API 650 Class 3`**。
   - 韓國 **Hyundai Steel（現代製鐵）**、加拿大 **Algoma** 與美國 **Oregon Steel** 過去 4–5 年皆已免費提供此四合一認證，不收額外加價。
 - **MTR 標示方式與法規責任解套**：
   - **拒絕單獨聲明書**：貿易商原提議開立獨立的「符合性聲明書（Letter of Conformance）」，遭客戶當場否決，堅持必須**直接印在 MTR 材質證明書上**並**噴印（Stencil）於鋼板**。
-  - **解套標示法（參考韓國東國製鋼 Dongkuk）**：由於 API 650 屬於下游儲槽建造與焊接規範（類似管線建造規範 CSA Z662 或抗酸規範 NACE MR0175），為避免煉鋼廠承擔下游施工焊接之產品責任（Fit for Purpose / Liability），建議參考東國製鋼作法，無須更改煉鋼化學成分（44W 銅、硫含量完全相容），只需於 MTR 註明 **`"This steel is compliant with (or suitable for) API 650 Class 3"`**。
+  - **解套標示法（參考韓國東國製鋼 Dongkuk）**：正因為 API 650 屬於下游儲槽施工與焊接建造規範（類似管線施工規範 CSA Z662 或抗酸環境規範 NACE MR0175），為避免煉鋼廠承擔下游施工焊接之產品責任（Fit for Purpose / Liability），建議參考東國製鋼作法，無須更改煉鋼化學成分，只需於 MTR 註明 **`"This steel is compliant with (or suitable for) API 650 Class 3"`**。
   - **後續配合**：Price Steel 承諾於會議當日下午提供 **Hyundai 與 Algoma 之 MTR 樣本** 及所需尺寸明細，Salzgitter 亦將提供 API 650 規範文本供中鋼內部評估（Internal Study）。
 
 ### 2. 中鋼產品組合差異化優勢（薄寬板 `1/4" × 10'`、Cat 4、全尺寸整包供應）

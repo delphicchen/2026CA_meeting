@@ -93,9 +93,9 @@
   - Phillip 向 Delphic 解釋：API 650 Class 3 是石油儲槽的製造規範（oil storage tank manufacturing specification）。
   - 在 44W 鋼板市場中，最主要且持續的競爭對手就是韓國現代鋼鐵（Hyundai），因為**韓國沒有反傾銷稅（no AD），且屬於自由貿易協定（FTA）TRQ 配額國家**（雖然韓國鋼廠已經大幅超賣配額 *"they've oversold dramatically their quota"*，但那是另一個問題）。
   - Phillip 總結 Rod 與 Dwayne 的核心訴求：中鋼能否在這個「四合一鋼種」（quad grade / multi-cert grade）的 MTR 及鋼種標示上，把 **API 650 Class 3** 加進去？
-- **Delphic 的回應與澄清**：
-  - Delphic 表示他記得中鋼曾開發過 **API X65**（管線鋼）。
-  - Phillip 與 Price Steel 立即澄清：**這完全不同（"No, no, this is different."）**，API X65 是製管用鋼（pipe grade），而 **API 650 Class 3 是用來製造大型儲油槽的鋼板規範（plate grade for manufacturing tanks）**。
+- **Delphic 的回應與規範本質釐清（API X65 管線鋼 vs. API 650 儲槽施工規範）**：
+  - Delphic 當下誤以為客戶詢問的是 API 管線鋼，表示記得中鋼曾開發過 **API X65**（API 5L 管線鋼）。
+  - Phillip 與 Price Steel 立即澄清：**這完全不同（"No, no, this is different."）**，API X65 是製管用鋼（pipe grade），而 **API 650 是大型常壓儲油槽的「施工與建造規範（tank construction / fabrication specification）」**——該規範本身並非獨立煉鋼材質，其允許使用的鋼板材料多為既有的 **ASTM 規格**（如 ASTM A36、A516 等）或加拿大 CSA G40.21 規格（如 38W/44W），客戶只是希望在 MTR 上加註該批 ASTM A36 / CSA 44W 鋼板符合 API 650 Class 3 之材料要求。
 
 ---
 
