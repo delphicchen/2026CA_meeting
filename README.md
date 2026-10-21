@@ -22,6 +22,7 @@
 | **02** | **2026-10-19** | **11:57 – 12:48 PDT** | **Cascadia Metals** (Jim Ritchie / Mark / Amy / Philip 及貿易商團隊) | Vancouver, BC, Canada | [`20261019_1157_cascadia/`](./20261019_1157_cascadia/) | ✅ 已完成聽覺解析與歸檔 |
 | **03** | **2026-10-21** | **09:09 – 10:31 MDT** | **Price Steel** (Dwayne / Rod 及 Salzgitter 團隊) | Edmonton, AB, Canada | [`20261021_0909_price_steel/`](./20261021_0909_price_steel/) | ✅ 已完成聽覺解析與歸檔 |
 | **04** | **2026-10-21** | **11:21 – 12:31 MDT** | **Carry Steel** (Richard 及貿易商團隊) | Edmonton, AB, Canada | [`20261021_1121_carry_steel/`](./20261021_1121_carry_steel/) | ✅ 已完成聽覺解析與歸檔 |
+| **05** | **2026-10-21** | **14:42 – 15:54 MDT** | **Russel Metals** (Jim / Devon / Steve 及 Salzgitter 團隊) | Edmonton, AB, Canada | [`20261021_1442_russel_steel/`](./20261021_1442_russel_steel/) | ✅ 已完成聽覺解析與歸檔 |
 
 ---
 
@@ -86,4 +87,22 @@
      - [`20261021_1121_Carry_Steel_Meeting_Report.docx`](./20261021_1121_carry_steel/20261021_1121_Carry_Steel_Meeting_Report.docx)
      - [`20261021_1121_Carry_Steel_Audio_Report.docx`](./20261021_1121_carry_steel/20261021_1121_Carry_Steel_Audio_Report.docx)
      - [`20261021_1121_Carry_Steel_Raw_Notes.docx`](./20261021_1121_carry_steel/20261021_1121_Carry_Steel_Raw_Notes.docx)
+
+---
+
+## 📁 場次 05：Russel Metals（2026-10-21 14:42 – 15:54 MDT）
+
+### 1. 檔案清單與用途說明
+- **時間序歸檔目錄 [`20261021_1442_russel_steel/`](./20261021_1442_russel_steel/)**（亦同步保留於根目錄 `./`）：
+  1. **[`20261021_1442_01_russel_steel_meeting_report.md`](./20261021_1442_russel_steel/20261021_1442_01_russel_steel_meeting_report.md)**（同根目錄 [`20261021_russel_steel_meeting_report.md`](./20261021_russel_steel_meeting_report.md)）
+     - **結構化重點與數據資料庫**：全加拿大第一大碳鋼分銷龍頭（北美第 5 大）Edmonton 廠 24/7 全天候生產；中鋼 1 月釋出 500 噸鋼板配額（Russel 優先）；中鋼專用碼頭直裝散貨船方案突破陸運 48 呎限制（供應 60'~68' 超長 50/80 Cat 3 橋梁板並與 A516 壓力容器板拼單）；詢價農機專用薄耐磨板 AR200/AR225（700噸/年），嚴格要求高光烤漆表面並排除 Steckel Mill（橘皮缺陷）；解套 API 650 Class 3 MTR 備註機制；揭露加西三區採購比例（BC 90% 進口、AB 60% 進口、Winnipeg 90% 國產）及 Russel 對國產鋼廠漲價限額之強硬反制（警告進口 5 個月交期反噬）。
+  2. **[`20261021_1442_02_russel_steel_audio_report.md`](./20261021_1442_russel_steel/20261021_1442_02_russel_steel_audio_report.md)**（同根目錄 [`russel_steel_20261021_audio_report.md`](./russel_steel_20261021_audio_report.md)）
+     - **完整音訊解析報告**：包含執行摘要與全部 25 段（`00:00:00` – `01:12:28`）時間軸詳細紀錄（記錄 Steve 離席與中場休息交換意見細節）。
+  3. **[`20261021_1442_03_russel_steel_raw_notes.md`](./20261021_1442_russel_steel/20261021_1442_03_russel_steel_raw_notes.md)**（同根目錄 [`20261021_russel_steel_raw_notes.md`](./20261021_russel_steel_raw_notes.md)）
+     - **未刪減分段聽覺完整底稿**：完整保留 25 段對話、英文原句引述（Quotes）、中鋼內部中文討論與量化數據細節。
+  4. **原生 Word 檔案（`.docx`）**：
+     - [`20261021_1442_Russel_Steel_Meeting_Report.docx`](./20261021_1442_russel_steel/20261021_1442_Russel_Steel_Meeting_Report.docx)
+     - [`20261021_1442_Russel_Steel_Audio_Report.docx`](./20261021_1442_russel_steel/20261021_1442_Russel_Steel_Audio_Report.docx)
+     - [`20261021_1442_Russel_Steel_Raw_Notes.docx`](./20261021_1442_russel_steel/20261021_1442_Russel_Steel_Raw_Notes.docx)
+
 
