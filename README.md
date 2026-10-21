@@ -16,10 +16,11 @@
 
 ## 📅 訪廠行程與會議時間軸總覽 (Chronological Trip Schedule)
 
-| 場次順序 | 日期 | 當地時間 (PDT) | 拜訪客戶 / 機構 | 地點 | 時間序歸檔目錄 | 狀態 |
+| 場次順序 | 日期 | 當地時間 | 拜訪客戶 / 機構 | 地點 | 時間序歸檔目錄 | 狀態 |
 | :---: | :---: | :---: | :--- | :--- | :--- | :---: |
-| **01** | **2026-10-19** | **09:08 – 10:53** | **Terra Nova Steel** (Doug / Chris 及貿易商團隊) | Richmond, BC, Canada | [`20261019_0908_terra_nova/`](./20261019_0908_terra_nova/) | ✅ 已完成聽覺解析與歸檔 |
-| **02** | **2026-10-19** | **11:57 – 12:48** | **Cascadia Metals** (Jim Ritchie / Mark / Amy / Philip 及貿易商團隊) | Vancouver, BC, Canada | [`20261019_1157_cascadia/`](./20261019_1157_cascadia/) | ✅ 已完成聽覺解析與歸檔 |
+| **01** | **2026-10-19** | **09:08 – 10:53 PDT** | **Terra Nova Steel** (Doug / Chris 及貿易商團隊) | Richmond, BC, Canada | [`20261019_0908_terra_nova/`](./20261019_0908_terra_nova/) | ✅ 已完成聽覺解析與歸檔 |
+| **02** | **2026-10-19** | **11:57 – 12:48 PDT** | **Cascadia Metals** (Jim Ritchie / Mark / Amy / Philip 及貿易商團隊) | Vancouver, BC, Canada | [`20261019_1157_cascadia/`](./20261019_1157_cascadia/) | ✅ 已完成聽覺解析與歸檔 |
+| **03** | **2026-10-21** | **09:09 – 10:31 MDT** | **Price Steel** (Dwayne / Rod 及 Salzgitter 團隊) | Edmonton, AB, Canada | [`20261021_0909_price_steel/`](./20261021_0909_price_steel/) | ✅ 已完成聽覺解析與歸檔 |
 
 ---
 
@@ -50,3 +51,20 @@
      - **未刪減分段聽覺完整底稿**：完整保留 17 段對話與英文原句引述（Quotes）、量化數據總表與細節。
   4. **[`20261019_1157_04_cascadia_structured_data.json`](./20261019_1157_cascadia/20261019_1157_04_cascadia_structured_data.json)**
      - **結構化 JSON 資料庫**：與會名單、關鍵指標、各產品線與北美鋼廠情報結構化資料。
+
+---
+
+## 📁 場次 03：Price Steel（2026-10-21 09:09 – 10:31 MDT）
+
+### 1. 檔案清單與用途說明
+- **時間序歸檔目錄 [`20261021_0909_price_steel/`](./20261021_0909_price_steel/)**（亦同步保留於根目錄 `./`）：
+  1. **[`20261021_0909_01_price_steel_meeting_report.md`](./20261021_0909_price_steel/20261021_0909_01_price_steel_meeting_report.md)**（同根目錄 [`20261021_price_steel_meeting_report.md`](./20261021_price_steel_meeting_report.md)）
+     - **結構化重點與數據資料庫**：四合一多重認證鋼板（`38W/44W + A36 + SA36 + API 650 Class 3`）MTR 標示與鋼板噴印要求、加西 30,000 噸常壓儲槽市場與「Pacific Link」1,500km 新油管商機、中鋼 `1/4" × 10'` 薄寬板與唯一海外供應 `Cat 4` 優勢、溫哥華至愛德蒙頓內陸接駁成本（CAD $185~$195/MT）及渥太華擬再砍 TRQ 獨家內幕。
+  2. **[`20261021_0909_02_price_steel_audio_report.md`](./20261021_0909_price_steel/20261021_0909_02_price_steel_audio_report.md)**（同根目錄 [`price_steel_20261021_audio_report.md`](./price_steel_20261021_audio_report.md)）
+     - **完整音訊解析報告**：包含執行摘要與全部 28 段（`00:00:00` – `01:22:29`）時間軸詳細紀錄。
+  3. **[`20261021_0909_03_price_steel_raw_notes.md`](./20261021_0909_price_steel/20261021_0909_03_price_steel_raw_notes.md)**（同根目錄 [`20261021_price_steel_raw_notes.md`](./20261021_price_steel_raw_notes.md)）
+     - **未刪減分段聽覺完整底稿**：完整保留 28 段對話、英文原句引述（Quotes）、中鋼內部中文討論與量化數據細節。
+  4. **原生 Word 檔案（`.docx`）**：
+     - [`20261021_0909_Price_Steel_Meeting_Report.docx`](./20261021_0909_price_steel/20261021_0909_Price_Steel_Meeting_Report.docx)
+     - [`20261021_0909_Price_Steel_Audio_Report.docx`](./20261021_0909_price_steel/20261021_0909_Price_Steel_Audio_Report.docx)
+     - [`20261021_0909_Price_Steel_Raw_Notes.docx`](./20261021_0909_price_steel/20261021_0909_Price_Steel_Raw_Notes.docx)
