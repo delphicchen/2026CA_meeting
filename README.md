@@ -23,6 +23,7 @@
 | **03** | **2026-10-21** | **09:09 – 10:31 MDT** | **Price Steel** (Dwayne / Rod 及 Salzgitter 團隊) | Edmonton, AB, Canada | [`20261021_0909_price_steel/`](./20261021_0909_price_steel/) | ✅ 已完成聽覺解析與歸檔 |
 | **04** | **2026-10-21** | **11:21 – 12:31 MDT** | **Carry Steel** (Richard 及貿易商團隊) | Edmonton, AB, Canada | [`20261021_1121_carry_steel/`](./20261021_1121_carry_steel/) | ✅ 已完成聽覺解析與歸檔 |
 | **05** | **2026-10-21** | **14:42 – 15:54 MDT** | **Russel Metals** (Jim / Devon / Steve 及 Salzgitter 團隊) | Edmonton, AB, Canada | [`20261021_1442_russel_steel/`](./20261021_1442_russel_steel/) | ✅ 已完成聽覺解析與歸檔 |
+| **06** | **2026-10-22** | **14:04 – 15:56 MDT** | **Varsteel Ltd.** (Jason / Kevin 及 thyssenkrupp 團隊) | Lethbridge, AB, Canada | [`20261022_1404_varsteel/`](./20261022_1404_varsteel/) | ✅ 已完成聽覺解析與歸檔 |
 
 ---
 
@@ -106,3 +107,20 @@
      - [`20261021_1442_Russel_Steel_Raw_Notes.docx`](./20261021_1442_russel_steel/20261021_1442_Russel_Steel_Raw_Notes.docx)
 
 
+
+---
+
+## 📁 場次 06：Varsteel Ltd.（2026-10-22 14:04 – 15:56 MDT）
+
+### 1. 檔案清單與用途說明
+- **時間序歸檔目錄 [`20261022_1404_varsteel/`](./20261022_1404_varsteel/)**（亦同步保留於根目錄 `./`）：
+  1. **[`20261022_1404_01_varsteel_meeting_report.md`](./20261022_1404_varsteel/20261022_1404_01_varsteel_meeting_report.md)**（同根目錄 [`20261022_1404_01_varsteel_meeting_report.md`](./20261022_1404_01_varsteel_meeting_report.md)）
+     - **結構化重點與數據資料庫**：全加美西 37 處服務中心網絡（收購 Transbec 魁北克 5 廠）；現場發掘年需求約 3,000 噸 AR400F/AR450F/A514 調質耐磨板重大新商機且**完全豁免加拿大反傾銷稅**；剖析痛失 5,000 噸 12mm 熱軋厚捲原因（中鋼 26 噸帶鋼超過 Delta 廠 22.5~25 噸天車極限且 Saga 拒載），提出入爐前「鋼胚對半鋸切（切為 13 噸鋼胚）」之根本破局方案；600 噸 350WT Cat 3 橋梁板在詢案證實中鋼厚板長度極限達 18.5 公尺（打破 40 呎限制）且 120" 超寬板排他性優勢顯著；單一 MTR 整合 API 650 Group 3（對標現代製鐵）；揭示北美 AI 超大規模資料中心建設狂潮引爆重型型鋼與剪切厚板大缺貨；雙方商定建立每月 3,000~5,000 噸常態月度訂購計畫。
+  2. **[`20261022_1404_02_varsteel_audio_report.md`](./20261022_1404_varsteel/20261022_1404_02_varsteel_audio_report.md)**（同根目錄 [`20261022_1404_02_varsteel_audio_report.md`](./20261022_1404_02_varsteel_audio_report.md)）
+     - **完整音訊深度解析報告**：包含執行摘要與全部 38 段（`00:00:00` – `01:51:53`）時間軸詳細紀錄（涵蓋 2 英吋重型冷整平機 1/2 A6 平坦度、加拿大三本土廠危機、溫哥華港 Lynnterm 鋼捲 3×3 打帶工安等）。
+  3. **[`20261022_1404_03_varsteel_raw_notes.md`](./20261022_1404_varsteel/20261022_1404_03_varsteel_raw_notes.md)**（同根目錄 [`20261022_1404_03_varsteel_raw_notes.md`](./20261022_1404_03_varsteel_raw_notes.md)）
+     - **未刪減分段聽覺完整底稿**：完整保留 38 段對話、英文原句引述（Quotes）、中鋼內部中文研商與量化數據細節。
+  4. **原生 Word 檔案（`.docx`）**：
+     - [`20261022_1404_Varsteel_Meeting_Report.docx`](./20261022_1404_varsteel/20261022_1404_Varsteel_Meeting_Report.docx)
+     - [`20261022_1404_Varsteel_Audio_Report.docx`](./20261022_1404_varsteel/20261022_1404_Varsteel_Audio_Report.docx)
+     - [`20261022_1404_Varsteel_Raw_Notes.docx`](./20261022_1404_varsteel/20261022_1404_Varsteel_Raw_Notes.docx)
